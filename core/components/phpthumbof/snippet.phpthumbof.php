@@ -1,13 +1,35 @@
 <?php
 /**
+ * phpThumbOf
+ *
+ * Copyright 2009-2010 by Shaun McCormick <shaun@modx.com>
+ *
+ * phpThumbOf is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any
+ * later version.
+ *
+ * phpThumbOf is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * phpThumbOf; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @package phpthumbof
+ */
+/**
  * A custom output filter for phpThumb
  *
  * @package phpthumbof
  */
+if (empty($modx)) return '';
 if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
     $modx->log(modX::LOG_LEVEL_ERROR,'Could not load modPhpThumb class.');
     return '';
 }
+if (empty($input)) return '';
 
 /* explode tag options */
 $ptOptions = array();
@@ -31,8 +53,8 @@ $phpThumb->setParameter('config_allow_src_above_phpthumb',true);
 $phpThumb->setParameter('allow_local_http_src',true);
 $phpThumb->setCacheDirectory();
 
-/* get absolute url */
-if (strpos($input,'/') != 0 && strpos($input.'http') != 0) {
+/* get absolute url of image */
+if (strpos($input,'/') != 0 && strpos($input,'http') != 0) {
     $input = $modx->getOption('base_url').$input;
 } else {
     $input = urldecode($input);
@@ -52,6 +74,9 @@ $assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->g
 $cacheUrl = $assetsUrl.'cache/'.str_replace($phpThumb->config_cache_directory,'',$cacheKey);
 $cacheUrl = str_replace('//','/',$cacheUrl);
 
+/* ensure we have an accurate and clean cache directory */
+$phpThumb->CleanUpCacheDirectory();
+
 /* check to see if there's a cached file of this already */
 if (file_exists($cacheKey)) {
     return $cacheUrl;
@@ -62,5 +87,7 @@ if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not rem
     if ($phpThumb->RenderToFile($cacheKey)) {
         return $cacheUrl;
     }
+} else {
+    $modx->log(modX::LOG_LEVEL_ERROR,'Could not cache thumb at: '.$input);
 }
 return 'Error!';
