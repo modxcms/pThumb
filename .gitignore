@@ -1,0 +1,3 @@
+_build/config.inc.php
+core.config.php
+assets/components/phpthumbof/cache/*cache*
