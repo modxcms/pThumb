@@ -29,6 +29,7 @@ if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthum
     $modx->log(modX::LOG_LEVEL_ERROR,'Could not load modPhpThumb class.');
     return '';
 }
+//var_dump($scriptProperties); die();
 if (empty($input)) return '';
 
 /* explode tag options */
@@ -43,8 +44,10 @@ foreach ($eoptions as $opt) {
 if (empty($ptOptions['f'])) $ptOptions['f'] = 'png';
 
 /* load phpthumb */
-$assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumb/');
+$assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
 $phpThumb = new modPhpThumb($modx,$ptOptions);
+
+if (!is_writable($assetsPath.'cache/')) return 'Cache dir not writable: '.$assetsPath.'cache/';
 
 /* do initial setup */
 $phpThumb->initialize();
@@ -70,7 +73,7 @@ $cacheKey .= '.'.md5($options);
 $cacheKey .= '.' . (!empty($ptOptions['f']) ? $ptOptions['f'] : 'png');
 
 /* get cache Url */
-$assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->getOption('assets_url').'components/phpthumb/');
+$assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->getOption('assets_url').'components/phpthumbof/');
 $cacheUrl = $assetsUrl.'cache/'.str_replace($phpThumb->config_cache_directory,'',$cacheKey);
 $cacheUrl = str_replace('//','/',$cacheUrl);
 
@@ -86,8 +89,10 @@ if (file_exists($cacheKey)) {
 if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not remove it!
     if ($phpThumb->RenderToFile($cacheKey)) {
         return $cacheUrl;
+    } else {
+        $modx->log(modX::LOG_LEVEL_ERROR,'Could not cache thumb "'.$input.'" to file at: '.$cacheKey);
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR,'Could not cache thumb at: '.$input);
+    $modx->log(modX::LOG_LEVEL_ERROR,'Could not generate thumbnail: '.$input);
 }
-return 'Error!';
+return 'Error: '.print_r($phpThumb->debugmessages);
