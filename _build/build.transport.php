@@ -91,6 +91,7 @@ $vehicle->resolve('file',array(
     'target' => "return MODX_ASSETS_PATH . 'components/';",
 ));
 $builder->putVehicle($vehicle);
+$modx->log(modX::LOG_LEVEL_INFO,'Packaged in phpthumbof Snippet.'); flush();
 
 /* load system settings */
 $settings = include_once $sources['data'].'transport.settings.php';
