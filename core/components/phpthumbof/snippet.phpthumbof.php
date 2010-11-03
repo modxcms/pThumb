@@ -2,7 +2,7 @@
 /**
  * phpThumbOf
  *
- * Copyright 2009-2010 by Shaun McCormick <shaun@modx.com>
+ * Copyright 2009-2011 by Shaun McCormick <shaun@modx.com>
  *
  * phpThumbOf is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,11 +26,13 @@
  */
 if (empty($modx)) return '';
 if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
-    $modx->log(modX::LOG_LEVEL_ERROR,'Could not load modPhpThumb class.');
+    $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class.');
     return '';
 }
-//var_dump($scriptProperties); die();
-if (empty($input)) return '';
+if (empty($input)) {
+    $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Empty image path passed, aborting.');
+    return '';
+}
 
 /* explode tag options */
 $ptOptions = array();
@@ -47,7 +49,10 @@ if (empty($ptOptions['f'])) $ptOptions['f'] = 'png';
 $assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
 $phpThumb = new modPhpThumb($modx,$ptOptions);
 
-if (!is_writable($assetsPath.'cache/')) return 'Cache dir not writable: '.$assetsPath.'cache/';
+if (!is_writable($assetsPath.'cache/')) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Cache dir not writable: '.$assetsPath.'cache/');
+    return '';
+}
 
 /* do initial setup */
 $phpThumb->initialize();
@@ -82,6 +87,7 @@ $phpThumb->CleanUpCacheDirectory();
 
 /* check to see if there's a cached file of this already */
 if (file_exists($cacheKey)) {
+    $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$cacheKey);
     return $cacheUrl;
 }
 
@@ -90,9 +96,9 @@ if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not rem
     if ($phpThumb->RenderToFile($cacheKey)) {
         return $cacheUrl;
     } else {
-        $modx->log(modX::LOG_LEVEL_ERROR,'Could not cache thumb "'.$input.'" to file at: '.$cacheKey);
+        $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not cache thumb "'.$input.'" to file at: '.$cacheKey.' - Debug: '.print_r($phpThumb->debugmessages,true));
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR,'Could not generate thumbnail: '.$input);
+    $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not generate thumbnail: '.$input.' - Debug: '.print_r($phpThumb->debugmessages,true));
 }
-return 'Error: '.print_r($phpThumb->debugmessages);
+return '';

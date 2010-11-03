@@ -1,0 +1,8 @@
+Changelog for UserProfiles package.
+
+UserProfiles 1.0.0
+=====================================
+- Added PartnerListing snippet, hooked into data model with cycle-based portfolio
+- Added PartnerDirectory snippet
+- Got s3 API, hooked up partner listing form and logo
+- Initial commit

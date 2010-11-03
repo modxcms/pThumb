@@ -1,3 +1,3 @@
-_build/config.inc.php
+_build/build.config.php
 core.config.php
 assets/components/phpthumbof/cache/*png
