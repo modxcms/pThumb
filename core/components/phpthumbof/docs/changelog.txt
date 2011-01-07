@@ -1,8 +1,10 @@
-Changelog for UserProfiles package.
+Changelog for phpThumbOf package.
 
-UserProfiles 1.0.0
+phpThumbOf 1.0.0
 =====================================
-- Added PartnerListing snippet, hooked into data model with cycle-based portfolio
-- Added PartnerDirectory snippet
-- Got s3 API, hooked up partner listing form and logo
+- Added Amazon S3 support
+- Added plugin to clear thumb cache when clearing site cache
+
+phpThumbOf 1.0.0
+=====================================
 - Initial commit

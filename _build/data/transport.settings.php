@@ -26,13 +26,67 @@
  * @subpackage build
  */
 $settings = array();
+
+$settings['phpthumbof.use_s3']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.use_s3']->fromArray(array(
+    'key' => 'phpthumbof.use_s3',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
+$settings['phpthumbof.s3_key']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_key']->fromArray(array(
+    'key' => 'phpthumbof.s3_key',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
+$settings['phpthumbof.s3_secret_key']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_secret_key']->fromArray(array(
+    'key' => 'phpthumbof.s3_secret_key',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
+$settings['phpthumbof.s3_bucket']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_bucket']->fromArray(array(
+    'key' => 'phpthumbof.s3_bucket',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
+$settings['phpthumbof.s3_path']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_path']->fromArray(array(
+    'key' => 'phpthumbof.s3_path',
+    'value' => 'phpthumbof/',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
+$settings['phpthumbof.s3_cache_time']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_cache_time']->fromArray(array(
+    'key' => 'phpthumbof.s3_cache_time',
+    'value' => 24,
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
 /*
 $settings['']= $modx->newObject('modSystemSetting');
 $settings['']->fromArray(array(
     'key' => '',
     'value' => false,
     'xtype' => 'textfield',
-    'namespace' => 'userprofiles',
+    'namespace' => 'phpthumbof',
     'area' => '',
 ),'',true,true);*/
 

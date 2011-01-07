@@ -1,7 +1,7 @@
 --------------------
 Snippet: phpthumbof
 --------------------
-Since: November 3rd, 2010
+Created: November 3rd, 2010
 Author: Shaun McCormick <shaun@modx.com>
 License: GNU GPLv2 (or later at your option)
 
