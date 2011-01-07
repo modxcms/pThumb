@@ -80,6 +80,15 @@ $settings['phpthumbof.s3_cache_time']->fromArray(array(
     'namespace' => 'phpthumbof',
     'area' => 's3',
 ),'',true,true);
+
+$settings['phpthumbof.s3_headers_check']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_headers_check']->fromArray(array(
+    'key' => 'phpthumbof.s3_headers_check',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
 /*
 $settings['']= $modx->newObject('modSystemSetting');
 $settings['']->fromArray(array(

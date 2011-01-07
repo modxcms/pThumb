@@ -97,31 +97,94 @@ $cacheUrl = str_replace('//','/',$cacheUrl);
 /* ensure we have an accurate and clean cache directory */
 $phpThumb->CleanUpCacheDirectory();
 
+/* debugging code */
+if ($debug) {
+    $mtime = microtime();
+    $mtime = explode(" ", $mtime);
+    $mtime = $mtime[1] + $mtime[0];
+    $tstart = $mtime;
+    set_time_limit(0);
+
+    $oldLogTarget = $modx->getLogTarget();
+    $oldLogLevel = $modx->getLogLevel();
+    $modx->setLogLevel(modX::LOG_LEVEL_DEBUG);
+    $logTarget = $modx->getOption('debugTarget',$scriptProperties,'');
+    if (!empty($logTarget)) {
+        $modx->setLogTarget();
+    }
+}
 /* if using s3, check for file there */
 $expired = false;
 if ($useS3) {
+    $s3bucket = $modx->getOption('phpthumbof.s3_bucket',$scriptProperties,'');
     $path = str_replace('//','/',$s3path.$cacheFilename);
-    $s3Url = $modaws->getFileUrl($path);
-    if (!empty($s3Url) && is_object($s3Url) && !empty($s3Url->body) && !empty($s3Url->status) && $s3Url->status == 200) {
-        /* check expiry for image */
-        $lastModified = strtotime($s3response->header['last-modified']);
-        if (!empty($lastModified)) {
-            /* use last-modified to determine age */
-            $maxAge = (int)$modx->getOption('phpthumbof.s3_cache_time',null,24) * 60 * 60;
-            $now = time();
-            if (($now - $lastModified) > $maxAge) {
+    
+    /* check with php's get_headers (slower) */
+    if ($modx->getOption('phpthumbof.s3_headers_check',$scriptProperties,false)) {
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[phpthumbof] Using get_headers to check modified.');
+        $s3imageUrl = 'http://'.str_replace('//','/',$s3bucket.'.s3.amazonaws.com/'.urlencode($path));
+        $headers = get_headers($s3imageUrl,1);
+
+        if (!empty($headers) && !empty($headers[0]) && $headers[0] == 'HTTP/1.1 200 OK') {
+            if (empty($headers['Last-Modified'])) {
                 $expired = true;
+            } else {
+                $lastModified = $headers['Last-Modified'];
+                $lastModified = strtotime(trim($lastModified[1]));
             }
-        }
-        /* if not expired past the cache time, use that url. otherwise, delete from S3 */
-        if (!$expired) {
-            return $s3Url->header['_info']['url'];
         } else {
-            $modaws->deleteObject($path);
+            $expired = true;
         }
+        
+    } else { /* otherwise use amazon's (faster) get object info */
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[phpthumbof] Using get_object_url to check modified.');
+        $s3response = $modaws->getFileUrl($path);
+        if (!empty($s3response) && is_object($s3response) && !empty($s3response->body) && !empty($s3response->status) && $s3response->status == 200) {
+            /* check expiry for image */
+            $lastModified = strtotime($s3response->header['last-modified']);
+            $s3imageUrl = $s3response->header['_info']['url'];
+        }
+    }
+    /* check to see if expired */
+    if (!empty($lastModified)) {
+        /* use last-modified to determine age */
+        $maxAge = (int)$modx->getOption('phpthumbof.s3_cache_time',null,24) * 60 * 60;
+        $now = time();
+        if (($now - $lastModified) > $maxAge) {
+            $expired = true;
+        }
+    }
+    /* if not expired past the cache time, use that url. otherwise, delete from S3 */
+    if (!$expired) {
+        if ($debug) {
+            $modx->log(modX::LOG_LEVEL_DEBUG,"\n".'[phpthumb] Not expired, returning.');
+            $mtime= microtime();
+            $mtime= explode(" ", $mtime);
+            $mtime= $mtime[1] + $mtime[0];
+            $tend= $mtime;
+            $totalTime= ($tend - $tstart);
+            $totalTime= sprintf("%2.4f s", $totalTime);
+
+            $modx->log(modX::LOG_LEVEL_DEBUG,"\n<br />Execution time: {$totalTime}\n<br />");
+        }
+        return $s3imageUrl;
+    } else {
+        $modaws->deleteObject($path);
     }
 }
 
+if ($debug) {    
+    $mtime= microtime();
+    $mtime= explode(" ", $mtime);
+    $mtime= $mtime[1] + $mtime[0];
+    $tend= $mtime;
+    $totalTime= ($tend - $tstart);
+    $totalTime= sprintf("%2.4f s", $totalTime);
+
+    $modx->log(modX::LOG_LEVEL_DEBUG,"\n<br />Execution time: {$totalTime}\n<br />");
+    $modx->setLogLevel($oldLogLevel);
+    $modx->setLogTarget($oldLogTarget);
+}
 /* check to see if there's a cached file of this already */
 if (file_exists($cacheKey) && !$useS3 && !$expired) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$cacheKey);

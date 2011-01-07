@@ -23,3 +23,6 @@ $_lang['setting_phpthumbof.s3_path_desc'] = 'The path in your bucket where you w
 
 $_lang['setting_phpthumbof.s3_cache_time'] = 'Amazon S3 Cache Time';
 $_lang['setting_phpthumbof.s3_cache_time_desc'] = 'The number of hours to cache a thumbnail for on Amazon S3. Thumbnails can be cleared by clearing the site cache.';
+
+$_lang['setting_phpthumbof.s3_headers_check'] = 'Use PHP get_headers to Check Modified Date';
+$_lang['setting_phpthumbof.s3_headers_check_desc'] = 'Use Amazon S3 get_object_url (faster) to check modified date on S3 thumbs. If on, will use PHPs get_headers, which is slower. Turn on if experiencing caching issues.';
