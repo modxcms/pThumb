@@ -161,7 +161,7 @@ if ($useS3) {
             $s3imageUrl = $s3response->header['_info']['url'];
 
             if (!empty($s3hostAlias)) {
-                $s3imageUrl = str_replace($s3bucket.'.s3.amazonaws.com/',$s3hostAlias,$s3imageUrl);
+                $s3imageUrl = str_replace($s3hostDefault,$s3hostAlias,$s3imageUrl);
             }
         }
     }
