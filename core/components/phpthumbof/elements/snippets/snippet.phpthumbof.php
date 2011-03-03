@@ -118,12 +118,27 @@ if ($debug) {
 $expired = false;
 if ($useS3) {
     $s3bucket = $modx->getOption('phpthumbof.s3_bucket',$scriptProperties,'');
+    $s3hostDefault = $s3bucket.'.s3.amazonaws.com/';
+
+    /* if using a CNAME alias, set here (ensure is postfixed with /) */
+    $s3hostAlias = $modx->getOption('phpthumbof.s3_host_alias',$scriptProperties,'');
+    $s3hostAliasLen = strlen($s3hostAlias);
+    if (!empty($s3hostAlias)) {
+        $s3hostAlias = str_replace(array('http://','https://'),'',$s3hostAlias);
+        if (substr($s3hostAlias,$s3hostAliasLen-1,$s3hostAliasLen) != '/') {
+            $s3hostAlias .= '/';
+        }
+    }
+    $s3host = !empty($s3hostAlias) ? $s3hostAlias : $s3hostDefault;
+
+    /* calc relative path of image in s3 bucket */
     $path = str_replace('//','/',$s3path.$cacheFilename);
-    
+    $expired = true;
+
     /* check with php's get_headers (slower) */
     if ($modx->getOption('phpthumbof.s3_headers_check',$scriptProperties,false)) {
         $modx->log(modX::LOG_LEVEL_DEBUG,'[phpthumbof] Using get_headers to check modified.');
-        $s3imageUrl = 'http://'.str_replace('//','/',$s3bucket.'.s3.amazonaws.com/'.urlencode($path));
+        $s3imageUrl = 'http://'.str_replace('//','/',$s3host.urlencode($path));
         $headers = get_headers($s3imageUrl,1);
 
         if (!empty($headers) && !empty($headers[0]) && $headers[0] == 'HTTP/1.1 200 OK') {
@@ -144,8 +159,13 @@ if ($useS3) {
             /* check expiry for image */
             $lastModified = strtotime($s3response->header['last-modified']);
             $s3imageUrl = $s3response->header['_info']['url'];
+
+            if (!empty($s3hostAlias)) {
+                $s3imageUrl = str_replace($s3bucket.'.s3.amazonaws.com/',$s3hostAlias,$s3imageUrl);
+            }
         }
     }
+    
     /* check to see if expired */
     if (!empty($lastModified)) {
         /* use last-modified to determine age */
@@ -175,8 +195,10 @@ if ($useS3) {
 }
 
 /* ensure file has proper permissions */
-$filePerm = (int)$modx->getOption('new_file_permissions',$scriptProperties,'0664');
-@chmod($cacheKey, octdec($filePerm));
+if (!empty($cacheKey)) {
+    $filePerm = (int)$modx->getOption('new_file_permissions',$scriptProperties,'0664');
+    @chmod($cacheKey, octdec($filePerm));
+}
 
 if ($debug) {
     $mtime= microtime();
@@ -195,7 +217,6 @@ if (file_exists($cacheKey) && !$useS3 && !$expired) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$cacheKey);
     return $cacheUrl;
 }
-
 /* actually make the thumbnail */
 if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not remove it!
     if ($phpThumb->RenderToFile($cacheKey)) {

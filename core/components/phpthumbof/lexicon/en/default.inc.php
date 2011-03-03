@@ -18,6 +18,9 @@ $_lang['setting_phpthumbof.s3_secret_key_desc'] = 'Your Amazon Web Services S3 S
 $_lang['setting_phpthumbof.s3_bucket'] = 'Amazon S3 Bucket';
 $_lang['setting_phpthumbof.s3_bucket_desc'] = 'The name of the bucket you are using in Amazon S3.';
 
+$_lang['setting_phpthumbof.s3_host_alias'] = 'Amazon S3 Host Alias';
+$_lang['setting_phpthumbof.s3_host_alias_desc'] = 'If using a CNAME or other alias to change the domain of the S3 service, enter it here.';
+
 $_lang['setting_phpthumbof.s3_path'] = 'Amazon S3 Bucket Path';
 $_lang['setting_phpthumbof.s3_path_desc'] = 'The path in your bucket where you want the phpthumbof cache files to go.';
 

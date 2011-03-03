@@ -63,6 +63,15 @@ $settings['phpthumbof.s3_bucket']->fromArray(array(
     'area' => 's3',
 ),'',true,true);
 
+$settings['phpthumbof.s3_host_alias']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.s3_host_alias']->fromArray(array(
+    'key' => 'phpthumbof.s3_host_alias',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 's3',
+),'',true,true);
+
 $settings['phpthumbof.s3_path']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_path']->fromArray(array(
     'key' => 'phpthumbof.s3_path',

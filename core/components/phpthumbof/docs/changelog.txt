@@ -2,6 +2,7 @@ Changelog for phpThumbOf package.
 
 phpThumbOf 1.0.0
 =====================================
+- [#8] Add phpthumbof.s3_host_alias setting to allow setting a CNAME alias for s3 url
 - [#10] Add fix to use modx base path rather than phpThumb default of document_root
 - [#9] Add fix for shared hosting environments using host dir aliasing
 - [#7] Add extra support for suphp by adding chmod statement to cache file
