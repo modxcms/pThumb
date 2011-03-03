@@ -94,8 +94,6 @@ $cacheKey = $assetsPath.'cache/'.$cacheFilename;
 $assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->getOption('assets_url').'components/phpthumbof/');
 $cacheUrl = $assetsUrl.'cache/'.str_replace($cacheDir,'',$cacheKey);
 $cacheUrl = str_replace('//','/',$cacheUrl);
-var_dump($cacheKey);
-var_dump($cacheUrl); die();
 
 /* ensure we have an accurate and clean cache directory */
 $phpThumb->CleanUpCacheDirectory();
