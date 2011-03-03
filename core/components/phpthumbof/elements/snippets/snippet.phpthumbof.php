@@ -70,6 +70,7 @@ $phpThumb->initialize();
 $phpThumb->setParameter('config_cache_directory',$assetsPath.'cache/');
 $phpThumb->setParameter('config_allow_src_above_phpthumb',true);
 $phpThumb->setParameter('allow_local_http_src',true);
+$phpThumb->setParameter('config_document_root',$modx->getOption('base_path',$scriptProperties,MODX_BASE_PATH));
 $phpThumb->setCacheDirectory();
 
 /* get absolute url of image */
@@ -91,8 +92,10 @@ $cacheKey = $assetsPath.'cache/'.$cacheFilename;
 
 /* get cache Url */
 $assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->getOption('assets_url').'components/phpthumbof/');
-$cacheUrl = $assetsUrl.'cache/'.str_replace($phpThumb->config_cache_directory,'',$cacheKey);
+$cacheUrl = $assetsUrl.'cache/'.str_replace($cacheDir,'',$cacheKey);
 $cacheUrl = str_replace('//','/',$cacheUrl);
+var_dump($cacheKey);
+var_dump($cacheUrl); die();
 
 /* ensure we have an accurate and clean cache directory */
 $phpThumb->CleanUpCacheDirectory();
@@ -173,7 +176,11 @@ if ($useS3) {
     }
 }
 
-if ($debug) {    
+/* ensure file has proper permissions */
+$filePerm = (int)$modx->getOption('new_file_permissions',$scriptProperties,'0664');
+@chmod($cacheKey, octdec($filePerm));
+
+if ($debug) {
     $mtime= microtime();
     $mtime= explode(" ", $mtime);
     $mtime= $mtime[1] + $mtime[0];

@@ -2,9 +2,12 @@ Changelog for phpThumbOf package.
 
 phpThumbOf 1.0.0
 =====================================
-- Added Amazon S3 support
-- Added plugin to clear thumb cache when clearing site cache
+- [#10] Add fix to use modx base path rather than phpThumb default of document_root
+- [#9] Add fix for shared hosting environments using host dir aliasing
+- [#7] Add extra support for suphp by adding chmod statement to cache file
 
 phpThumbOf 1.0.0
 =====================================
+- Added Amazon S3 support
+- Added plugin to clear thumb cache when clearing site cache
 - Initial commit
