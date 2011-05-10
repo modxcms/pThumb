@@ -215,7 +215,7 @@ if ($debug) {
 /* check to see if there's a cached file of this already */
 if (file_exists($cacheKey) && !$useS3 && !$expired) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$cacheKey);
-    return $cacheUrl;
+    return str_replace(' ', '%20', $cacheUrl);
 }
 /* actually make the thumbnail */
 if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not remove it!
@@ -228,7 +228,7 @@ if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not rem
                 @unlink($cacheKey);
             }
         }
-        return $cacheUrl;
+        return str_replace(' ', '%20', $cacheUrl);
     } else {
         $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not cache thumb "'.$input.'" to file at: '.$cacheKey.' - Debug: '.print_r($phpThumb->debugmessages,true));
     }
