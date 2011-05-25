@@ -50,7 +50,22 @@ foreach ($eoptions as $opt) {
         $ptOptions[$opt[0]] = $opt[1];
     }
 }
-if (empty($ptOptions['f'])) $ptOptions['f'] = 'png';
+if (empty($ptOptions['f'])){
+    $ext = pathinfo($input, PATHINFO_EXTENSION);
+    $ext = strtolower($ext);
+    switch ($ext) {
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+        case 'bmp':
+            $ptOptions['f'] = $ext;
+            break;
+        default:
+            $ptOptions['f'] = 'jpeg';
+            break;
+    }
+}
 
 /* load phpthumb */
 $assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
