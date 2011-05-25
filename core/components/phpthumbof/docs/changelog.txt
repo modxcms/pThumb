@@ -1,5 +1,11 @@
 Changelog for phpThumbOf package.
 
+phpThumbOf 1.2.0
+=====================================
+- [#12] Fix issue where multiple fltr calls were not working, allow parameters with [] in their names
+- [#18] If output format is not specified, try to determine format from the original file extension
+- [#16] Avoid invalid file paths in HTML5
+
 phpThumbOf 1.1.0
 =====================================
 - [#8] Add phpthumbof.s3_host_alias setting to allow setting a CNAME alias for s3 url

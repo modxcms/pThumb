@@ -46,8 +46,17 @@ $ptOptions = array();
 $eoptions = explode('&',$options);
 foreach ($eoptions as $opt) {
     $opt = explode('=',$opt);
-    if (!empty($opt[0])) {
-        $ptOptions[$opt[0]] = $opt[1];
+    $key = str_replace('[]','',$opt[0]);
+    if (!empty($key)) {
+        /* allow arrays of options */
+        if (isset($ptOptions[$key])) {
+            if (is_string($ptOptions[$key])) {
+                $ptOptions[$key] = array($ptOptions[$key]);
+            }
+            $ptOptions[$key][] = $opt[1];
+        } else { /* otherwise pass in as string */
+            $ptOptions[$key] = $opt[1];
+        }
     }
 }
 if (empty($ptOptions['f'])){
