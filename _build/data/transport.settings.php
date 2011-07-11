@@ -27,6 +27,15 @@
  */
 $settings = array();
 
+$settings['phpthumbof.cache_path']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.cache_path']->fromArray(array(
+    'key' => 'phpthumbof.cache_path',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 'paths',
+),'',true,true);
+
 $settings['phpthumbof.use_s3']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.use_s3']->fromArray(array(
     'key' => 'phpthumbof.use_s3',

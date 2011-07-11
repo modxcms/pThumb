@@ -1,5 +1,10 @@
 Changelog for phpThumbOf package.
 
+phpThumbOf 1.2.1
+=====================================
+- [#14] Cloak path of generated thumbnail to prevent linking to source image
+- [#20] Added phpthumbof.cache_path setting for overriding the default cache path
+
 phpThumbOf 1.2.0
 =====================================
 - [#12] Fix issue where multiple fltr calls were not working, allow parameters with [] in their names

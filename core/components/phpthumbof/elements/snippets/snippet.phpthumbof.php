@@ -33,12 +33,16 @@ if (empty($input)) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Empty image path passed, aborting.');
     return '';
 }
+$debug = $modx->getOption('debug',$scriptProperties,false);
+$options = $modx->getOption('options',$scriptProperties,array());
+
 /* if using s3, load service class */
 $useS3 = $modx->getOption('phpthumbof.use_s3',$scriptProperties,false);
+$s3path = $modx->getOption('phpthumbof.s3_path',null,'phpthumbof/');
+$modaws = null;
 if ($useS3) {
     $modelPath = $modx->getOption('phpthumbof.core_path',null,$modx->getOption('core_path').'components/phpthumbof/').'model/';
     $modaws = $modx->getService('modaws','modAws',$modelPath.'aws/',$scriptProperties);
-    $s3path = $modx->getOption('phpthumbof.s3_path',null,'phpthumbof/');
 }
 
 /* explode tag options */
@@ -77,21 +81,38 @@ if (empty($ptOptions['f'])){
 }
 
 /* load phpthumb */
-$assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
 $phpThumb = new modPhpThumb($modx,$ptOptions);
-$cacheDir = $assetsPath.'cache/';
+
+/* get cacheDir */
+$cacheDir = $modx->getOption('phpthumbof.cache_path',$scriptProperties,'');
+if (empty($cacheDir)) {
+    $assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
+    $cacheDir = $assetsPath.'cache/';
+} else {
+    $cacheDir = str_replace(array(
+        '[[+core_path]]',
+        '[[+assets_path]]',
+        '[[+base_path]]',
+        '[[+manager_path]]',
+    ),array(
+        $modx->getOption('core_path',null,MODX_CORE_PATH),
+        $modx->getOption('assets_path',null,MODX_ASSETS_PATH),
+        $modx->getOption('base_path',null,MODX_BASE_PATH),
+        $modx->getOption('manager_path',null,MODX_MANAGER_PATH),
+    ),$cacheDir);
+}
 
 /* check to make sure cache dir is writable */
 if (!is_writable($cacheDir)) {
     if (!$modx->cacheManager->writeTree($cacheDir)) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Cache dir not writable: '.$assetsPath.'cache/');
+        $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Cache dir not writable: '.$cacheDir);
         return '';
     }
 }
 
 /* do initial setup */
 $phpThumb->initialize();
-$phpThumb->setParameter('config_cache_directory',$assetsPath.'cache/');
+$phpThumb->setParameter('config_cache_directory',$cacheDir);
 $phpThumb->setParameter('config_allow_src_above_phpthumb',true);
 $phpThumb->setParameter('allow_local_http_src',true);
 $phpThumb->setParameter('config_document_root',$modx->getOption('base_path',$scriptProperties,MODX_BASE_PATH));
@@ -109,10 +130,10 @@ $phpThumb->set($input);
 
 /* setup cache filename that is unique to this tag */
 $inputSanitized = str_replace(array(':','/'),'_',$input);
-$cacheFilename = $inputSanitized;
+$cacheFilename = md5($inputSanitized);
 $cacheFilename .= '.'.md5($options);
 $cacheFilename .= '.' . (!empty($ptOptions['f']) ? $ptOptions['f'] : 'png');
-$cacheKey = $assetsPath.'cache/'.$cacheFilename;
+$cacheKey = $cacheDir.$cacheFilename;
 
 /* get cache Url */
 $assetsUrl = $modx->getOption('phpthumbof.assets_url',$scriptProperties,$modx->getOption('assets_url').'components/phpthumbof/');
@@ -158,6 +179,8 @@ if ($useS3) {
     /* calc relative path of image in s3 bucket */
     $path = str_replace('//','/',$s3path.$cacheFilename);
     $expired = true;
+    $lastModified = 0;
+    $s3imageUrl = '';
 
     /* check with php's get_headers (slower) */
     if ($modx->getOption('phpthumbof.s3_headers_check',$scriptProperties,false)) {
