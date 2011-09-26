@@ -193,6 +193,7 @@ if ($useS3) {
             if (empty($headers['Last-Modified'])) {
                 $expired = true;
             } else {
+                $expired = false;
                 $lastModified = $headers['Last-Modified'];
                 $lastModified = strtotime(trim($lastModified[1]));
             }
@@ -205,6 +206,7 @@ if ($useS3) {
         $s3response = $modaws->getFileUrl($path);
         if (!empty($s3response) && is_object($s3response) && !empty($s3response->body) && !empty($s3response->status) && $s3response->status == 200) {
             /* check expiry for image */
+            $expired = false;
             $lastModified = strtotime($s3response->header['last-modified']);
             $s3imageUrl = $s3response->header['_info']['url'];
 

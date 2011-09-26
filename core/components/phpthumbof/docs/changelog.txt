@@ -2,7 +2,8 @@ Changelog for phpThumbOf package.
 
 phpThumbOf 1.2.2
 =====================================
-- [#24] Respect s3hostAlias parameter for new thumbnails
+- [#23] Fix issue with expiry and S3 thumbnails
+- [#24] Respect s3hostAlias parameter for new thumbnails on S3
 
 phpThumbOf 1.2.1
 =====================================
