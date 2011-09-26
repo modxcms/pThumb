@@ -1,5 +1,9 @@
 Changelog for phpThumbOf package.
 
+phpThumbOf 1.2.2
+=====================================
+- [#24] Respect s3hostAlias parameter for new thumbnails
+
 phpThumbOf 1.2.1
 =====================================
 - [#14] Cloak path of generated thumbnail to prevent linking to source image

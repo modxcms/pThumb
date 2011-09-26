@@ -35,6 +35,7 @@ if (empty($input)) {
 }
 $debug = $modx->getOption('debug',$scriptProperties,false);
 $options = $modx->getOption('options',$scriptProperties,array());
+$cache = $modx->getOption('cache',$scriptProperties,true);
 
 /* if using s3, load service class */
 $useS3 = $modx->getOption('phpthumbof.use_s3',$scriptProperties,false);
@@ -240,13 +241,11 @@ if ($useS3) {
         $modaws->deleteObject($path);
     }
 }
-
 /* ensure file has proper permissions */
 if (!empty($cacheKey)) {
     $filePerm = (int)$modx->getOption('new_file_permissions',$scriptProperties,'0664');
     @chmod($cacheKey, octdec($filePerm));
 }
-
 if ($debug) {
     $mtime= microtime();
     $mtime= explode(" ", $mtime);
@@ -260,7 +259,7 @@ if ($debug) {
     $modx->setLogTarget($oldLogTarget);
 }
 /* check to see if there's a cached file of this already */
-if (file_exists($cacheKey) && !$useS3 && !$expired) {
+if (file_exists($cacheKey) && !$useS3 && !$expired && $cache) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$cacheKey);
     return str_replace(' ','%20',$cacheUrl);
 }
@@ -271,7 +270,11 @@ if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not rem
         if ($modx->getOption('phpthumbof.use_s3',$scriptProperties,false)) {
             $response = $modaws->upload($cacheKey,$s3path);
             if (!empty($response)) {
-                $cacheUrl = $response;
+                if (!empty($s3hostAlias)) {
+                    $cacheUrl = str_replace($s3hostDefault,$s3hostAlias,$response);
+                } else {
+                    $cacheUrl = $response;
+                }
                 @unlink($cacheKey);
             }
         }
