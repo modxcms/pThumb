@@ -2,6 +2,7 @@ Changelog for phpThumbOf package.
 
 phpThumbOf 1.2.2
 =====================================
+- [#21] Fix issue with file permissions on shared servers that have incorrect umask settings
 - [#23] Fix issue with expiry and S3 thumbnails
 - [#24] Respect s3hostAlias parameter for new thumbnails on S3
 

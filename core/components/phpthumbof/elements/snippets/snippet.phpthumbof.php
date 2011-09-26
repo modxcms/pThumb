@@ -268,6 +268,13 @@ if (file_exists($cacheKey) && !$useS3 && !$expired && $cache) {
 /* actually make the thumbnail */
 if ($phpThumb->GenerateThumbnail()) { // this line is VERY important, do not remove it!
     if ($phpThumb->RenderToFile($cacheKey)) {
+        /* ensure file has proper permissions */
+        if (!empty($cacheKey)) {
+            $filePerm = (int)$modx->getOption('new_file_permissions',$scriptProperties,'0664');
+            if (file_exists($cacheKey)) {
+                @chmod($cacheKey, octdec($filePerm));
+            }
+        }
         /* if using s3, upload there and remove locally */
         if ($modx->getOption('phpthumbof.use_s3',$scriptProperties,false)) {
             $response = $modaws->upload($cacheKey,$s3path);
