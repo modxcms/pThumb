@@ -34,8 +34,8 @@ set_time_limit(0);
 /* set package defines */
 define('PKG_NAME','phpThumbOf');
 define('PKG_NAME_LOWER',strtolower(PKG_NAME));
-define('PKG_VERSION','1.2.2');
-define('PKG_RELEASE','pl');
+define('PKG_VERSION','1.3.0');
+define('PKG_RELEASE','rc1');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once dirname(__FILE__) . '/build.config.php';
