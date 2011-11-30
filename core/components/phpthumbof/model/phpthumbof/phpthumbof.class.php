@@ -197,6 +197,12 @@ class ptThumbnail {
             $input = urldecode($input);
         }
 
+        $hasQuery = strpos($input,'?');
+        if ($hasQuery !== false) {
+            $this->options['queryString'] = substr($input,$hasQuery+1);
+            $input = substr($input,0,$hasQuery);
+        }
+
         $this->input = $input;
         return $this->input;
     }
@@ -241,7 +247,7 @@ class ptThumbnail {
                     break;
             }
         }
-        $this->options = $ptOptions;
+        $this->options = array_merge($this->options,$ptOptions);
     }
 
     /**

@@ -2,6 +2,7 @@ Changelog for phpThumbOf package.
 
 phpThumbOf 1.3.0
 =====================================
+- [#28] Fix issue where image with query string on URL would not render
 - Revamp phpThumbOf to more OOP approach for easier debugging and quicker loads
 - [#27] Fix double slash issue with absolute cache paths
 
