@@ -9,6 +9,9 @@
 $_lang['setting_phpthumbof.cache_path'] = 'Override Cache Path';
 $_lang['setting_phpthumbof.cache_path_desc'] = 'Optional. You may set an absolute path here to override the cache path for phpThumb thumbnails.';
 
+$_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
+$_lang['setting_phpthumbof.cache_url_desc'] = 'Optional. You may set an absolute URL here to override the cache URL for phpThumb thumbnails.';
+
 $_lang['setting_phpthumbof.use_s3'] = 'Use Amazon S3';
 $_lang['setting_phpthumbof.use_s3_desc'] = 'If true, will use an Amazon S3 bucket as the place to store the cached thumbnails.';
 

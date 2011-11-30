@@ -22,6 +22,7 @@ class phpThumbOf {
         $this->modx =& $modx;
         $corePath = $modx->getOption('phpthumbof.core_path',$this->config,$modx->getOption('core_path').'components/phpthumbof/');
         $assetsPath = $modx->getOption('phpthumbof.assets_path',$this->config,$this->modx->getOption('assets_path').'components/phpthumbof/');
+        $assetsUrl = $this->modx->getOption('phpthumbof.assets_url',$this->config,$this->modx->getOption('assets_url').'components/phpthumbof/');
 
         $this->config = array_merge(array(
             'debug' => false,
@@ -30,8 +31,12 @@ class phpThumbOf {
             'corePath' => $corePath,
             'modelPath' => $corePath.'model/',
             'assetsPath' => $assetsPath,
+            'assetsUrl' => $assetsUrl,
+
             'cachePath' => $modx->getOption('phpthumbof.cache_path',$this->config,''),
+            'cachePathUrl' => $modx->getOption('phpthumbof.cache_url',$this->config,$assetsUrl.'cache/'),
         ));
+        if (empty($this->config['cachePathUrl'])) $this->config['cachePathUrl'] = $assetsUrl.'cache/';
     }
 
     /**
@@ -268,8 +273,7 @@ class ptThumbnail {
      * @return string
      */
     public function getCacheUrl() {
-        $assetsUrl = $this->modx->getOption('phpthumbof.assets_url',$this->config,$this->modx->getOption('assets_url').'components/phpthumbof/');
-        $this->cacheUrl = $assetsUrl.'cache/'.str_replace($this->config['cachePath'],'',$this->cacheKey);
+        $this->cacheUrl = $this->config['cachePathUrl'].str_replace($this->config['cachePath'],'',$this->cacheKey);
         $this->cacheUrl = $this->stripDoubleSlashes($this->cacheUrl);
         return $this->cacheUrl;
     }

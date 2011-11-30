@@ -22,6 +22,7 @@
 /**
  * System Settings
  *
+ * @var modX $modx
  * @package phpthumbof
  * @subpackage build
  */
@@ -30,6 +31,15 @@ $settings = array();
 $settings['phpthumbof.cache_path']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.cache_path']->fromArray(array(
     'key' => 'phpthumbof.cache_path',
+    'value' => '',
+    'xtype' => 'textfield',
+    'namespace' => 'phpthumbof',
+    'area' => 'paths',
+),'',true,true);
+
+$settings['phpthumbof.cache_url']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.cache_url']->fromArray(array(
+    'key' => 'phpthumbof.cache_url',
     'value' => '',
     'xtype' => 'textfield',
     'namespace' => 'phpthumbof',
