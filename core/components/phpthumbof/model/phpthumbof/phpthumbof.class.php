@@ -156,7 +156,7 @@ class ptThumbnail {
         $this->phpThumbOf =& $phpThumbOf;
         $this->modx =& $phpThumbOf->modx;
         $this->config = array_merge(array(
-            'cache' => false,
+            'cache' => true,
 
             'useS3' => $this->modx->getOption('phpthumbof.use_s3',$this->config,false),
             's3path' => $this->modx->getOption('phpthumbof.s3_path',$this->config,'phpthumbof/'),
@@ -444,7 +444,6 @@ class ptThumbnail {
      * @return boolean|string
      */
     public function checkForCachedFile() {
-        /*  */
         if (file_exists($this->cacheKey) && !$this->modx->getOption('useS3',$this->config,false) && !$this->expired && $this->modx->getOption('cache',$this->config,true)) {
             $this->modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Using cached file found for thumb: '.$this->cacheKey);
             return str_replace(' ','%20',$this->cacheUrl);
