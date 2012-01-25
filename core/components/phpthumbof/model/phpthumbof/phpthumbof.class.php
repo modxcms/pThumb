@@ -207,6 +207,9 @@ class ptThumbnail {
             $this->options['queryString'] = substr($input,$hasQuery+1);
             $input = substr($input,0,$hasQuery);
         }
+        if (!file_exists($input)) {
+            $input = $this->modx->getOption('url_scheme',null,MODX_URL_SCHEME).$this->modx->getOption('http_host',null,MODX_HTTP_HOST).$input;
+        }
 
         $this->input = $input;
         return $this->input;

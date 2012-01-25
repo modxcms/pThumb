@@ -1,5 +1,9 @@
 Changelog for phpThumbOf package.
 
+phpThumbOf 1.3.1
+=====================================
+- Fix for 2.2 base path prefixing
+
 phpThumbOf 1.3.0
 =====================================
 - [#29] Fix issue with caching of thumbnails always being forced
