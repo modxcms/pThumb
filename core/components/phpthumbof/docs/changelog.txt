@@ -1,5 +1,10 @@
 Changelog for phpThumbOf package.
 
+
+phpThumbOf 1.3.2
+=====================================
+- Rollback 1.3.1 fix due to issues
+
 phpThumbOf 1.3.1
 =====================================
 - Fix for 2.2 base path prefixing

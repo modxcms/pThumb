@@ -35,6 +35,7 @@ class phpThumbOf {
 
             'cachePath' => $modx->getOption('phpthumbof.cache_path',$this->config,''),
             'cachePathUrl' => $modx->getOption('phpthumbof.cache_url',$this->config,$assetsUrl.'cache/'),
+            'checkRemotelyIfNotFound' => $modx->getOption('phpthumbof.check_remotely_if_not_found',$this->config,false),
         ));
         if (empty($this->config['cachePathUrl'])) $this->config['cachePathUrl'] = $assetsUrl.'cache/';
     }
@@ -207,8 +208,8 @@ class ptThumbnail {
             $this->options['queryString'] = substr($input,$hasQuery+1);
             $input = substr($input,0,$hasQuery);
         }
-        if (!file_exists($input)) {
-            $input = $this->modx->getOption('url_scheme',null,MODX_URL_SCHEME).$this->modx->getOption('http_host',null,MODX_HTTP_HOST).$input;
+        if (!file_exists($input) && !empty($this->config['checkRemotelyIfNotFound'])) {
+            $input = $this->modx->getOption('url_scheme',null,MODX_URL_SCHEME).$this->modx->getOption('http_host',null,MODX_HTTP_HOST).urlencode($input);
         }
 
         $this->input = $input;
