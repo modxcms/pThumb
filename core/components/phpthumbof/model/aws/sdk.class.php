@@ -51,7 +51,8 @@ elseif (getenv('HOME') && file_exists(getenv('HOME') . DIRECTORY_SEPARATOR . '.a
  * Exception: CFRuntime_Exception
  * 	Default CFRuntime Exception.
  */
-class CFRuntime_Exception extends Exception {}
+if(class_exists('CFRuntime_Exception') != true) {
+	 class CFRuntime_Exception extends Exception {}
 
 
 /*%******************************************************************************************%*/
@@ -113,6 +114,8 @@ function __aws_sdk_ua_callback()
 }
 
 
+}
+
 /*%******************************************************************************************%*/
 // INTERMEDIARY CONSTANTS
 
@@ -130,7 +133,8 @@ define('CFRUNTIME_USERAGENT', CFRUNTIME_NAME . '/' . CFRUNTIME_VERSION . ' PHP/'
  * Class: CFRuntime
  * 	Container for all shared methods. This is not intended to be instantiated directly, but is extended by the service-specific classes.
  */
-class CFRuntime
+if(class_exists('CFRuntime_Exception') != true) {
+	class CFRuntime
 {
 	/*%******************************************************************************************%*/
 	// CONSTANTS
@@ -1276,14 +1280,17 @@ class CFRuntime
 
 		return $this;
 	}
-}
+} // end class
+
+} //end if
 
 
 /**
  * Class: CFLoader
  * 	Contains the functionality for auto-loading service classes.
  */
-class CFLoader
+if(class_exists('CFLoader') != true){
+	class CFLoader
 {
 
 	/*%******************************************************************************************%*/
@@ -1352,7 +1359,8 @@ class CFLoader
 			require_once($path);
 		}
 	}
-}
+} //end class
+} // end if
 
 // Register the autoloader.
 spl_autoload_register(array('CFLoader', 'autoloader'));
