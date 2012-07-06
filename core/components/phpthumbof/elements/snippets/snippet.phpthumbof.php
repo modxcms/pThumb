@@ -2,7 +2,7 @@
 /**
  * phpThumbOf
  *
- * Copyright 2009-2011 by Shaun McCormick <shaun@modx.com>
+ * Copyright 2009-2012 by Shaun McCormick <shaun@modx.com>
  *
  * phpThumbOf is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
