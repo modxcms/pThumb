@@ -36,7 +36,7 @@ class phpThumbOf {
             'cachePath' => $modx->context->getOption('phpthumbof.cache_path','',$this->config),
             'cachePathUrl' => $modx->context->getOption('phpthumbof.cache_url',$assetsUrl.'cache/',$this->config),
             'checkRemotelyIfNotFound' => $modx->context->getOption('phpthumbof.check_remotely_if_not_found',false,$this->config),
-        ));
+        ),$config);
         if (empty($this->config['cachePathUrl'])) $this->config['cachePathUrl'] = $assetsUrl.'cache/';
     }
 
