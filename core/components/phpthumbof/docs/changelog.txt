@@ -1,6 +1,11 @@
 Changelog for phpThumbOf package.
 
 
+phpThumbOf 1.3.3
+=====================================
+- [#32] Fix context settings not respected
+- [#39] Fix class exists errors with AWS
+
 phpThumbOf 1.3.2
 =====================================
 - Rollback 1.3.1 fix due to issues

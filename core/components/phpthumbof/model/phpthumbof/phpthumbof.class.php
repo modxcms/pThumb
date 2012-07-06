@@ -20,8 +20,8 @@ class phpThumbOf {
 
     function __construct(modX $modx,array $config = array()) {
         $this->modx =& $modx;
-        $corePath = $modx->getOption('phpthumbof.core_path',$this->config,$modx->getOption('core_path').'components/phpthumbof/');
-        $assetsPath = $modx->getOption('phpthumbof.assets_path',$this->config,$this->modx->getOption('assets_path').'components/phpthumbof/');
+        $corePath = $this->modx->getOption('phpthumbof.core_path',$this->config,$this->modx->getOption('core_path').'components/phpthumbof/');
+        $assetsPath = $this->modx->getOption('phpthumbof.assets_path',$this->config,$this->modx->getOption('assets_path').'components/phpthumbof/');
         $assetsUrl = $this->modx->getOption('phpthumbof.assets_url',$this->config,$this->modx->getOption('assets_url').'components/phpthumbof/');
 
         $this->config = array_merge(array(
@@ -33,9 +33,9 @@ class phpThumbOf {
             'assetsPath' => $assetsPath,
             'assetsUrl' => $assetsUrl,
 
-            'cachePath' => $modx->getOption('phpthumbof.cache_path',$this->config,''),
-            'cachePathUrl' => $modx->getOption('phpthumbof.cache_url',$this->config,$assetsUrl.'cache/'),
-            'checkRemotelyIfNotFound' => $modx->getOption('phpthumbof.check_remotely_if_not_found',$this->config,false),
+            'cachePath' => $modx->context->getOption('phpthumbof.cache_path','',$this->config),
+            'cachePathUrl' => $modx->context->getOption('phpthumbof.cache_url',$assetsUrl.'cache/',$this->config),
+            'checkRemotelyIfNotFound' => $modx->context->getOption('phpthumbof.check_remotely_if_not_found',false,$this->config),
         ));
         if (empty($this->config['cachePathUrl'])) $this->config['cachePathUrl'] = $assetsUrl.'cache/';
     }
@@ -159,11 +159,11 @@ class ptThumbnail {
         $this->config = array_merge(array(
             'cache' => true,
 
-            'useS3' => $this->modx->getOption('phpthumbof.use_s3',$this->config,false),
-            's3path' => $this->modx->getOption('phpthumbof.s3_path',$this->config,'phpthumbof/'),
-            's3bucket' => $this->modx->getOption('phpthumbof.s3_bucket',$this->config,''),
-            's3hostAlias' => $this->modx->getOption('phpthumbof.s3_host_alias',$this->config,''),
-            's3headersCheck' => $this->modx->getOption('phpthumbof.s3_headers_check',$this->config,false),
+            'useS3' => $this->modx->context->getOption('phpthumbof.use_s3',false,$this->config),
+            's3path' => $this->modx->context->getOption('phpthumbof.s3_path','phpthumbof/',$this->config),
+            's3bucket' => $this->modx->context->getOption('phpthumbof.s3_bucket','',$this->config),
+            's3hostAlias' => $this->modx->context->getOption('phpthumbof.s3_host_alias','',$this->config),
+            's3headersCheck' => $this->modx->context->getOption('phpthumbof.s3_headers_check',false,$this->config),
 
         ),$config);
         $this->config = array_merge(array(
@@ -185,7 +185,7 @@ class ptThumbnail {
         $this->phpThumb->setParameter('config_cache_directory',$this->config['cachePath']);
         $this->phpThumb->setParameter('config_allow_src_above_phpthumb',true);
         $this->phpThumb->setParameter('allow_local_http_src',true);
-        $this->phpThumb->setParameter('config_document_root',$this->modx->getOption('base_path',$this->config,MODX_BASE_PATH));
+        $this->phpThumb->setParameter('config_document_root',$this->modx->context->getOption('base_path',MODX_BASE_PATH,$this->config));
         $this->phpThumb->setCacheDirectory();
         $this->phpThumb->set($this->input);
     }
@@ -198,7 +198,7 @@ class ptThumbnail {
     public function setInput($input) {
         /* get absolute url of image */
         if (strpos($input,'/') != 0 && strpos($input,'http') != 0) {
-            $input = $this->modx->getOption('base_url').$input;
+            $input = $this->modx->context->getOption('base_url').$input;
         } else {
             $input = urldecode($input);
         }
@@ -209,7 +209,7 @@ class ptThumbnail {
             $input = substr($input,0,$hasQuery);
         }
         if (!file_exists($input) && !empty($this->config['checkRemotelyIfNotFound'])) {
-            $input = $this->modx->getOption('url_scheme',null,MODX_URL_SCHEME).$this->modx->getOption('http_host',null,MODX_HTTP_HOST).urlencode($input);
+            $input = $this->modx->context->getOption('url_scheme',MODX_URL_SCHEME).$this->modx->context->getOption('http_host',MODX_HTTP_HOST).urlencode($input);
         }
 
         $this->input = $input;
@@ -416,6 +416,8 @@ class ptThumbnail {
 
     /**
      * Push the cached file to S3
+     *
+     * @return string The URL returned by S3
      */
     public function pushToS3() {
         $response = $this->aws->upload($this->cacheKey,$this->config['s3path']);
@@ -427,6 +429,7 @@ class ptThumbnail {
             }
             @unlink($this->cacheKey);
         }
+        return $this->cacheUrl;
     }
 
     /**
@@ -434,7 +437,7 @@ class ptThumbnail {
      */
     public function checkCacheFilePermissions() {
         if (!empty($this->cacheKey)) {
-            $filePerm = (int)$this->modx->getOption('new_file_permissions',$this->config,'0664');
+            $filePerm = (int)$this->modx->context->getOption('new_file_permissions','0664',$this->config);
             $permissions = @fileperms($this->cacheKey);
             if ($permissions != $filePerm) {
                 @chmod($this->cacheKey, octdec($filePerm));
