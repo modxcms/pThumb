@@ -476,7 +476,11 @@ class RequestCore
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, true);
 		curl_setopt($curl_handle, CURLOPT_CLOSEPOLICY, CURLCLOSEPOLICY_LEAST_RECENTLY_USED);
-		curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, true);
+		$safeMode = @ini_get('safe_mode');
+        $openBasedir = @ini_get('open_basedir');
+        if (empty($safeMode) && empty($openBasedir)) {
+            curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, true);
+        }
 		curl_setopt($curl_handle, CURLOPT_MAXREDIRS, 5);
 		curl_setopt($curl_handle, CURLOPT_HEADER, true);
 		curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
