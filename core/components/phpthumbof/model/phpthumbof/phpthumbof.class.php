@@ -284,10 +284,29 @@ class ptThumbnail {
      * @return string
      */
     public function getCacheFilename() {
-        $inputSanitized = str_replace(array(':','/'),'_',$this->input);
-        $this->cacheFilename = md5($inputSanitized);
-        $this->cacheFilename .= '.'.md5(serialize($this->options));
-        $this->cacheFilename .= '.' . (!empty($this->options['f']) ? $this->options['f'] : 'png');
+        /* either hash the filename */
+        if ($this->modx->context->getOption('phpthumbof.hash_thumbnail_names',false,$this->config)) {
+            $inputSanitized = str_replace(array(':','/'),'_',$this->input);
+            $this->cacheFilename = md5($inputSanitized);
+            $this->cacheFilename .= '.'.md5(serialize($this->options));
+            $this->cacheFilename .= '.' . (!empty($this->options['f']) ? $this->options['f'] : 'png');
+        } else { /* or attempt to preserve the filename */
+            $inputSanitized = str_replace(array('http://','https://','ftp://','sftp://'),'',$this->input);
+            $inputSanitized = str_replace(array(':'),'_',$inputSanitized);
+            $this->cacheFilename = basename($inputSanitized);
+            if ($this->modx->context->getOption('phpthumbof.postfix_property_hash',true,$this->config)) {
+                if (!empty($this->options['f'])) { /* get rid of the middle extension and put it at the end */
+                    $length = strlen($this->cacheFilename);
+                    $extLength = strlen($this->options['f']);
+                    $cut = $length-$extLength-1;
+                    if (strlen($this->cacheFilename) > $cut) {
+                        $this->cacheFilename = substr($this->cacheFilename,0,$cut);
+                    }
+                }
+                $this->cacheFilename .= '.'.md5(serialize($this->options)).$this->modx->resource->get('id');
+                $this->cacheFilename .= '.' . (!empty($this->options['f']) ? $this->options['f'] : 'png');
+            }
+        }
         $this->cacheKey = $this->config['cachePath'].$this->cacheFilename;
         return $this->cacheKey;
     }

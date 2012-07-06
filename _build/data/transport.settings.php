@@ -46,6 +46,24 @@ $settings['phpthumbof.cache_url']->fromArray(array(
     'area' => 'paths',
 ),'',true,true);
 
+$settings['phpthumbof.hash_thumbnail_names']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.hash_thumbnail_names']->fromArray(array(
+    'key' => 'phpthumbof.hash_thumbnail_names',
+    'value' => false,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'phpthumbof',
+    'area' => 'general',
+),'',true,true);
+
+$settings['phpthumbof.postfix_property_hash']= $modx->newObject('modSystemSetting');
+$settings['phpthumbof.postfix_property_hash']->fromArray(array(
+    'key' => 'phpthumbof.postfix_property_hash',
+    'value' => true,
+    'xtype' => 'combo-boolean',
+    'namespace' => 'phpthumbof',
+    'area' => 'general',
+),'',true,true);
+
 $settings['phpthumbof.use_s3']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.use_s3']->fromArray(array(
     'key' => 'phpthumbof.use_s3',

@@ -1,8 +1,8 @@
 Changelog for phpThumbOf package.
 
-
-phpThumbOf 1.3.3
+phpThumbOf 1.4.0
 =====================================
+- [#22] Allow for thumbnails to preserve basename of file being thumbnailed
 - [#33] Fix issue with config not passed to phpthumbof class, causing some properties to not be respected
 - [#32] Fix context settings not respected
 - [#39] Fix class exists errors with AWS

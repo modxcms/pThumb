@@ -32,6 +32,12 @@ $_lang['setting_phpthumbof.cache_path_desc'] = 'Optional. You may set an absolut
 $_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
 $_lang['setting_phpthumbof.cache_url_desc'] = 'Optional. You may set an absolute URL here to override the cache URL for phpThumb thumbnails.';
 
+$_lang['setting_phpthumbof.hash_thumbnail_names'] = 'Hash Thumbnail Names';
+$_lang['setting_phpthumbof.hash_thumbnail_names_desc'] = 'If true, will hash the thumbnail names when rendering them in output to hide the true name of the file.';
+
+$_lang['setting_phpthumbof.postfix_property_hash'] = 'Post-fix Properties Hash to Name';
+$_lang['setting_phpthumbof.postfix_property_hash_desc'] = 'If true, will postfix a properties-hash to the filename of the thumbnail to prevent collisions with duplicate thumbnails of the same image.';
+
 $_lang['setting_phpthumbof.use_s3'] = 'Use Amazon S3';
 $_lang['setting_phpthumbof.use_s3_desc'] = 'If true, will use an Amazon S3 bucket as the place to store the cached thumbnails.';
 
