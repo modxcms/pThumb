@@ -30,17 +30,14 @@
  *
  * @package phpthumbof
  */
-if (empty($input)) {  // Exit gracefully if no file name given
+if (empty($input)) {  // Exit quietly if no file name given
 	return '';
 }
 if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
 	$modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class.');
 	return '';
 }
-if (empty($input)) {
-	$modx->log(modX::LOG_LEVEL_DEBUG,'[phpThumbOf] Empty image path passed, aborting.');
-	return '';
-}
+
 $modelPath = $modx->getOption('phpthumbof.core_path',null,$modx->getOption('core_path').'components/phpthumbof/').'model/';
 require_once $modelPath.'phpthumbof/phpthumbof.class.php';
 $phpThumbOf = new phpThumbOf($modx,$scriptProperties);
