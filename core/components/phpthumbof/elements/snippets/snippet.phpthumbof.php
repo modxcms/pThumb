@@ -30,7 +30,9 @@
  *
  * @package phpthumbof
  */
-if (empty($modx)) return '';
+if (empty($input)) {  // Exit gracefully if no file name given
+	return '';
+}
 if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
 	$modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class.');
 	return '';
