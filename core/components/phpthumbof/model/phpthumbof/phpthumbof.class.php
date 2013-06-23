@@ -242,20 +242,25 @@ class ptThumbnail {
 	 */
 	public function setOptions($options) {
 		/* explode tag options */
-		$ptOptions = array();
-		$eoptions = is_array($options) ? $options : explode('&',$options);
-		foreach ($eoptions as $opt) {
-			$opt = explode('=',$opt);
-			$key = str_replace('[]','',$opt[0]);
-			if (!empty($key)) {
-				/* allow arrays of options */
-				if (isset($ptOptions[$key])) {
-					if (is_string($ptOptions[$key])) {
-						$ptOptions[$key] = array($ptOptions[$key]);
+		if (!is_array($options)) {  // convert options string to array
+			parse_str($options, $ptOptions);
+		}
+		else {  // otherwise use the original phpThumbOf code
+			$ptOptions = array();
+			$eoptions = $options;
+			foreach ($eoptions as $opt) {
+				$opt = explode('=',$opt);
+				$key = str_replace('[]','',$opt[0]);
+				if (!empty($key)) {
+					/* allow arrays of options */
+					if (isset($ptOptions[$key])) {
+						if (is_string($ptOptions[$key])) {
+							$ptOptions[$key] = array($ptOptions[$key]);
+						}
+						$ptOptions[$key][] = $opt[1];
+					} else { /* otherwise pass in as string */
+						$ptOptions[$key] = $opt[1];
 					}
-					$ptOptions[$key][] = $opt[1];
-				} else { /* otherwise pass in as string */
-					$ptOptions[$key] = $opt[1];
 				}
 			}
 		}
