@@ -27,45 +27,27 @@
  *
  * @package phpthumbof
  */
+
+/* 	Currently this does nothing because of a sort of bug in the core
+	phpThumb class.  Cache cleanup didn't do anything in phpThumbOf
+	either.
+*/
+
 if (empty($results)) $results = array();
 
-switch ($modx->event->name) {
-    case 'OnSiteRefresh':
-        if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
-            $modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class in plugin.');
-            return;
-        }
-        $assetsPath = $modx->getOption('phpthumbof.assets_path',$scriptProperties,$modx->getOption('assets_path').'components/phpthumbof/');
-        $phpThumb = new modPhpThumb($modx);
-        $cacheDir = $assetsPath.'cache/';
-
-        /* clear local cache */
-        if (!empty($cacheDir)) {
-            /** @var DirectoryIterator $file */
-            foreach (new DirectoryIterator($cacheDir) as $file) {
-                if (!$file->isFile()) continue;
-                @unlink($file->getPathname());
-            }
-        }
-
-        /* if using amazon s3, clear our cache there */
-        $useS3 = $modx->getOption('phpthumbof.use_s3',$scriptProperties,false);
-        if ($useS3) {
-            $modelPath = $modx->getOption('phpthumbof.core_path',null,$modx->getOption('core_path').'components/phpthumbof/').'model/';
-            /** @var modAws $modaws */
-            $modaws = $modx->getService('modaws','modAws',$modelPath.'aws/',$scriptProperties);
-            $s3path = $modx->getOption('phpthumbof.s3_path',null,'phpthumbof/');
-            
-            $list = $modaws->getObjectList($s3path);
-            if (!empty($list) && is_array($list)) {
-                foreach ($list as $obj) {
-                    if (empty($obj->Key)) continue;
-
-                    $results[] = $modaws->deleteObject($obj->Key);
-                }
-            }
-        }
-
-        break;
+if ($modx->event->name === 'OnSiteRefresh') {
+	if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
+		$modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class in plugin.');
+		return;
+	}
+	$modelPath = $modx->getOption('phpthumbof.core_path', null, $modx->getOption('core_path').'components/phpthumbof/') . 'model/';
+	require_once $modelPath . 'phpthumbof/phpthumbof.class.php';
+	$phpThumbOf = new phpThumbOf($modx);
+	$phpThumbOf->getCacheDirectory();
+	$phpThumbOf->ensureCacheDirectoryIsWritable();
+	$thumbnail = $phpThumbOf->createThumbnailObject();
+	$thumbnail->initializeService();
+	$thumbnail->cleanCache();
 }
+
 return;
