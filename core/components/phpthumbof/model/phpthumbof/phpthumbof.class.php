@@ -276,6 +276,11 @@ class ptThumbnail {
 					break;
 			}
 		}
+
+		if (($ptOptions['f'] === 'jpeg' || $ptOptions['f'] === 'jpg') && empty($ptOptions['q'])) {  // use global jpeg quality if needed
+			$ptOptions['q'] = $this->modx->context->getOption('phpthumbof.jpeg_quality', 75, $this->config);
+		}
+
 		$this->options = array_merge($this->options,$ptOptions);
 	}
 

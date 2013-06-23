@@ -64,6 +64,15 @@ $settings['phpthumbof.postfix_property_hash']->fromArray(array(
 	'area' => 'general',
 ),'',true,true);
 
+$settings['phpthumbof.jpeg_quality'] = $modx->newObject('modSystemSetting');
+$settings['phpthumbof.jpeg_quality']->fromArray(array(
+	'key' => 'phpthumbof.jpeg_quality',
+	'value' => '75',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
+), '', true, true);
+
 $settings['phpthumbof.use_s3']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.use_s3']->fromArray(array(
 	'key' => 'phpthumbof.use_s3',

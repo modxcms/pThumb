@@ -38,6 +38,9 @@ $_lang['setting_phpthumbof.hash_thumbnail_names_desc'] = 'If true, will hash the
 $_lang['setting_phpthumbof.postfix_property_hash'] = 'Post-fix Properties Hash to Name';
 $_lang['setting_phpthumbof.postfix_property_hash_desc'] = 'If true, will postfix a properties-hash to the filename of the thumbnail to prevent collisions with duplicate thumbnails of the same image.';
 
+$_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
+$_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
+
 $_lang['setting_phpthumbof.use_s3'] = 'Use Amazon S3';
 $_lang['setting_phpthumbof.use_s3_desc'] = 'If true, will use an Amazon S3 bucket as the place to store the cached thumbnails.';
 
