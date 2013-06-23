@@ -345,7 +345,6 @@ class ptThumbnail {
     public function render() {
         $this->getCacheFilename();
         $this->getCacheUrl();
-        $this->cleanCache();
         $this->phpThumbOf->startDebug();
 
         /* if using s3, check for file there */
