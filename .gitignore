@@ -1,4 +1,1 @@
-_build/build.config.php
-core.config.php
-assets/components/phpthumbof/cache/*png
-.idea
+no-git/*
