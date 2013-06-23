@@ -301,7 +301,7 @@ class ptThumbnail {
 				$cut = strrpos($this->cacheFilename, '.');
 				if ($cut) { $this->cacheFilename = substr($this->cacheFilename, 0, $cut); } */
 				$this->cacheFilename .= '.' . md5( serialize($this->options) . pathinfo($inputSanitized, PATHINFO_DIRNAME) ) .
-					'.' . $this->options['f'];
+					'.' . ($this->options['f'] === 'jpeg' ? 'jpg' : $this->options['f']);
             }
         }
         $this->cacheKey = $this->config['cachePath'].$this->cacheFilename;
