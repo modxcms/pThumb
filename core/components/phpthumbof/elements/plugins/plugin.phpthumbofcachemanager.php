@@ -28,11 +28,6 @@
  * @package phpthumbof
  */
 
-/*	Currently this does nothing because of a sort of bug in the core
-	phpThumb class.  Cache cleanup didn't do anything in phpThumbOf
-	either.
-*/
-
 if (empty($results)) $results = array();
 
 if ($modx->event->name === 'OnSiteRefresh') {
