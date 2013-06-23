@@ -30,119 +30,119 @@ $settings = array();
 
 $settings['phpthumbof.cache_path']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.cache_path']->fromArray(array(
-    'key' => 'phpthumbof.cache_path',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 'paths',
+	'key' => 'phpthumbof.cache_path',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'paths',
 ),'',true,true);
 
 $settings['phpthumbof.cache_url']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.cache_url']->fromArray(array(
-    'key' => 'phpthumbof.cache_url',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 'paths',
+	'key' => 'phpthumbof.cache_url',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'paths',
 ),'',true,true);
 
 $settings['phpthumbof.hash_thumbnail_names']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.hash_thumbnail_names']->fromArray(array(
-    'key' => 'phpthumbof.hash_thumbnail_names',
-    'value' => false,
-    'xtype' => 'combo-boolean',
-    'namespace' => 'phpthumbof',
-    'area' => 'general',
+	'key' => 'phpthumbof.hash_thumbnail_names',
+	'value' => false,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
 ),'',true,true);
 
 $settings['phpthumbof.postfix_property_hash']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.postfix_property_hash']->fromArray(array(
-    'key' => 'phpthumbof.postfix_property_hash',
-    'value' => true,
-    'xtype' => 'combo-boolean',
-    'namespace' => 'phpthumbof',
-    'area' => 'general',
+	'key' => 'phpthumbof.postfix_property_hash',
+	'value' => true,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
 ),'',true,true);
 
 $settings['phpthumbof.use_s3']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.use_s3']->fromArray(array(
-    'key' => 'phpthumbof.use_s3',
-    'value' => false,
-    'xtype' => 'combo-boolean',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.use_s3',
+	'value' => false,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_key']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_key']->fromArray(array(
-    'key' => 'phpthumbof.s3_key',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_key',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_secret_key']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_secret_key']->fromArray(array(
-    'key' => 'phpthumbof.s3_secret_key',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_secret_key',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_bucket']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_bucket']->fromArray(array(
-    'key' => 'phpthumbof.s3_bucket',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_bucket',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_host_alias']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_host_alias']->fromArray(array(
-    'key' => 'phpthumbof.s3_host_alias',
-    'value' => '',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_host_alias',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_path']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_path']->fromArray(array(
-    'key' => 'phpthumbof.s3_path',
-    'value' => 'phpthumbof/',
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_path',
+	'value' => 'phpthumbof/',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_cache_time']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_cache_time']->fromArray(array(
-    'key' => 'phpthumbof.s3_cache_time',
-    'value' => 24,
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_cache_time',
+	'value' => 24,
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 
 $settings['phpthumbof.s3_headers_check']= $modx->newObject('modSystemSetting');
 $settings['phpthumbof.s3_headers_check']->fromArray(array(
-    'key' => 'phpthumbof.s3_headers_check',
-    'value' => false,
-    'xtype' => 'combo-boolean',
-    'namespace' => 'phpthumbof',
-    'area' => 's3',
+	'key' => 'phpthumbof.s3_headers_check',
+	'value' => false,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 's3',
 ),'',true,true);
 /*
 $settings['']= $modx->newObject('modSystemSetting');
 $settings['']->fromArray(array(
-    'key' => '',
-    'value' => false,
-    'xtype' => 'textfield',
-    'namespace' => 'phpthumbof',
-    'area' => '',
+	'key' => '',
+	'value' => false,
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => '',
 ),'',true,true);*/
 
 return $settings;

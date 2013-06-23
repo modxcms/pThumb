@@ -28,7 +28,7 @@
  * @package phpthumbof
  */
 
-/* 	Currently this does nothing because of a sort of bug in the core
+/*	Currently this does nothing because of a sort of bug in the core
 	phpThumb class.  Cache cleanup didn't do anything in phpThumbOf
 	either.
 */
@@ -36,7 +36,7 @@
 if (empty($results)) $results = array();
 
 if ($modx->event->name === 'OnSiteRefresh') {
-	if (!$modx->loadClass('modPhpThumb',$modx->getOption('core_path').'model/phpthumb/',true,true)) {
+	if (!$modx->loadClass('modPhpThumb', $modx->getOption('core_path').'model/phpthumb/',true,true)) {
 		$modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not load modPhpThumb class in plugin.');
 		return;
 	}

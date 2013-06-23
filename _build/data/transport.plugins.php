@@ -37,10 +37,10 @@ $plugins[0]->set('category', 0);
 
 $events = include $sources['events'].'events.phpthumbofcachemanager.php';
 if (is_array($events) && !empty($events)) {
-    $plugins[0]->addMany($events);
-    $modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($events).' Plugin Events for phpThumbOfCacheManager.'); flush();
+	$plugins[0]->addMany($events);
+	$modx->log(xPDO::LOG_LEVEL_INFO,'Packaged in '.count($events).' Plugin Events for phpThumbOfCacheManager.'); flush();
 } else {
-    $modx->log(xPDO::LOG_LEVEL_ERROR,'Could not find plugin events for phpThumbOfCacheManager!');
+	$modx->log(xPDO::LOG_LEVEL_ERROR,'Could not find plugin events for phpThumbOfCacheManager!');
 }
 unset($events);
 
