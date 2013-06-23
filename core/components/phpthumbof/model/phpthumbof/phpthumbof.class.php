@@ -284,9 +284,6 @@ class ptThumbnail {
      * @return string
      */
     public function getCacheFilename() {
-    	if (empty($this->options['f'])) {
-			$this->options['f'] = 'png';
-		}
         /* either hash the filename */
         if ($this->modx->context->getOption('phpthumbof.hash_thumbnail_names',false,$this->config)) {
             $inputSanitized = str_replace(array(':','/'),'_',$this->input);
