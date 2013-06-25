@@ -64,6 +64,15 @@ $settings['phpthumbof.postfix_property_hash']->fromArray(array(
 	'area' => 'general',
 ),'',true,true);
 
+$settings['phpthumbof.fix_dup_subdir'] = $modx->newObject('modSystemSetting');
+$settings['phpthumbof.fix_dup_subdir']->fromArray(array(
+	'key' => 'phpthumbof.fix_dup_subdir',
+	'value' => true,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
+), '', true, true);
+
 $settings['phpthumbof.jpeg_quality'] = $modx->newObject('modSystemSetting');
 $settings['phpthumbof.jpeg_quality']->fromArray(array(
 	'key' => 'phpthumbof.jpeg_quality',

@@ -38,6 +38,9 @@ $_lang['setting_phpthumbof.hash_thumbnail_names_desc'] = 'If true, will hash the
 $_lang['setting_phpthumbof.postfix_property_hash'] = 'Post-fix Properties Hash to Name';
 $_lang['setting_phpthumbof.postfix_property_hash_desc'] = 'If true, will postfix a properties-hash to the filename of the thumbnail to prevent collisions with duplicate thumbnails of the same image.';
 
+$_lang['setting_phpthumbof.fix_dup_subdir'] = 'Fix Duplicate Subdirectory';
+$_lang['setting_phpthumbof.fix_dup_subdir_desc'] = 'Fix image path when MODX base path ends with the same dir as the image path begins with (occurs when MODX is running from a subdirectory and the TV&rsquo;s media source hasn&rsquo;t been adjusted).<br /><strong>Default:</strong> Yes';
+
 $_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
 $_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
 

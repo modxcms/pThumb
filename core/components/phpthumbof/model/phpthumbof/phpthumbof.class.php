@@ -205,7 +205,6 @@ class ptThumbnail {
 		$this->phpThumb->setParameter('config_cache_directory',$this->config['cachePath']);
 		$this->phpThumb->setParameter('config_allow_src_above_phpthumb',true);
 		$this->phpThumb->setParameter('allow_local_http_src',true);
-		$this->phpThumb->setParameter('config_document_root',$this->modx->context->getOption('base_path',MODX_BASE_PATH,$this->config));
 		$this->phpThumb->setCacheDirectory();
 		$this->phpThumb->set($this->input);
 	}
@@ -217,10 +216,24 @@ class ptThumbnail {
 	 */
 	public function setInput($input) {
 		/* get absolute url of image */
-		if (strpos($input,'/') != 0 && strpos($input,'http') != 0) {
-			$input = $this->modx->context->getOption('base_url').$input;
-		} else {
+
+		$basepath = $this->modx->context->getOption('base_path', MODX_BASE_PATH, $this->config);
+		$this->phpThumb->setParameter('config_document_root', $basepath);
+
+		if ($input[0] === '/') {
 			$input = urldecode($input);
+			if ($this->modx->context->getOption('phpthumbof.fix_dup_subdir', TRUE, $this->config)) {
+				$topdir = substr($input, 0, strpos($input, '/', 1) + 1);
+				$topdir_len = strlen($topdir);
+				if ($topdir === substr($basepath, -$topdir_len)) {
+					$input = substr($basepath, 0, -$topdir_len) . $input;
+				}
+			}
+		}
+		elseif (strpos($input,'http') === 0) {
+			$input = urldecode($input);
+		} else {
+			$input = $this->modx->context->getOption('base_url').$input;
 		}
 
 		$hasQuery = strpos($input,'?');
