@@ -220,33 +220,19 @@ class ptThumbnail {
 		$basepath = $this->modx->context->getOption('base_path', MODX_BASE_PATH, $this->config);
 		$this->phpThumb->setParameter('config_document_root', $basepath);
 
-		if ($input[0] === '/') {
-			$input = urldecode($input);
+		if ( !preg_match('/^(?:https?:)?\/\/.+/i', $input) && !file_exists($input)) {  // if we've got a local image to work with
 			if ($this->modx->context->getOption('phpthumbof.fix_dup_subdir', TRUE, $this->config)) {
 				$topdir = substr($input, 0, strpos($input, '/', 1) + 1);
 				$topdir_len = strlen($topdir);
 				if ($topdir === substr($basepath, -$topdir_len)) {
-					$input = substr($basepath, 0, -$topdir_len) . $input;
+					$input = substr($input, $topdir_len);
 				}
 			}
-		}
-		elseif (strpos($input,'http') === 0) {
-			$input = urldecode($input);
-		} else {
-			$input = $this->modx->context->getOption('base_url').$input;
-		}
-
-		$hasQuery = strpos($input,'?');
-		if ($hasQuery !== false) {
-			$this->options['queryString'] = substr($input,$hasQuery+1);
-			$input = substr($input,0,$hasQuery);
-		}
-		if (!file_exists($input) && !empty($this->config['checkRemotelyIfNotFound'])) {
-			$input = $this->modx->context->getOption('url_scheme',MODX_URL_SCHEME).$this->modx->context->getOption('http_host',MODX_HTTP_HOST).urlencode($input);
+			$input = $basepath . ltrim($input, '/');
 		}
 
 		$this->input = $input;
-		return $this->input;
+		return $input;
 	}
 
 	/**
@@ -307,24 +293,22 @@ class ptThumbnail {
 	 * @return string
 	 */
 	public function getCacheFilename() {
+		$modtime = $this->modx->context->getOption('phpthumbof.hash_thumbnail_names', false, $this->config) ? @filemtime($this->input) : '';
 		/* either hash the filename */
-		if ($this->modx->context->getOption('phpthumbof.hash_thumbnail_names',false,$this->config)) {
-			$inputSanitized = str_replace(array(':','/'),'_',$this->input);
-			$this->cacheFilename = md5($inputSanitized) . '.' . md5(serialize($this->options)) . '.' . $this->options['f'];
+		if ($this->modx->context->getOption('phpthumbof.hash_thumbnail_names', false, $this->config)) {
+			$this->cacheFilename = md5($this->input) . '.' . md5(serialize($this->options)) . '.' . $this->options['f'];
 		} else { /* or attempt to preserve the filename */
-			$inputSanitized = str_replace( array('http://', 'https://'), '', $this->input );
-			$inputSanitized = str_replace(':', '_', $inputSanitized);
-			$this->cacheFilename = basename($inputSanitized);
-			if ($this->modx->context->getOption('phpthumbof.postfix_property_hash',true,$this->config)) {
+			$this->cacheFilename = basename($this->input);
+			if ($this->modx->context->getOption('phpthumbof.postfix_property_hash', true, $this->config)) {
 				$this->cacheFilename = pathinfo($this->cacheFilename, PATHINFO_FILENAME);
 				/* for PHP < 5.2 use:
 				$cut = strrpos($this->cacheFilename, '.');
 				if ($cut) { $this->cacheFilename = substr($this->cacheFilename, 0, $cut); } */
-				$this->cacheFilename .= '.' . md5( serialize($this->options) . pathinfo($inputSanitized, PATHINFO_DIRNAME) ) .
+				$this->cacheFilename .= '.' . md5( serialize($this->options) . pathinfo($this->input, PATHINFO_DIRNAME) ) .
 					'.' . ($this->options['f'] === 'jpeg' ? 'jpg' : $this->options['f']);
 			}
 		}
-		$this->cacheKey = $this->config['cachePath'].$this->cacheFilename;
+		$this->cacheKey = $this->config['cachePath'] . $this->cacheFilename;
 		return $this->cacheKey;
 	}
 
