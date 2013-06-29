@@ -64,6 +64,15 @@ $settings['phpthumbof.postfix_property_hash']->fromArray(array(
 	'area' => 'general',
 ),'',true,true);
 
+$settings['phpthumbof.check_mod_time'] = $modx->newObject('modSystemSetting');
+$settings['phpthumbof.check_mod_time']->fromArray(array(
+	'key' => 'phpthumbof.check_mod_time',
+	'value' => false,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
+), '', true, true);
+
 $settings['phpthumbof.fix_dup_subdir'] = $modx->newObject('modSystemSetting');
 $settings['phpthumbof.fix_dup_subdir']->fromArray(array(
 	'key' => 'phpthumbof.fix_dup_subdir',

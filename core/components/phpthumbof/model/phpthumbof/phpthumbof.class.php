@@ -264,28 +264,16 @@ class ptThumbnail {
 			}
 		}
 
-		if (empty($ptOptions['f'])){
-			$ext = pathinfo($this->input, PATHINFO_EXTENSION);
-			$ext = strtolower($ext);
-			switch ($ext) {
-				case 'jpg':
-				case 'jpeg':
-				case 'png':
-				case 'gif':
-				case 'bmp':
-					$ptOptions['f'] = $ext;
-					break;
-				default:
-					$ptOptions['f'] = 'jpeg';
-					break;
-			}
+		if (empty($ptOptions['f'])) {
+			$ext = strtolower( pathinfo($this->input, PATHINFO_EXTENSION) );
+			$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
 		}
 
 		if (($ptOptions['f'] === 'jpeg' || $ptOptions['f'] === 'jpg') && empty($ptOptions['q'])) {  // use global jpeg quality if needed
 			$ptOptions['q'] = $this->modx->context->getOption('phpthumbof.jpeg_quality', 75, $this->config);
 		}
 
-		$this->options = array_merge($this->options,$ptOptions);
+		$this->options = array_merge($this->options, $ptOptions);
 	}
 
 	/**
@@ -293,10 +281,10 @@ class ptThumbnail {
 	 * @return string
 	 */
 	public function getCacheFilename() {
-		$modtime = $this->modx->context->getOption('phpthumbof.hash_thumbnail_names', false, $this->config) ? @filemtime($this->input) : '';
+		$modtime = $this->modx->context->getOption('phpthumbof.check_mod_time', false, $this->config) ? @filemtime($this->input) : '';
 		/* either hash the filename */
 		if ($this->modx->context->getOption('phpthumbof.hash_thumbnail_names', false, $this->config)) {
-			$this->cacheFilename = md5($this->input) . '.' . md5(serialize($this->options)) . '.' . $this->options['f'];
+			$this->cacheFilename = md5($this->input . $modtime) . '.' . md5(serialize($this->options)) . '.' . $this->options['f'];
 		} else { /* or attempt to preserve the filename */
 			$this->cacheFilename = basename($this->input);
 			if ($this->modx->context->getOption('phpthumbof.postfix_property_hash', true, $this->config)) {
@@ -304,7 +292,7 @@ class ptThumbnail {
 				/* for PHP < 5.2 use:
 				$cut = strrpos($this->cacheFilename, '.');
 				if ($cut) { $this->cacheFilename = substr($this->cacheFilename, 0, $cut); } */
-				$this->cacheFilename .= '.' . md5( serialize($this->options) . pathinfo($this->input, PATHINFO_DIRNAME) ) .
+				$this->cacheFilename .= '.' . md5( serialize($this->options) . pathinfo($this->input, PATHINFO_DIRNAME) . $modtime) .
 					'.' . ($this->options['f'] === 'jpeg' ? 'jpg' : $this->options['f']);
 			}
 		}
