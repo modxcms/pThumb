@@ -67,7 +67,7 @@ $settings['phpthumbof.postfix_property_hash']->fromArray(array(
 $settings['phpthumbof.check_mod_time'] = $modx->newObject('modSystemSetting');
 $settings['phpthumbof.check_mod_time']->fromArray(array(
 	'key' => 'phpthumbof.check_mod_time',
-	'value' => false,
+	'value' => true,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
 	'area' => 'general',

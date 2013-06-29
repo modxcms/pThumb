@@ -39,7 +39,7 @@ $_lang['setting_phpthumbof.postfix_property_hash'] = 'Post-fix Properties Hash t
 $_lang['setting_phpthumbof.postfix_property_hash_desc'] = 'If true, will postfix a properties-hash to the filename of the thumbnail to prevent collisions with duplicate thumbnails of the same image.';
 
 $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
-$_lang['setting_phpthumbof.check_mod_time_desc'] = 'Check file mod time and update the cached version if the image has changed.<br /><strong>Default:</strong> No';
+$_lang['setting_phpthumbof.check_mod_time_desc'] = 'Check file mod time and update the cached version if the image has changed.<br /><strong>Default:</strong> Yes';
 
 $_lang['setting_phpthumbof.fix_dup_subdir'] = 'Fix Duplicate Subdirectory';
 $_lang['setting_phpthumbof.fix_dup_subdir_desc'] = 'Fix image path when MODX base path ends with the same dir as the image path begins with (occurs when MODX is running from a subdirectory and the TV&rsquo;s media source hasn&rsquo;t been adjusted).<br /><strong>Default:</strong> Yes';
