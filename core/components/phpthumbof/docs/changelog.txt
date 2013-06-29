@@ -1,55 +1,23 @@
-Changelog for phpThumbOf package.
+pThumb 1.0.0
+============
 
-phpThumbOf 1.4.0
-=====================================
-- [#22] Allow for thumbnails to preserve basename of file being thumbnailed
-- [#33] Fix issue with config not passed to phpthumbof class, causing some properties to not be respected
-- [#32] Fix context settings not respected
-- [#39] Fix class exists errors with AWS
-- [#25] Prevent followlocation curl error in environments that have open_basedir on
+- Initial Commit. Forked from phpThumbOf 1.4.0.
+- Improve cache management and performance: the cache manager plugin has been changed
+  to only clean the cache; it doesn't completely clear it.  Cache cleanup is only done
+  on OnSiteRefresh events instead of every time phpThumbOf is run (which previously
+  didn't work anyway), improving overall performance
 
-phpThumbOf 1.3.2
-=====================================
-- Rollback 1.3.1 fix due to issues
 
-phpThumbOf 1.3.1
-=====================================
-- Fix for 2.2 base path prefixing
-
-phpThumbOf 1.3.0
-=====================================
-- [#29] Fix issue with caching of thumbnails always being forced
-- [#26] Add phpthumbof.cache_url setting for setting caching URLs outside of the main domain
-- [#28] Fix issue where image with query string on URL would not render
-- Revamp phpThumbOf to more OOP approach for easier debugging and quicker loads
-- [#27] Fix double slash issue with absolute cache paths
-
-phpThumbOf 1.2.2
-=====================================
-- [#21] Fix issue with file permissions on shared servers that have incorrect umask settings
-- [#23] Fix issue with expiry and S3 thumbnails
-- [#24] Respect s3hostAlias parameter for new thumbnails on S3
-
-phpThumbOf 1.2.1
-=====================================
-- [#14] Cloak path of generated thumbnail to prevent linking to source image
-- [#20] Added phpthumbof.cache_path setting for overriding the default cache path
-
-phpThumbOf 1.2.0
-=====================================
-- [#12] Fix issue where multiple fltr calls were not working, allow parameters with [] in their names
-- [#18] If output format is not specified, try to determine format from the original file extension
-- [#16] Avoid invalid file paths in HTML5
-
-phpThumbOf 1.1.0
-=====================================
-- [#8] Add phpthumbof.s3_host_alias setting to allow setting a CNAME alias for s3 url
-- [#10] Add fix to use modx base path rather than phpThumb default of document_root
-- [#9] Add fix for shared hosting environments using host dir aliasing
-- [#7] Add extra support for suphp by adding chmod statement to cache file
-
-phpThumbOf 1.0.0
-=====================================
-- Added Amazon S3 support
-- Added plugin to clear thumb cache when clearing site cache
-- Initial commit
+phpThumbOf issues addressed:
+- [#37] Add a phpthumbof.jpeg_quality global default JPEG quality setting
+- [#41] Don't urldecode filenames
+- [#46] add phpthumbof.check_mod_time option to refresh the cached image if the
+  original has been modified
+- [#44] [#49] Prevent generation of identical images when the same image is used in
+  multiple resources
+- [#48] [#49] Fix duplication of images with identical names in different directories
+- [#47] Exit quickly and silently when called with no file name
+- [#52] Make input file name handling more robust, particularly when MODX is
+  install in a subdirectory
+- [#53] Trim extension properly
+- [#54] [#50] Fix cache cleaning
