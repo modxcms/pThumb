@@ -11,7 +11,7 @@ pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, set
 
 Hopefully pThumb will be in the MODX repository soon, but for now follow these instructions to install it:
 
-1. Download the pThumb [transport package](https://github.com/oo12/phpThumbOf/blob/pThumb/pthumb-1.0.0-beta1.transport.zip) and upload it to core/packages on your server.
+1. Download the pThumb [transport package](https://github.com/oo12/phpThumbOf/raw/pThumb/pthumb-1.0.0-beta1.transport.zip) and upload it to core/packages on your server.
 2. In the MODX Manager go to Package Management, click the down arrow on the right side of the Download Extras button and pick 'Search Locally for Packages'. Click Yes and pthumb should appear in the grid.
 3. Uninstall phpThumbOf if it's installed.
 4. Install pthumb.
@@ -27,7 +27,7 @@ Official documentation for [phpThumbOf](http://rtfm.modx.com/display/addon/phpth
 
 pThumb adds the following system settings:
 
-* __Check File Modification Time__: Check's the original image's file modification time and updates the cache if necessary.  Switching this setting's value will cause all currently cached images to become stale.
+* __Check File Modification Time__: Checks the original image's file modification time and updates the cached version if necessary.  Changing this setting's value will cause all currently cached images to become stale.
 
 * __Fix Duplicate Subdirectory__:  phpThumbOf had problems running when MODX was installed in a subdirectory.  Technically this wasn't its fault and you can prevent it from happening by using a [properly configured](http://forums.modx.com/?action=thread&thread=75040#dis-post-454845) media source, but this setting resolves the problem with minimal effort.
 
@@ -53,7 +53,7 @@ pThumb addresses the following open phpThumbOf issues:
 * [[#54](https://github.com/splittingred/phpThumbOf/issues/54)] [[#50](https://github.com/splittingred/phpThumbOf/pull/50)] Fix cache cleaning
 
 
-S3
-----
+Amazon S3
+---------
 
 I haven't modified or tested the S3 functionality.  It probably needs some bugs fixed and the SDK updated.  If anybody's interested in helping out with this please get in touch.
