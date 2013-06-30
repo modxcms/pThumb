@@ -1,5 +1,5 @@
-pThumb 1.0.0
-============
+pThumb 1.0.0-beta1
+==================
 
 - Initial Commit. Forked from phpThumbOf 1.4.0.
 - Improve cache management and performance: the cache manager plugin has been changed
