@@ -36,7 +36,7 @@ define('PKG_NAME','pThumb');
 define('PKG_NAME_LOWER','phpthumbof');
 define('PKG_NAME_LOWER_B','pthumb');
 define('PKG_VERSION','1.0.0');
-define('PKG_RELEASE','beta1');
+define('PKG_RELEASE','beta2');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once dirname(__FILE__) . '/build.config.php';

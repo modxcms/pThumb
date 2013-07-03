@@ -1,7 +1,7 @@
 pThumb 1.0 beta
 ===============
 
-pThumb — a fork of phpThumbOf 1.4.0.
+pThumb — a fork of phpThumbOf 1.4.0.  It's an effort to get maintenance and development restarted on a very useful extra: fix some bugs, add a few new features and make some performance improvements.
 
 
 Installation
@@ -11,11 +11,10 @@ pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, set
 
 Hopefully pThumb will be in the MODX repository soon, but for now follow these instructions to install it:
 
-1. Download the pThumb [transport package](https://github.com/oo12/phpThumbOf/raw/pThumb/pthumb-1.0.0-beta1.transport.zip) and upload it to core/packages on your server.
-2. In the MODX Manager go to Package Management, click the down arrow on the right side of the Download Extras button and pick 'Search Locally for Packages'. Click Yes and pthumb should appear in the grid.
-3. Uninstall phpThumbOf if it's installed.
-4. Install pthumb.
-5. Check the Max Cache Age, Files and Size system settings (in core / phpThumb) to make sure they're appropriate for your site.  The phpThumbOf cache will be cleaned according to these settings after OnSiteRefresh events (Clear Cache from the Site menu).
+1. Download [pThumb](http://modx.com/extras/package/pthumb) via Package Management.
+2. Uninstall phpThumbOf if it's installed.
+3. Install pThumb.
+4. (optional) Check the Max Cache Age, Files and Size system settings (in core / phpThumb) to make sure they're appropriate for your site.  The phpThumbOf cache will be cleaned according to these settings after OnSiteRefresh events (Clear Cache from the Site menu).
 
 (Actually you don't _have_ to uninstall phpThumbOf first, but it makes things potentially less confusing. If you uninstall phpThumbOf later, you'll have to reinstall pThumb.)
 
