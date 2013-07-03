@@ -365,10 +365,10 @@ class ptThumbnail {
 				}
 				return str_replace(' ','%20',$this->cacheUrl);
 			} else {
-				$this->modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not cache thumb "'.$this->input.'" to file at: '.$this->cacheKey.' - Debug: '.print_r($this->phpThumb->debugmessages,true));
+				$this->modx->log(modX::LOG_LEVEL_ERROR, '[phpThumbOf] Resource ' . $this->modx->resource->get('id') . ' :: Could not cache thumb "' . $this->input . '" to file at: ' . $this->cacheKey . ' - Debug: ' . print_r($this->phpThumb->debugmessages, true));
 			}
 		} else {
-			$this->modx->log(modX::LOG_LEVEL_ERROR,'[phpThumbOf] Could not generate thumbnail: '.$this->input.' - Debug: '.print_r($this->phpThumb->debugmessages,true));
+			$this->modx->log(modX::LOG_LEVEL_ERROR, '[phpThumbOf] Resource ' . $this->modx->resource->get('id') . ' :: Could not generate thumbnail: ' . $this->input . ' - Debug: ' . print_r($this->phpThumb->debugmessages, true));
 		}
 		return '';
 	}
