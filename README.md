@@ -7,16 +7,16 @@ pThumb — a fork of phpThumbOf 1.4.0.  It's an effort to get maintenance and de
 Installation
 ------------
 
-pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, settings and snippet name, so after it's installed any code using phpThumbOf will automatically use the new version instead.
-
-Hopefully pThumb will be in the MODX repository soon, but for now follow these instructions to install it:
+pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, settings and component names, so after it's installed any code using phpThumbOf will automatically use the new version instead.
 
 1. Download [pThumb](http://modx.com/extras/package/pthumb) via Package Management.
 2. Uninstall phpThumbOf if it's installed.
 3. Install pThumb.
-4. (optional) Check the Max Cache Age, Files and Size system settings (in core / phpThumb) to make sure they're appropriate for your site.  The phpThumbOf cache will be cleaned according to these settings after OnSiteRefresh events (Clear Cache from the Site menu).
+
+Your phpThumbOf cache will be cleared in the process, but since pThumb generates slightly different file names the images would have to be regenerated anyway.
 
 (Actually you don't _have_ to uninstall phpThumbOf first, but it makes things potentially less confusing. If you uninstall phpThumbOf later, you'll have to reinstall pThumb.)
+
 
 
 Documentation
@@ -45,11 +45,17 @@ pThumb addresses the following open phpThumbOf issues:
 * [[#44](https://github.com/splittingred/phpThumbOf/issues/44)] [[#49](https://github.com/splittingred/phpThumbOf/issues/49)] Prevent generation of identical images when the same image is used in
   multiple resources
 * [[#48](https://github.com/splittingred/phpThumbOf/pull/48)] [[#49](https://github.com/splittingred/phpThumbOf/issues/49)] Fix duplication of images with identical names in different directories
-* [[#47](https://github.com/splittingred/phpThumbOf/pull/47)] Exit quickly and silently when called with no file name
+* [[#47](https://github.com/splittingred/phpThumbOf/pull/47)] Exit quickly and silently when called with no file name, such as in the case of an empty placeholder
 * [[#52](https://github.com/splittingred/phpThumbOf/issues/52)] Make input file name handling more robust, particularly when MODX is
-  install in a subdirectory
+  installed in a subdirectory
 * [[#53](https://github.com/splittingred/phpThumbOf/issues/53)] Trim extension properly
 * [[#54](https://github.com/splittingred/phpThumbOf/issues/54)] [[#50](https://github.com/splittingred/phpThumbOf/pull/50)] Fix cache cleaning
+
+In addition to that it:
+
+* Adds resource IDs to error log messages to aid in locating problem images (hat tip tillilab)
+* Improves performance, especially on sites with lots of images or with the same image on multiple pages.
+* Improves—in my opinion—phpThumbOfCacheManager behavior so that the cache isn't wiped out, but only cleaned based on the Max Cache Age, Files and Size system settings.
 
 
 Amazon S3
