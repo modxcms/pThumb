@@ -261,7 +261,7 @@ public function cleanCache() {
 		closedir($dirhandle);
 	}
 	$totalimages = count($AllFilesInCacheDirectory);
-	$this->modx->log(modX::LOG_LEVEL_INFO, ":: $totalimages images in the phpThumbOf cache");
+	$this->modx->log(modX::LOG_LEVEL_INFO, ":: $totalimages image" . ($totalimages !== 1 ? 's':'') . ' in the cache');
 
 	if (empty($AllFilesInCacheDirectory)) {
 		return;
