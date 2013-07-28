@@ -1,13 +1,13 @@
-pThumb 1.0 beta
-===============
+pThumb 2.0
+==========
 
-pThumb — a fork of phpThumbOf 1.4.0.  It's an effort to get maintenance and development restarted on a very useful extra: fix some bugs, add a few new features and make some performance improvements.
+A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding a few new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
 
 
 Installation
 ------------
 
-pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, settings and component names, so after it's installed any code using phpThumbOf will automatically use the new version instead.
+pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, settings and component names, so after it's installed any code using phpThumbOf will automatically use the new version instead, with no further changes to the site required.
 
 1. Download [pThumb](http://modx.com/extras/package/pthumb) via Package Management.
 2. Uninstall phpThumbOf if it's installed.
@@ -15,8 +15,13 @@ pThumb is a drop-in replacement for phpThumbOf.  It uses the same namespace, set
 
 Your phpThumbOf cache will be cleared in the process, but since pThumb generates slightly different file names the images would have to be regenerated anyway.
 
-(Actually you don't _have_ to uninstall phpThumbOf first, but it makes things potentially less confusing. If you uninstall phpThumbOf later, you'll have to reinstall pThumb.)
+(Actually you don't _have_ to uninstall phpThumbOf first, but it makes things less confusing. If you uninstall phpThumbOf later, you'll have to reinstall pThumb.)
 
+
+No Amazon S3
+---------
+
+Version 2.0 drops support for AWS. I don't use or know much about it and rather than release completely untested and possibly broken code, I took it out.  If you'd like it added back and are interested in helping, please get in touch.
 
 
 Documentation
@@ -28,18 +33,21 @@ pThumb adds the following system settings:
 
 * __Check File Modification Time__: Checks the original image's file modification time and updates the cached version if necessary.  Changing this setting's value will cause all currently cached images to become stale.
 
-* __Fix Duplicate Subdirectory__:  phpThumbOf had problems running when MODX was installed in a subdirectory.  Technically this wasn't its fault and you can prevent it from happening by using a [properly configured](http://forums.modx.com/?action=thread&thread=75040#dis-post-454845) media source, but this setting resolves the problem with minimal effort.
+* __Fix Duplicate Subdirectory__: phpThumbOf had problems running when MODX was installed in a subdirectory.  Technically this wasn't its fault and you can prevent it from happening by using a [properly configured](http://forums.modx.com/?action=thread&thread=75040#dis-post-454845) media source, but this setting resolves the problem with minimal effort.
 
 * __JPEG Quality__: A global setting for JPEG quality.  It may be overridden with the ```q``` parameter as before, but this is an easy way to globally change the quality from phpThumb's default of 75.
 
+and one property to the phpThumbOf snippet:
 
-Changelog
+* __&amp;debug__: When this is on, phpThumbOf will write the phpThumb debugmessages array to the MODX error log.  This is very useful for troubleshooting phpThumb issues, like whether it's using ImageMagick on not.
+
+
+Changes from phpThumbOf 1.4.0
 ----------
 
 pThumb addresses the following open phpThumbOf issues:
 
 * [[#37](https://github.com/splittingred/phpThumbOf/issues/37)] Add a phpthumbof.jpeg_quality global default JPEG quality setting
-* [[#41](https://github.com/splittingred/phpThumbOf/pull/41)] Don't urldecode filenames
 * [[#46](https://github.com/splittingred/phpThumbOf/pull/46)] add phpthumbof.check\_mod\_time option to refresh the cached image if the
   original has been modified
 * [[#44](https://github.com/splittingred/phpThumbOf/issues/44)] [[#49](https://github.com/splittingred/phpThumbOf/issues/49)] Prevent generation of identical images when the same image is used in
@@ -53,12 +61,7 @@ pThumb addresses the following open phpThumbOf issues:
 
 In addition to that it:
 
-* Adds resource IDs to error log messages to aid in locating problem images (hat tip tillilab)
-* Improves performance, especially on sites with lots of images or with the same image on multiple pages.
+* Improves performance, especially on sites and pages which use phpThumbOf extensively.  In some cases the difference can be very significant.
+* Adds better debugging output, like the page's resouce ID to make finding broken images easy, or simple access to phpThumb's debug messages.
 * Improves—in my opinion—phpThumbOfCacheManager behavior so that the cache isn't wiped out, but only cleaned based on the Max Cache Age, Files and Size system settings.
-
-
-Amazon S3
----------
-
-I haven't modified or tested the S3 functionality.  It probably needs some bugs fixed and the SDK updated.  If anybody's interested in helping out with this please get in touch.
+* Removes Amazon AWS support (see above).

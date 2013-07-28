@@ -1,11 +1,28 @@
-pThumb 1.0.0-beta2
-==================
+pThumb
+======
+
+2.0.0-rc1
+---------
+
+- Major refactor for improved efficiency, especially when used multiple times on
+  a page or when an image is already cached.
+- Remove Amazon S3 support. I don't use or know much about this and rather than
+  release completely untested and possibly broken code, I took it out.  If you'd
+  like it added back and are interested in helping, please get in touch.
+- Improve remote image handling. Originals are now downloaded to the cache to
+  greatly speed up future access
+- Improve debugging output, including easy access to the phpThumb debug messages
+  created when a thumbnail is generated (new &debug property for phpThumbOf)
+
+
+1.0.0-beta2
+-----------
 
 - Add resource id # to error log message to make finding problem images easier
 
 
-pThumb 1.0.0-beta1
-==================
+1.0.0-beta1
+-----------
 
 - Initial Commit. Forked from phpThumbOf 1.4.0.
 - Improve cache management and performance: the cache manager plugin has been changed

@@ -1,15 +1,20 @@
 <?php
 /**
- * phpThumbOf
+ * pThumb
+ * Copyright 2013 Jason Grant
  *
+ * Forked from phpThumbOf 1.4.0
  * Copyright 2009-2012 by Shaun McCormick <shaun@modx.com>
  *
- * phpThumbOf is free software; you can redistribute it and/or modify it
+ * Please see the GitHub page for documentation or to report bugs:
+ * https://github.com/oo12/phpThumbOf
+ *
+ * pThumb is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any
  * later version.
  *
- * phpThumbOf is distributed in the hope that it will be useful, but WITHOUT ANY
+ * pThumb is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
@@ -47,26 +52,4 @@ $_lang['setting_phpthumbof.fix_dup_subdir_desc'] = 'Fix image path when MODX bas
 $_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
 $_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
 
-$_lang['setting_phpthumbof.use_s3'] = 'Use Amazon S3';
-$_lang['setting_phpthumbof.use_s3_desc'] = 'If true, will use an Amazon S3 bucket as the place to store the cached thumbnails.';
-
-$_lang['setting_phpthumbof.s3_key'] = 'Amazon S3 Key';
-$_lang['setting_phpthumbof.s3_key_desc'] = 'Your Amazon Web Services S3 Key.';
-
-$_lang['setting_phpthumbof.s3_secret_key'] = 'Amazon S3 Secret Key';
-$_lang['setting_phpthumbof.s3_secret_key_desc'] = 'Your Amazon Web Services S3 Secret Key.';
-
-$_lang['setting_phpthumbof.s3_bucket'] = 'Amazon S3 Bucket';
-$_lang['setting_phpthumbof.s3_bucket_desc'] = 'The name of the bucket you are using in Amazon S3.';
-
-$_lang['setting_phpthumbof.s3_host_alias'] = 'Amazon S3 Host Alias';
-$_lang['setting_phpthumbof.s3_host_alias_desc'] = 'If using a CNAME or other alias to change the domain of the S3 service, enter it here.';
-
-$_lang['setting_phpthumbof.s3_path'] = 'Amazon S3 Bucket Path';
-$_lang['setting_phpthumbof.s3_path_desc'] = 'The path in your bucket where you want the phpthumbof cache files to go.';
-
-$_lang['setting_phpthumbof.s3_cache_time'] = 'Amazon S3 Cache Time';
-$_lang['setting_phpthumbof.s3_cache_time_desc'] = 'The number of hours to cache a thumbnail for on Amazon S3. Thumbnails can be cleared by clearing the site cache.';
-
-$_lang['setting_phpthumbof.s3_headers_check'] = 'Use PHP get_headers to Check Modified Date';
-$_lang['setting_phpthumbof.s3_headers_check_desc'] = 'Use Amazon S3 get_object_url (faster) to check modified date on S3 thumbs. If on, will use PHPs get_headers, which is slower. Turn on if experiencing caching issues.';
+$_lang['prop_pthumb.debug_desc'] = 'Write phpThumb debug messages to the MODX error log.';

@@ -1,15 +1,20 @@
 <?php
 /**
- * phpThumbOf
+ * pThumb
+ * Copyright 2013 Jason Grant
  *
+ * Forked from phpThumbOf 1.4.0
  * Copyright 2009-2012 by Shaun McCormick <shaun@modx.com>
  *
- * phpThumbOf is free software; you can redistribute it and/or modify it
+ * Please see the GitHub page for documentation or to report bugs:
+ * https://github.com/oo12/phpThumbOf
+ *
+ * pThumb is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any
  * later version.
  *
- * phpThumbOf is distributed in the hope that it will be useful, but WITHOUT ANY
+ * pThumb is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
