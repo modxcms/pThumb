@@ -59,7 +59,7 @@ Resizer only supports a subset of phpThumb options, the most useful and commonly
 
 Supported (see the phpThumb [documentation](http://phpthumb.sourceforge.net/demo/docs/phpthumb.readme.txt) for descriptions):
 
-* Sizing: ```w```, ```h```, ```wl```, ```hl```, ```wp```, ```hp```, ```ws```, ```ws```, ```aoe``` (the landscape, portrait and square dimension options are broken in phpThumb but work in Resizer)
+* Sizing: ```w```, ```h```, ```wl```, ```hl```, ```wp```, ```hp```, ```ws```, ```hs```, ```aoe``` (the landscape, portrait and square dimension options are broken in phpThumb but work in Resizer)
 
 * Zoom Crop: ```zc``` (all 9 positions. All work with GD too.)
 
