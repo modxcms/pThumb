@@ -36,7 +36,7 @@ define('PKG_NAME','pThumb');
 define('PKG_NAME_LOWER','phpthumbof');
 define('PKG_NAME_LOWER_B','pthumb');
 define('PKG_VERSION','2.0.0');
-define('PKG_RELEASE','rc1');
+define('PKG_RELEASE','rc2');
 define('PKG_CATEGORY','pThumb');
 
 /* Set package options - you can turn these on one-by-one

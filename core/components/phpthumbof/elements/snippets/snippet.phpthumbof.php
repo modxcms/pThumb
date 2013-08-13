@@ -40,7 +40,8 @@ if (empty($input)) {  // Exit quietly if no file name given
 	return;
 }
 
-$debug = isset($debug) ? $debug : FALSE;
+$scriptProperties['debug'] = isset($debug) ? $debug : FALSE;
+
 
 static $pt_settings = array();
 
@@ -51,7 +52,7 @@ if (empty($pt_settings)) {
 	}
 }
 
-$phpThumbOf = new phpThumbOf($modx, $pt_settings, $debug, $scriptProperties);
+$phpThumbOf = new phpThumbOf($modx, $pt_settings, $scriptProperties);
 
 if (!$phpThumbOf->cacheWritable) {
 	return $input;

@@ -1,6 +1,17 @@
 pThumb
 ======
 
+2.0.0-rc2
+[12.08.13]
+
+- Add Resizer v0.1, a light-weight modern alternative to phpThumb. Resizer is built
+  on Imagine, supports the Gmagick, Imagick and GD extensions and is considerably
+  faster than phpThumb for scaling/cropping operations. Plus all the ZC options now
+  work with GD. Enable in System Settings. Requires PHP 5.3 or higher.
+- Fix a PHP warning the phpThumbOfCacheManager plugin was throwing.
+
+
+
 2.0.0-rc1
 ---------
 

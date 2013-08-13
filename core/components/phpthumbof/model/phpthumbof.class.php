@@ -36,11 +36,11 @@ public $success = TRUE;
 private $modx;
 private $input;
 
-function __construct(modX &$modx, &$settings_cache, $debug, $options = array()) {
+function __construct(modX &$modx, &$settings_cache, $options = array()) {
 	$this->modx =& $modx;
 	$this->config =& $settings_cache;
 	if (empty($this->config)) {  // first time through, get and store all the settings
-		$this->config['debug'] = $debug;
+		$this->config['debug'] = isset($options['debug']) ? $options['debug'] : FALSE;
 		$this->config['corePath'] = MODX_CORE_PATH . 'components/phpthumbof/';
 		$this->config['assetsPath'] = $modx->getOption('phpthumbof.assets_path', $options, $modx->getOption('assets_path') . 'components/phpthumbof/');
 		$this->config['assetsUrl'] = $modx->getOption('phpthumbof.assets_url', $options, $modx->getOption('assets_url') . 'components/phpthumbof/');
@@ -58,6 +58,8 @@ function __construct(modX &$modx, &$settings_cache, $debug, $options = array()) 
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
 		$this->config['newFilePermissions'] = $modx->getOption('new_file_permissions', $options, 0664);
+		$this->config['useResizer'] = isset($options['useResizer']) ? (boolean) $options['useResizer'] : $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
+		$this->config['graphicsLib'] = (int) $modx->getOption('phpthumbof.graphics_library', $options, 2);
 
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
 			if (!$modx->cacheManager->writeTree($this->config['cachePath'])) {
@@ -73,13 +75,15 @@ function __construct(modX &$modx, &$settings_cache, $debug, $options = array()) 
  *  if $phpthumbDebug, also write the phpThumb debugmessages array
  */
 public function debugmsg($msg, $phpthumbDebug = FALSE) {
-	$this->modx->log(
-		modX::LOG_LEVEL_ERROR,
-		"[pThumb] Resource: {$this->modx->resource->get('id')} || Image: " .
+	$logmsg = "[pThumb] Resource: {$this->modx->resource->get('id')} || Image: " .
 		(isset($this->input) ? $this->input : '(none)') .
-		($msg ? "\n$msg" : '') .
-		($phpthumbDebug && isset($this->phpThumb->debugmessages) ? "\nphpThumb debug output:" . substr(print_r($this->phpThumb->debugmessages, TRUE), 7, -2) . "----------------------\n" : '')
-	);
+		($msg ? "\n$msg" : '');
+	if ($phpthumbDebug && isset($this->phpThumb->debugmessages)) {
+		$logmsg .= ($this->config['useResizer'] ? "\nResizer" : "\nphpThumb") .
+			' debug output:' . substr(print_r($this->phpThumb->debugmessages, TRUE), 7, -2) .
+			"----------------------\n";
+	}
+	$this->modx->log(modX::LOG_LEVEL_ERROR, $logmsg);
 }
 
 /*
@@ -194,33 +198,53 @@ public function createThumbnail($src, $options) {
 		return $cacheUrl;
 	}
 
+	if ($this->config['useResizer']) {
+		static $resizer_obj = array();
+		if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
+			if (!$this->modx->loadClass('Resizer', MODX_CORE_PATH . 'components/phpthumbof/model/', true, true)) {
+				$this->debugmsg('Could not load Resizer class.');
+				$this->success = FALSE;
+				return $src;
+			}
+			$resizer_obj[] = new Resizer($this->config['graphicsLib']);
+			$resizer_obj[0]->debug = $this->config['debug'];
+			$this->phpThumb = $resizer_obj[0];
+		}
+		else  {  // We've already got a Resizer object and will just clear out its debug log
+			$this->phpThumb = $resizer_obj[0];
+			$this->config['debug'] &&  $this->phpThumb->resetDebug();
+		}
+		$writeSuccess = $this->phpThumb->writeResized($this->input, $cacheKey, $ptOptions);
+	}
+	else {  //use phpThumb
+		if (!class_exists('modPhpThumb')) {
+			if (!$this->modx->loadClass('modPhpThumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
+				$this->debugmsg('Could not load modPhpThumb class.');
+				$this->success = FALSE;
+				return $src;
+			}
+		}
+		$this->phpThumb = new modPhpThumb($this->modx);
+		$this->phpThumb->config = array_merge($this->phpThumb->config, $ptOptions);
+		$this->phpThumb->setParameter('config_document_root', $this->config['basePath']);
+		$this->phpThumb->initialize();
 
-	/* Startup the phpThumb service. */
-	if (!class_exists('modPhpThumb')) {
-		if (!$this->modx->loadClass('modPhpThumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
-			$this->debugmsg('Could not load modPhpThumb class.');
+		$this->phpThumb->setParameter('config_cache_directory', $this->config['cachePath']);
+		$this->phpThumb->setParameter('config_allow_src_above_phpthumb', TRUE);
+		$this->phpThumb->setParameter('allow_local_http_src', TRUE);
+		$this->phpThumb->setCacheDirectory();
+		$this->phpThumb->set($this->input);
+
+
+		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
+			$this->debugmsg('Could not generate thumbnail', TRUE);
 			$this->success = FALSE;
 			return $src;
 		}
+		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
 	}
-	$this->phpThumb = new modPhpThumb($this->modx);
-	$this->phpThumb->config = array_merge($this->phpThumb->config, $ptOptions);
-	$this->phpThumb->setParameter('config_document_root', $this->config['basePath']);
-	$this->phpThumb->initialize();
 
-	$this->phpThumb->setParameter('config_cache_directory', $this->config['cachePath']);
-	$this->phpThumb->setParameter('config_allow_src_above_phpthumb', TRUE);
-	$this->phpThumb->setParameter('allow_local_http_src', TRUE);
-	$this->phpThumb->setCacheDirectory();
-	$this->phpThumb->set($this->input);
-
-
-	if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
-		$this->debugmsg('Could not generate thumbnail', TRUE);
-		$this->success = FALSE;
-		return $src;
-	}
-	if ($this->phpThumb->RenderToFile($cacheKey)) {  // write it to the cache file
+	if ($writeSuccess) {  // write it to the cache file
 		@chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
 		return $cacheUrl;
 	}

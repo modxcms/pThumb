@@ -1,4 +1,4 @@
-pThumb 2.0
+pThumb 2.0.0-rc2
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding a few new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -37,9 +37,35 @@ pThumb adds the following system settings:
 
 * __JPEG Quality__: A global setting for JPEG quality.  It may be overridden with the ```q``` parameter as before, but this is an easy way to globally change the quality from phpThumb's default of 75.
 
-and one property to the phpThumbOf snippet:
+and two properties to the phpThumbOf snippet:
 
 * __&amp;debug__: When this is on, phpThumbOf will write the phpThumb debugmessages array to the MODX error log.  This is very useful for troubleshooting phpThumb issues, like whether it's using ImageMagick on not.
+
+* __&amp;useResizer__: Overrides the phpthumbof.use_resizer system setting to allow more flexibility in switching between phpThumb and Resizer.  Useful if you generally want to use one but need the other in a few particular places.
+
+
+Resizer
+-------
+
+__[Experimental — Requires PHP 5.3 or higher]__
+
+Resizer is a light-weight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for scaling/cropping operations. Plus all the ZC options now work with GD.
+
+To enable it, go to System Settings and under phpthumbof, change Use Resize to Yes.  You don't need to make any other changes to your site; pThumb transparently handles switching between them.  Read the next section though.
+
+### Supported phpThumb options
+
+Resizer only supports a subset of phpThumb options, the most useful and commonly used ones.  Many of phpThumb's options are better handled now or in the near future with CSS transforms and filters anyway, so I haven't implemented these.  But if there's one you've just got to have, open an issue :-)
+
+Supported (see the phpThumb [documentation](http://phpthumb.sourceforge.net/demo/docs/phpthumb.readme.txt) for descriptions):
+
+* Sizing: ```w```, ```h```, ```wl```, ```hl```, ```wp```, ```hp```, ```ws```, ```ws```, ```aoe``` (the landscape, portrait and square dimension options are broken in phpThumb but work in Resizer)
+
+* Zoom Crop: ```zc``` (all 9 positions. All work with GD too.)
+
+* Jpeg: ```q```
+
+Anything else will be ignored, but you can always switch back to phpThumb for particular images with ```&amp;useResizer``` property in your phpthumbof call.
 
 
 Changes from phpThumbOf 1.4.0

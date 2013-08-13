@@ -96,4 +96,22 @@ $settings['phpthumbof.jpeg_quality']->fromArray(array(
 	'area' => 'general',
 ), '', true, true);
 
+$settings['phpthumbof.use_resizer'] = $modx->newObject('modSystemSetting');
+$settings['phpthumbof.use_resizer']->fromArray(array(
+	'key' => 'phpthumbof.use_resizer',
+	'value' => false,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'Resizer',
+), '', true, true);
+
+$settings['phpthumbof.graphics_library'] = $modx->newObject('modSystemSetting');
+$settings['phpthumbof.graphics_library']->fromArray(array(
+	'key' => 'phpthumbof.graphics_library',
+	'value' => '2',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Resizer',
+), '', true, true);
+
 return $settings;
