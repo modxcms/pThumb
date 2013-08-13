@@ -49,7 +49,7 @@ Resizer
 
 __[Experimental — Requires PHP 5.3 or higher]__
 
-Resizer is a light-weight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for scaling/cropping operations. Plus all the ZC options now work with GD.
+pThumb comes bundled with Resizer, a light-weight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
 
 To enable it, go to System Settings and under phpthumbof, change Use Resize to Yes.  You don't need to make any other changes to your site; pThumb transparently handles switching between them.  Read the next section though.
 
@@ -65,7 +65,7 @@ Supported (see the phpThumb [documentation](http://phpthumb.sourceforge.net/demo
 
 * Jpeg: ```q```
 
-Anything else will be ignored, but you can always switch back to phpThumb for particular images with ```&amp;useResizer``` property in your phpthumbof call.
+Anything else will be ignored, but you can always switch back to phpThumb for particular images with ```&useResizer``` property in your phpthumbof call.
 
 
 Changes from phpThumbOf 1.4.0
@@ -91,3 +91,4 @@ In addition to that it:
 * Adds better debugging output, like the page's resouce ID to make finding broken images easy, or simple access to phpThumb's debug messages.
 * Improves—in my opinion—phpThumbOfCacheManager behavior so that the cache isn't wiped out, but only cleaned based on the Max Cache Age, Files and Size system settings.
 * Removes Amazon AWS support (see above).
+* Adds Resizer, an alternative to phpThumb.
