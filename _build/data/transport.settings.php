@@ -26,45 +26,50 @@ if (! function_exists('stripPhpTags')) {
 $systemSettings = array();
 
 $ssIdx = 1;
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.use_resizer',
 	'value' => FALSE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'Resizer',
+	'area' => 'Images',
 ), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.jpeg_quality',
 	'value' => 75,
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'general',
+	'area' => 'Images',
 ), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.check_mod_time',
 	'value' => TRUE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'general',
+	'area' => 'Filenames',
 ), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.hash_thumbnail_names',
 	'value' => FALSE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'general',
+	'area' => 'Filenames',
 ), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.postfix_property_hash',
 	'value' => TRUE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'general',
+	'area' => 'Filenames',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -73,7 +78,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => 4,
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'general',
+	'area' => 'Other',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -82,15 +87,16 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'paths',
+	'area' => 'Paths',
 ), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.cache_path',
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'paths',
+	'area' => 'Paths',
 ), '', true, true);
 
 return $systemSettings;
