@@ -40,7 +40,6 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 	$this->modx =& $modx;
 	$this->config =& $settings_cache;
 	if (empty($this->config)) {  // first time through, get and store all the settings
-		$this->config['debug'] = isset($options['debug']) ? $options['debug'] : FALSE;
 		$this->config['corePath'] = MODX_CORE_PATH . 'components/phpthumbof/';
 		$this->config['assetsPath'] = $modx->getOption('phpthumbof.assets_path', $options, $modx->getOption('assets_path') . 'components/phpthumbof/');
 		$this->config['assetsUrl'] = $modx->getOption('phpthumbof.assets_url', $options, $modx->getOption('assets_url') . 'components/phpthumbof/');
@@ -58,14 +57,17 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
 		$this->config['newFilePermissions'] = $modx->getOption('new_file_permissions', $options, 0664);
-		$this->config['useResizer'] = isset($options['useResizer']) ? (boolean) $options['useResizer'] : $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
-
+		$this->config['useResizer'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
 			if (!$modx->cacheManager->writeTree($this->config['cachePath'])) {
 				$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Cache path not writable: ' . $this->config['cachePath']);
 				$this->cacheWritable = $this->success = FALSE;
 			}
 		}
+	}
+	$this->config['debug'] = $options['debug'];
+	if (isset($options['useResizer'])) {  // if the property's set, use it instead of the system setting
+		$this->config['useResizer'] = (boolean) $options['useResizer'];
 	}
 }
 
