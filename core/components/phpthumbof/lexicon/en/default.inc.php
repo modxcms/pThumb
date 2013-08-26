@@ -52,4 +52,7 @@ $_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><st
 $_lang['setting_phpthumbof.use_resizer'] = 'Use Resizer';
 $_lang['setting_phpthumbof.use_resizer_desc'] = 'Use Resizer instead of phpThumb for image sizing and cropping.<br /><strong>Requires PHP 5.3.2 or higher</strong><br />See the <a href="https://github.com/oo12/Resizer" target="_blank">Resizer documentation</a> for more info.<br /><strong>Default:</strong> No';
 
+$_lang['setting_phpthumbof.remote_timeout'] = 'Remote Timeout';
+$_lang['setting_phpthumbof.remote_timeout_desc'] = 'When downloading a remote image, abort if the transfer hasn&rsquo;t finished after this many seconds. Remote images are cached for subsequent use.<br /><strong>Default:</strong> 5';
+
 $_lang['prop_pthumb.debug_desc'] = 'Write debug messages to the MODX error log.';

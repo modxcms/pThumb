@@ -66,6 +66,16 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'namespace' => 'phpthumbof',
 	'area' => 'general',
 ), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'phpthumbof.remote_timeout',
+	'value' => 4,
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'general',
+), '', true, true);
+
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.cache_url',

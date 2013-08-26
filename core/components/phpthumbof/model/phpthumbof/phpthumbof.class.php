@@ -57,6 +57,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
 		$this->config['newFilePermissions'] = $modx->getOption('new_file_permissions', $options, 0664);
 		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
+		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', $options, 5);  // in seconds. For fetching remote images
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
 			if (!$modx->cacheManager->writeTree($this->config['cachePath'])) {
 				$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Cache path not writable: ' . $this->config['cachePath']);
@@ -92,7 +93,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  */
 public function createThumbnail($src, $options) {
 	if ( preg_match('/^(?:https?:)?\/\/(.+?)\/(.+)/i', $src, $matches) ) {  // if we've got a remote image to work with
-		$file = $this->config['cachePath'] . preg_replace("/[^\w\d\-_\.]/", '-', "{$matches[1]}-{$matches[2]}");
+		$file = $this->config['cachePath'] . preg_replace("/[^\w\d\-_\.]/", '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
