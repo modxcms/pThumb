@@ -56,7 +56,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
 		$this->config['newFilePermissions'] = $modx->getOption('new_file_permissions', $options, 0664);
-		$this->config['useResizer'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
+		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
 			if (!$modx->cacheManager->writeTree($this->config['cachePath'])) {
 				$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Cache path not writable: ' . $this->config['cachePath']);
@@ -64,10 +64,9 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 			}
 		}
 	}
+	// these two can't be cached
 	$this->config['debug'] = $options['debug'];
-	if (isset($options['useResizer'])) {  // if the property's set, use it instead of the system setting
-		$this->config['useResizer'] = (boolean) $options['useResizer'];
-	}
+	$this->config['useResizer'] = isset($options['useResizer']) ? $options['useResizer'] : $this->config['useResizerGlobal'];
 }
 
 /*
