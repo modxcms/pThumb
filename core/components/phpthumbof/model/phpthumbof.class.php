@@ -203,7 +203,7 @@ public function createThumbnail($src, $options) {
 				$this->success = FALSE;
 				return $src;
 			}
-			$resizer_obj[] = new Resizer();
+			$resizer_obj[] = new Resizer($this->modx);
 			$resizer_obj[0]->debug = $this->config['debug'];
 			$this->phpThumb = $resizer_obj[0];
 		}
@@ -214,7 +214,7 @@ public function createThumbnail($src, $options) {
 		$writeSuccess = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
 	}
 	else {  //use phpThumb
-		if (!class_exists('modPhpThumb')) {
+		if (!class_exists('modPhpThumb', FALSE)) {
 			if (!$this->modx->loadClass('modPhpThumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
 				$this->debugmsg('Could not load modPhpThumb class.');
 				$this->success = FALSE;
