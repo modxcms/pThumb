@@ -51,8 +51,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		);
 		$this->config['cachePathUrl'] = $modx->getOption('phpthumbof.cache_url', $options, $this->config['assetsUrl'] . 'cache/', TRUE);
 		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
-		$this->config['fixDupSubdir'] = $modx->getOption('phpthumbof.fix_dup_subdir', $options, TRUE);
-		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
+		$this->config['jpegQuality'] = (int) $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
