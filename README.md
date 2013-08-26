@@ -1,4 +1,4 @@
-pThumb 2.0.0-rc2
+pThumb 2.0.0-rc3
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding a few new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -47,7 +47,7 @@ Resizer
 
 __[Requires PHP 5.3 or higher]__
 
-pThumb comes bundled with Resizer, a light-weight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
+pThumb comes bundled with Resizer, a lightweight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
 
 See the Resizer [documentation](https://github.com/oo12/Resizer) for more on its requirements and supported options.
 
