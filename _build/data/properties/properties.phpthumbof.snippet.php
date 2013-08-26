@@ -15,18 +15,17 @@
 $properties = array (
   'debug' =>
   array (
-    'name' => 'debug',
-    'desc' => 'prop_pthumb.debug_desc',
-    'type' => 'combo-boolean',
-    'options' =>
-    array (
-    ),
-    'value' => FALSE,
-    'lexicon' => 'phpthumbof:default',
-    'area' => '',
-    'area_trans' => '',
+	'name' => 'debug',
+	'desc' => 'prop_pthumb.debug_desc',
+	'type' => 'combo-boolean',
+	'options' =>
+	array (
+	),
+	'value' => FALSE,
+	'lexicon' => 'phpthumbof:default',
+	'area' => '',
+	'area_trans' => '',
   ),
 );
 
 return $properties;
-
