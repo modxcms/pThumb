@@ -1,8 +1,17 @@
 pThumb
 ======
 
-2.0.0-rc2
-[12.08.13]
+2.0.0-rc3 [25.08.2013]
+----------------------
+
+- Update Resizer to v0.2.0-rc1, now a separate package
+- [#1] Fix protocol-relative URLs for remote images
+- Fix &useResizer and &debug properties
+- Several minor speed and efficiency improvements
+
+
+2.0.0-rc2 [12.08.2013]
+--------------------
 
 - Add Resizer v0.1, a light-weight modern alternative to phpThumb. Resizer is built
   on Imagine, supports the Gmagick, Imagick and GD extensions and is considerably
