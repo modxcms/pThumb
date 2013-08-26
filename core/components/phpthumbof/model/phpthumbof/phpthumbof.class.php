@@ -50,7 +50,6 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 			$this->config['cachePath']
 		);
 		$this->config['cachePathUrl'] = $modx->getOption('phpthumbof.cache_url', $options, $this->config['assetsUrl'] . 'cache/', TRUE);
-		$this->config['basePath'] = MODX_BASE_PATH;
 		$this->config['fixDupSubdir'] = $modx->getOption('phpthumbof.fix_dup_subdir', $options, TRUE);
 		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
@@ -130,11 +129,11 @@ public function createThumbnail($src, $options) {
 			if ($this->config['fixDupSubdir']) {  // fixes path problems when MODX is installed in a subdir
 				$topdir = substr($src, 0, strpos($src, '/', 1) + 1);
 				$topdir_len = strlen($topdir);
-				if ($topdir === substr($this->config['basePath'], -$topdir_len)) {
+				if ($topdir === substr(MODX_BASE_PATH, -$topdir_len)) {
 					$src = substr($src, $topdir_len);
 				}
 			}
-			$file = $this->config['basePath'] . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
+			$file = MODX_BASE_PATH . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
 			if (!file_exists($file)) {
 				$this->debugmsg("File not found: $file  *** Skipping ***");
 				$this->success = FALSE;
@@ -227,15 +226,8 @@ public function createThumbnail($src, $options) {
 		}
 		$this->phpThumb = new modPhpThumb($this->modx);
 		$this->phpThumb->config = array_merge($this->phpThumb->config, $ptOptions);
-		$this->phpThumb->setParameter('config_document_root', $this->config['basePath']);
 		$this->phpThumb->initialize();
-
-		$this->phpThumb->setParameter('config_cache_directory', $this->config['cachePath']);
-		$this->phpThumb->setParameter('config_allow_src_above_phpthumb', TRUE);
-		$this->phpThumb->setParameter('allow_local_http_src', TRUE);
-		$this->phpThumb->setCacheDirectory();
 		$this->phpThumb->set($this->input);
-
 
 		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
 			$this->debugmsg('Could not generate thumbnail', TRUE);
