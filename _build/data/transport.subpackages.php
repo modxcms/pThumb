@@ -28,7 +28,7 @@ if (! function_exists('stripPhpTags')) {
  * @package articles
  */
 $subpackages = array (
-  'resizer' => 'resizer-0.2.0-beta3',
+  'resizer' => 'resizer-0.2.0-rc1',
 );
 $spAttr = array('vehicle_class' => 'xPDOTransportVehicle');
 

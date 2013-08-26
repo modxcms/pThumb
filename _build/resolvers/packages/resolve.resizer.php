@@ -31,7 +31,7 @@ if (! function_exists('stripPhpTags')) {
  */
 $success= true;
 if ($transport && $transport->xpdo) {
-	$signature = 'resizer-0.2.0-beta3';
+	$signature = 'resizer-0.2.0-rc1';
 	$modx =& $transport->xpdo;
 	$modx->addPackage('modx.transport',$modx->getOption('core_path').'model/');
 
