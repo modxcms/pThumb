@@ -53,9 +53,6 @@ $_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
 $_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
 
 $_lang['setting_phpthumbof.use_resizer'] = 'Use Resizer';
-$_lang['setting_phpthumbof.use_resizer_desc'] = 'Use Resizer instead of phpThumb for image sizing and cropping.<br /><strong>Requires PHP 5.3 or higher</strong><br />See the <a href="https://github.com/oo12/phpThumbOf#resizer" target="_blank">Resizer documentation</a> for more info.<br /><strong>Default:</strong> No';
+$_lang['setting_phpthumbof.use_resizer_desc'] = 'Use Resizer instead of phpThumb for image sizing and cropping.<br /><strong>Requires PHP 5.3.2 or higher</strong><br />See the <a href="https://github.com/oo12/Resizer" target="_blank">Resizer documentation</a> for more info.<br /><strong>Default:</strong> No';
 
-$_lang['setting_phpthumbof.graphics_library'] = 'Preferred Graphics Library';
-$_lang['setting_phpthumbof.graphics_library_desc'] = '<b>2</b>: Auto / Gmagick<br /><b>1</b>: Imagick<br /><b>0</b>: GD<br />Gmagick or Imagick are generally faster, but not always available. Check phpinfo() on your system to find out what you&rsquo;ve got.<br /><strong>Default:</strong> 2';
-
-$_lang['prop_pthumb.debug_desc'] = 'Write phpThumb debug messages to the MODX error log.';
+$_lang['prop_pthumb.debug_desc'] = 'Write debug messages to the MODX error log.';

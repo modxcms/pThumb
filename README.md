@@ -47,25 +47,14 @@ and two properties to the phpThumbOf snippet:
 Resizer
 -------
 
-__[Experimental — Requires PHP 5.3 or higher]__
+__[Requires PHP 5.3 or higher]__
 
 pThumb comes bundled with Resizer, a light-weight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
 
-To enable it, go to System Settings and under phpthumbof, change Use Resize to Yes.  You don't need to make any other changes to your site; pThumb transparently handles switching between them.  Read the next section though.
+See the Resizer [documentation](https://github.com/oo12/Resizer) for more on its requirements and supported options.
 
-### Supported phpThumb options
+To enable it, go to System Settings and under phpthumbof, change Use Resizer to Yes.  You don't need to make any other changes to your site; pThumb transparently handles switching between them.  You can override the system setting for a particular phpthumbof call by using the ```&useResizer``` property (1 for yes, 0 for no).
 
-Resizer only supports a subset of phpThumb options, the most useful and commonly used ones.  Many of phpThumb's options are better handled now or in the near future with CSS transforms and filters anyway, so I haven't implemented these.  But if there's one you've just got to have, open an issue :-)
-
-Supported (see the phpThumb [documentation](http://phpthumb.sourceforge.net/demo/docs/phpthumb.readme.txt) for descriptions):
-
-* Sizing: ```w```, ```h```, ```wl```, ```hl```, ```wp```, ```hp```, ```ws```, ```hs```, ```aoe``` (the landscape, portrait and square dimension options are broken in phpThumb but work in Resizer)
-
-* Zoom Crop: ```zc``` (all 9 positions. All work with GD too.)
-
-* Jpeg: ```q```
-
-Anything else will be ignored, but you can always switch back to phpThumb for particular images with ```&useResizer``` property in your phpthumbof call.
 
 
 Changes from phpThumbOf 1.4.0
