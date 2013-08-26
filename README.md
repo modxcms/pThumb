@@ -33,8 +33,6 @@ pThumb adds the following system settings:
 
 * __Check File Modification Time__: Checks the original image's file modification time and updates the cached version if necessary.  Changing this setting's value will cause all currently cached images to become stale.
 
-* __Fix Duplicate Subdirectory__: phpThumbOf had problems running when MODX was installed in a subdirectory.  Technically this wasn't its fault and you can prevent it from happening by using a [properly configured](http://forums.modx.com/?action=thread&thread=75040#dis-post-454845) media source, but this setting resolves the problem with minimal effort.
-
 * __JPEG Quality__: A global setting for JPEG quality.  It may be overridden with the ```q``` parameter as before, but this is an easy way to globally change the quality from phpThumb's default of 75.
 
 and two properties to the phpThumbOf snippet:

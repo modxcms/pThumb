@@ -50,6 +50,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 			$this->config['cachePath']
 		);
 		$this->config['cachePathUrl'] = $modx->getOption('phpthumbof.cache_url', $options, $this->config['assetsUrl'] . 'cache/', TRUE);
+		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['fixDupSubdir'] = $modx->getOption('phpthumbof.fix_dup_subdir', $options, TRUE);
 		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
@@ -125,14 +126,8 @@ public function createThumbnail($src, $options) {
 			$file = $src;
 		}
 		else {  // otherwise prepend basePath and try again
-			if ($this->config['fixDupSubdir']) {  // fixes path problems when MODX is installed in a subdir
-				$topdir = substr($src, 0, strpos($src, '/', 1) + 1);
-				$topdir_len = strlen($topdir);
-				if ($topdir === substr(MODX_BASE_PATH, -$topdir_len)) {
-					$src = substr($src, $topdir_len);
-				}
-			}
 			$file = MODX_BASE_PATH . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
+			$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice
 			if (!file_exists($file)) {
 				$this->debugmsg("File not found: $file  *** Skipping ***");
 				$this->success = FALSE;

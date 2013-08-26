@@ -46,9 +46,6 @@ $_lang['setting_phpthumbof.postfix_property_hash_desc'] = 'If true, will postfix
 $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
 $_lang['setting_phpthumbof.check_mod_time_desc'] = 'Check file mod time and update the cached version if the image has changed.<br /><strong>Default:</strong> Yes';
 
-$_lang['setting_phpthumbof.fix_dup_subdir'] = 'Fix Duplicate Subdirectory';
-$_lang['setting_phpthumbof.fix_dup_subdir_desc'] = 'Fix image path when MODX base path ends with the same dir as the image path begins with (occurs when MODX is running from a subdirectory and the TV&rsquo;s media source hasn&rsquo;t been adjusted).<br /><strong>Default:</strong> Yes';
-
 $_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
 $_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
 
