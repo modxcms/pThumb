@@ -472,7 +472,7 @@ $components = array(
 	 * (other resolvers may be created above for TVs and plugins).
 	 * Suffix 'resolver.php' will be added automatically */
 	'resolvers' => array(
-		// 'default',
+		'default',
 		// 'addUsers'
 	),
 

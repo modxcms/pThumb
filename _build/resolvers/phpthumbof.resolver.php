@@ -30,7 +30,6 @@ if ($object->xpdo) {
 	$modx =& $object->xpdo;
 	switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 		case xPDOTransport::ACTION_INSTALL:
-			break;
 		case xPDOTransport::ACTION_UPGRADE:
 			// remove some old settings on upgrade
 			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir');
@@ -40,6 +39,7 @@ if ($object->xpdo) {
 					$setting->remove();
 				}
 			}
+			$success = TRUE;
 			break;
 
 		case xPDOTransport::ACTION_UNINSTALL:
