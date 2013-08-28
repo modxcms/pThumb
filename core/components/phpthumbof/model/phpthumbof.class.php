@@ -92,8 +92,8 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  *  Returns the filename of the cached image on success or $src on failure
  */
 public function createThumbnail($src, $options) {
-	if ( preg_match('/^(?:https?:)?\/\/(.+?)\/(.+)/i', $src, $matches) ) {  // if we've got a remote image to work with
-		$file = $this->config['cachePath'] . preg_replace("/[^\w\d\-_\.]/", '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
+	if ( preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches) ) {  // if we've got a remote image to work with
+		$file = $this->config['cachePath'] . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
