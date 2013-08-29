@@ -92,7 +92,12 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  *  Returns the filename of the cached image on success or $src on failure
  */
 public function createThumbnail($src, $options) {
-	if ( preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches) ) {  // if we've got a remote image to work with
+	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
+	if ($isRemote && MODX_HTTP_HOST === strtolower($matches[1])) {  // if it's the same server we're running on
+		$isRemote = FALSE;  // then it's not really remote
+		$src = $matches[2];  // we just need the path and filename
+	}
+	if ($isRemote) {  // if we've got a real remote image to work with
 		$file = $this->config['cachePath'] . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
 			$fh = fopen($file, 'wb');
@@ -124,7 +129,7 @@ public function createThumbnail($src, $options) {
 			}
 		}
 	}
-	else {
+	else {  // it's a local file
 		if (file_exists($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
