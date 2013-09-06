@@ -66,7 +66,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		}
 	}
 	// these two can't be cached
-	$this->config['debug'] = $options['debug'];
+	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
 	$this->config['useResizer'] = isset($options['useResizer']) ? $options['useResizer'] : $this->config['useResizerGlobal'];
 }
 
