@@ -41,6 +41,9 @@ if ($modx->event->name === 'OnSiteRefresh') {
 	static $pt_settings = array();
 	$phpThumbOf = new phpThumbOf($modx, $pt_settings);
 	if ($phpThumbOf->cacheWritable) {
+		$modx->log(modX::LOG_LEVEL_INFO, 'phpThumbOfCacheManager: Cleaning phpThumbOf cache...');
 		$phpThumbOf->cleanCache();
+		$modx->log(modX::LOG_LEVEL_INFO, 'phpThumbOfCacheManager: Cleaning phpThumbOf remote images cache...');
+		$phpThumbOf->cleanCache('remote-images');
 	}
 }
