@@ -55,7 +55,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
-		$this->config['newFilePermissions'] = $modx->getOption('new_file_permissions', $options, 0664);
+		$this->config['newFilePermissions'] = octdec($modx->getOption('new_file_permissions', $options, '0664'));
 		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
 		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', $options, 5);  // in seconds. For fetching remote images
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
