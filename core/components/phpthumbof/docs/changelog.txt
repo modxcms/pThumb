@@ -6,7 +6,7 @@ pThumb
 
 - Improve handling of paths, URLs and remote images
 - [#2] Fix new_file_permissions setting
-- Update Resizer to v0.3.0-pl
+- Update Resizer to v0.3.1-pl
 - Several minor bug fixes
 
 
