@@ -14,9 +14,9 @@ $components = array(
 	/* These are used to define the package and set values for placeholders */
 	'packageName' => 'pThumb',  /* No spaces, no dashes */
 	'packageNameLower' => 'phpthumbof',
-	'packageDescription' => 'A fork of phpThumbOf 1.4.0',
+	'packageDescription' => 'A better phpThumbOf',
 	'version' => '2.0.0',
-	'release' => 'rc3',
+	'release' => 'pl',
 	'author' => 'Jason Grant',
 	'email' => '',
 	'authorUrl' => 'https://github.com/oo12',

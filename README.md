@@ -1,4 +1,4 @@
-pThumb 2.0.0-rc3
+pThumb 2.0.0-pl
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding a few new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -35,6 +35,8 @@ pThumb adds the following system settings:
 
 * __JPEG Quality__: A global setting for JPEG quality.  It may be overridden with the ```q``` parameter as before, but this is an easy way to globally change the quality from phpThumb's default of 75.
 
+* __Use Resizer__: A global setting for which image manipulation class to use. Setting this to No means pThumb will use the MODX's built-in phpThumb class. See the Resizer [section](https://github.com/oo12/phpThumbOf#resizer) and [extra](http://modx.com/extras/package/resizer) for more details. **Default**: No
+
 and two properties to the phpThumbOf snippet:
 
 * __&amp;debug__: When this is on, phpThumbOf will write the phpThumb debugmessages array to the MODX error log.  This is very useful for troubleshooting phpThumb issues, like whether it's using ImageMagick on not.
@@ -47,7 +49,7 @@ Resizer
 
 __[Requires PHP 5.3 or higher]__
 
-pThumb comes bundled with Resizer, a lightweight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
+pThumb comes bundled with [Resizer](http://modx.com/extras/package/resizer), a lightweight modern alternative to phpThumb. Built on [Imagine](https://github.com/avalanche123/Imagine), Resizer supports the Gmagick, Imagick and GD extensions and is considerably faster than phpThumb for image sizing and cropping operations. Plus all the ZC options now work with GD.
 
 See the Resizer [documentation](https://github.com/oo12/Resizer) for more on its requirements and supported options.
 

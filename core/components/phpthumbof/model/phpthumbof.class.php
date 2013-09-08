@@ -51,7 +51,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		);
 		$this->config['cachePathUrl'] = $modx->getOption('phpthumbof.cache_url', $options, $this->config['assetsUrl'] . 'cache/', TRUE);
 		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
-		$this->config['jpegQuality'] = (int) $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
+		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
 		$this->config['hashThumbnailNames'] = $modx->getOption('phpthumbof.hash_thumbnail_names', $options, FALSE);
 		$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
@@ -102,6 +102,7 @@ public function createThumbnail($src, $options) {
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
+				$this->debugmsg("Unable to write to cache file: $file  *** Skipping ***");
 				$this->success = FALSE;
 				return $src;
 			}
@@ -208,14 +209,13 @@ public function createThumbnail($src, $options) {
 				$this->success = FALSE;
 				return $src;
 			}
-			$resizer_obj[] = new Resizer($this->modx);
+			$resizer_obj[0] = new Resizer($this->modx);  // we'll reuse this same object for all subsequent images
 			$resizer_obj[0]->debug = $this->config['debug'];
-			$this->phpThumb = $resizer_obj[0];
 		}
-		else  {  // We've already got a Resizer object and will just clear out its debug log
-			$this->phpThumb = $resizer_obj[0];
-			$this->config['debug'] &&  $this->phpThumb->resetDebug();
+		elseif ($this->config['debug'])  {  // We've already got a Resizer object and will just clear out its debug log
+			$resizer_obj[0]->resetDebug();
 		}
+		$this->phpThumb = $resizer_obj[0];
 		$writeSuccess = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
 	}
 	else {  //use phpThumb
@@ -226,7 +226,7 @@ public function createThumbnail($src, $options) {
 				return $src;
 			}
 		}
-		$this->phpThumb = new modPhpThumb($this->modx);
+		$this->phpThumb = new modPhpThumb($this->modx);  // unfortunately we have to create a new object for each image!
 		$this->phpThumb->config = array_merge($this->phpThumb->config, $ptOptions);
 		$this->phpThumb->initialize();
 		$this->phpThumb->set($this->input);

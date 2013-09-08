@@ -1,6 +1,15 @@
 pThumb
 ======
 
+2.0.0-pl [09.09.2013]
+----------------------
+
+- Improve handling of paths, URLs and remote images
+- [#2] Fix new_file_permissions setting
+- Update Resizer to v0.3.0-pl
+- Several minor bug fixes
+
+
 2.0.0-rc3 [25.08.2013]
 ----------------------
 
