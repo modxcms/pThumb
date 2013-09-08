@@ -2,7 +2,7 @@
 /**
  * Subpackage Validator file for pThumb extra
  *
- * Copyright 2013 by Jason Grant 
+ * Copyright 2013 by Jason Grant
  * Created on 08-25-2013
  *
  * @package phpthumbof
@@ -36,7 +36,7 @@ if ($transport && $transport->xpdo) {
             $modx =& $transport->xpdo;
 
             /* define resizer version */
-            $newVersion = '0.2.0-beta3';
+            $newVersion = '0.3.0-pl';
             $newVersionMajor = '0';
             $name = 'resizer';
 
