@@ -219,17 +219,18 @@ public function createThumbnail($src, $options) {
 		$writeSuccess = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
 	}
 	else {  //use phpThumb
-		if (!class_exists('modPhpThumb', FALSE)) {
-			if (!$this->modx->loadClass('modPhpThumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
-				$this->debugmsg('Could not load modPhpThumb class.');
+		if (!class_exists('phpthumb', FALSE)) {
+			if (!$this->modx->loadClass('phpthumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
+				$this->debugmsg('Could not load phpthumb class.');
 				$this->success = FALSE;
 				return $src;
 			}
 		}
-		$this->phpThumb = new modPhpThumb($this->modx);  // unfortunately we have to create a new object for each image!
-		$this->phpThumb->config = array_merge($this->phpThumb->config, $ptOptions);
-		$this->phpThumb->initialize();
-		$this->phpThumb->set($this->input);
+		$this->phpThumb = new phpthumb($this->modx);  // unfortunately we have to create a new object for each image!
+		foreach ($ptOptions as $k => $v) {
+			$this->phpThumb->setParameter($k,$v);
+		}
+		$this->phpThumb->setSourceFilename($this->input);
 
 		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
 			$this->debugmsg('Could not generate thumbnail', TRUE);
