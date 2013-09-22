@@ -34,9 +34,6 @@
 $_lang['setting_phpthumbof.cache_path'] = 'Override Cache Path';
 $_lang['setting_phpthumbof.cache_path_desc'] = 'Optional. You may set an absolute path here to override the cache path for phpThumb thumbnails.';
 
-$_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
-$_lang['setting_phpthumbof.cache_url_desc'] = 'Optional. You may set an absolute URL here to override the cache URL for phpThumb thumbnails.';
-
 $_lang['setting_phpthumbof.hash_thumbnail_names'] = 'Hash Thumbnail Names';
 $_lang['setting_phpthumbof.hash_thumbnail_names_desc'] = 'If true, will hash the thumbnail names when rendering them in output to hide the true name of the file.';
 

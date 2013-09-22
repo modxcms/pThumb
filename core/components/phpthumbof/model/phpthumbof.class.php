@@ -41,14 +41,12 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 	if (empty($this->config)) {  // first time through, get and store all the settings
 		$this->config['corePath'] = MODX_CORE_PATH . 'components/phpthumbof/';
 		$this->config['assetsPath'] = $modx->getOption('phpthumbof.assets_path', $options, $modx->getOption('assets_path') . 'components/phpthumbof/');
-		$this->config['assetsUrl'] = $modx->getOption('phpthumbof.assets_url', $options, $modx->getOption('assets_url') . 'components/phpthumbof/');
 		$this->config['cachePath'] = $modx->getOption('phpthumbof.cache_path', $options, $this->config['assetsPath'] . 'cache/', TRUE);
 		$this->config['cachePath'] = str_replace(
 			array('[[+core_path]]', '[[+assets_path]]', '[[+base_path]]', '[[+manager_path]]'),
 			array(MODX_CORE_PATH, MODX_ASSETS_PATH,	MODX_BASE_PATH,	MODX_MANAGER_PATH),
 			$this->config['cachePath']
 		);
-		$this->config['cachePathUrl'] = $modx->getOption('phpthumbof.cache_url', $options, $this->config['assetsUrl'] . 'cache/', TRUE);
 		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
@@ -63,6 +61,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 				$this->cacheWritable = FALSE;
 			}
 		}
+		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, MODX_BASE_URL, $this->config['cachePath']);
 		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed
 	}
 	// these two can't be cached

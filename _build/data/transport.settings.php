@@ -83,15 +83,6 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'phpthumbof.cache_url',
-	'value' => '',
-	'xtype' => 'textfield',
-	'namespace' => 'phpthumbof',
-	'area' => 'Paths',
-), '', true, true);
-
-$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
-$systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.cache_path',
 	'value' => '',
 	'xtype' => 'textfield',
