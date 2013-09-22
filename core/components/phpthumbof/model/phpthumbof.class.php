@@ -64,6 +64,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 				$this->cacheWritable = $this->success = FALSE;
 			}
 		}
+		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed
 	}
 	// these two can't be cached
 	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
@@ -98,8 +99,17 @@ public function createThumbnail($src, $options) {
 		$src = $matches[2];  // we just need the path and filename
 	}
 	if ($isRemote) {  // if we've got a real remote image to work with
-		$file = $this->config['cachePath'] . 'remote-images/' . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
+		$file = $this->config['remoteImagesCachePath'] . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
+			if ($this->config['checkRemoteCache']) {  // first time through check remote images cache exists and is writable
+				if (!is_writable($this->config['remoteImagesCachePath'])) {
+					if ( !$this->modx->cacheManager->writeTree($this->config['remoteImagesCachePath']) ) {
+						$this->modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Remote images cache path not writable: ' . $this->config['remoteImagesCachePath']);
+						return $src;
+					}
+				}
+				$this->config['checkRemoteCache'] = FALSE;
+			}
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
 				$this->debugmsg("Unable to write to cache file: $file  *** Skipping ***");
