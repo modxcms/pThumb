@@ -31,7 +31,6 @@ class phpThumbOf {
 
 public $phpThumb;
 public $cacheWritable = TRUE;
-public $success = TRUE;
 
 private $modx;
 private $input;
@@ -61,7 +60,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
 			if (!$modx->cacheManager->writeTree($this->config['cachePath'])) {
 				$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Cache path not writable: ' . $this->config['cachePath']);
-				$this->cacheWritable = $this->success = FALSE;
+				$this->cacheWritable = FALSE;
 			}
 		}
 		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed
@@ -113,7 +112,6 @@ public function createThumbnail($src, $options) {
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
 				$this->debugmsg("Unable to write to cache file: $file  *** Skipping ***");
-				$this->success = FALSE;
 				return $src;
 			}
 			$curlFail = FALSE;
@@ -135,7 +133,6 @@ public function createThumbnail($src, $options) {
 			fclose($fh);
 			if ($curlFail) {  // if we didn't get it, skip and don't cache
 				unlink($file);
-				$this->success = FALSE;
 				return $src;
 			}
 		}
@@ -149,7 +146,6 @@ public function createThumbnail($src, $options) {
 			$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice
 			if (!file_exists($file)) {
 				$this->debugmsg("File not found: $file  *** Skipping ***");
-				$this->success = FALSE;
 				return $src;
 			}
 		}
@@ -216,7 +212,6 @@ public function createThumbnail($src, $options) {
 		if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
 			if (!$this->modx->loadClass('Resizer', MODX_CORE_PATH . 'components/resizer/model/', true, true)) {
 				$this->debugmsg('Could not load Resizer class.');
-				$this->success = FALSE;
 				return $src;
 			}
 			$resizer_obj[0] = new Resizer($this->modx);  // we'll reuse this same object for all subsequent images
@@ -232,7 +227,6 @@ public function createThumbnail($src, $options) {
 		if (!class_exists('phpthumb', FALSE)) {
 			if (!$this->modx->loadClass('phpthumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
 				$this->debugmsg('Could not load phpthumb class.');
-				$this->success = FALSE;
 				return $src;
 			}
 		}
@@ -244,7 +238,6 @@ public function createThumbnail($src, $options) {
 
 		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
 			$this->debugmsg('Could not generate thumbnail', TRUE);
-			$this->success = FALSE;
 			return $src;
 		}
 		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
@@ -256,7 +249,6 @@ public function createThumbnail($src, $options) {
 	}
 	else {
 		$this->debugmsg("Could not cache thumbnail to file at: {$cacheKey}", TRUE);
-		$this->success = FALSE;
 		return $src;
 	}
 }
