@@ -75,7 +75,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.remote_timeout',
-	'value' => 4,
+	'value' => 5,
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
 	'area' => 'Other',
