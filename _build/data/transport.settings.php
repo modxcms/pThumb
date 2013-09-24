@@ -47,33 +47,6 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'phpthumbof.check_mod_time',
-	'value' => TRUE,
-	'xtype' => 'combo-boolean',
-	'namespace' => 'phpthumbof',
-	'area' => 'Filenames',
-), '', true, true);
-
-$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
-$systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'phpthumbof.hash_thumbnail_names',
-	'value' => FALSE,
-	'xtype' => 'combo-boolean',
-	'namespace' => 'phpthumbof',
-	'area' => 'Filenames',
-), '', true, true);
-
-$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
-$systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'phpthumbof.postfix_property_hash',
-	'value' => TRUE,
-	'xtype' => 'combo-boolean',
-	'namespace' => 'phpthumbof',
-	'area' => 'Filenames',
-), '', true, true);
-
-$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
-$systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.remote_timeout',
 	'value' => 5,
 	'xtype' => 'textfield',
@@ -83,11 +56,56 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'phpthumbof.postfix_property_hash',
+	'value' => TRUE,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'phpThumbOf Cache',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'phpthumbof.cache_path',
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'Paths',
+	'area' => 'phpThumbOf Cache',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.use_ptcache',
+	'value' => FALSE,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'pThumb Cache',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.ptcache_location',
+	'value' => 'assets/image-cache',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'pThumb Cache',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.ptcache_images_basedir',
+	'value' => 'assets',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'pThumb Cache',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'phpthumbof.check_mod_time',
+	'value' => FALSE,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'pThumb Cache',
 ), '', true, true);
 
 return $systemSettings;
