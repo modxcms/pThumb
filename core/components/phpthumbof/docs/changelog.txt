@@ -1,8 +1,21 @@
 pThumb
 ======
 
+2.1.0-pl [23.09.2013]
+---------------------
+
+- Add a 'pThumb Cache' option. With this enabled, cached images aren't lumped into
+  one flat directory but put into the cache in subdirectories which mirror part of
+  the original image's path. The hash added to filenames is also much shorter.
+  End result: cleaner, more semantic and SEO-friendly image URLs
+  See the documentation for more on configuring and enabling it:
+  https://github.com/oo12/phpThumbOf#pthumb-cache
+- Several performance optimizations, including one when using phpThumb.
+- Add pthumb snippet. It's the same as phpthumbof, only shorter to type :-)
+
+
 2.0.0-pl [09.09.2013]
-----------------------
+---------------------
 
 - Improve handling of paths, URLs and remote images
 - [#2] Fix new_file_permissions setting
@@ -20,7 +33,7 @@ pThumb
 
 
 2.0.0-rc2 [12.08.2013]
---------------------
+----------------------
 
 - Add Resizer v0.1, a light-weight modern alternative to phpThumb. Resizer is built
   on Imagine, supports the Gmagick, Imagick and GD extensions and is considerably

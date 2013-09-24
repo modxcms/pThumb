@@ -32,7 +32,7 @@ if ($object->xpdo) {
 		case xPDOTransport::ACTION_INSTALL:
 		case xPDOTransport::ACTION_UPGRADE:
 			// remove some old settings on upgrade
-			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir');
+			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.cache_url');
 			foreach ($oldSettings as $key) {
 				$setting = $modx->getObject('modSystemSetting', array('key' => $key));
 				if ($setting) {

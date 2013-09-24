@@ -15,7 +15,7 @@ $components = array(
 	'packageName' => 'pThumb',  /* No spaces, no dashes */
 	'packageNameLower' => 'phpthumbof',
 	'packageDescription' => 'A better phpThumbOf',
-	'version' => '2.0.0',
+	'version' => '2.1.0',
 	'release' => 'pl',
 	'author' => 'Jason Grant',
 	'email' => '',
@@ -61,20 +61,6 @@ $components = array(
 			'xtype' => 'textfield',
 			'namespace' => 'phpthumbof',
 			'area' => 'paths',
-		),
-		'pthumb_system_setting2' => array(
-			'key' => 'phpthumbof.cache_url',
-			'value' => '',
-			'xtype' => 'textfield',
-			'namespace' => 'phpthumbof',
-			'area' => 'paths',
-		),
-		'pthumb_system_setting3' => array(
-			'key' => 'phpthumbof.hash_thumbnail_names',
-			'value' => false,
-			'xtype' => 'combo-boolean',
-			'namespace' => 'phpthumbof',
-			'area' => 'general',
 		),
 		'pthumb_system_setting4' => array(
 			'key' => 'phpthumbof.postfix_property_hash',
