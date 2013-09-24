@@ -275,7 +275,12 @@ $components = array(
 		'snippets' => array(
 			'phpthumbof' => array(
 				'category' => 'pthumb',
-				'description' => 'An output filter for resizing images. https://github.com/oo12/phpThumbOf',
+				'description' => 'Identical to pthumb. Retained for backwards compatibility.<br />Documentation: https://github.com/oo12/phpThumbOf',
+				'static' => false,
+			),
+			'pthumb' => array(
+				'category' => 'pthumb',
+				'description' => 'Identical to phpthumbof. Use whichever name you like best.<br />Documentation: https://github.com/oo12/phpThumbOf',
 				'static' => false,
 			),
 
