@@ -250,7 +250,8 @@ public function createThumbnail($src, $options) {
 		foreach ($ptOptions as $k => $v) {
 			$this->phpThumb->setParameter($k,$v);
 		}
-		$this->phpThumb->setSourceFilename($this->input);
+		// only pass absolute paths to phpThumb, otherwise it prepends $_SERVER['DOCUMENT_ROOT'] which may not be correct
+		$this->phpThumb->setSourceFilename($this->input[0] === '/' ? $this->input : MODX_BASE_PATH . $this->input);
 
 		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
 			$this->debugmsg('Could not generate thumbnail', TRUE);
