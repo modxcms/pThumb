@@ -189,7 +189,11 @@ public function createThumbnail($src, $options) {
 
 
 	/* Determine cache filename. Set $cacheKey and $cacheUrl */
-	$modtime = $this->config['checkModTime'] ? @filemtime($this->input) : '';
+	$modflags = (int) $this->config['useResizer'];  // keep cached image from being stale if useResizer changes
+	if ($this->config['checkModTime']) {
+		$modflags .= @filemtime($this->input);
+	}
+	$cacheFilename = "{$inputParts['filename']}.";
 	if ($this->config['use_ptcache']) {
 		$inputParts['dirname'] .= '/';
 		$baseDirOffset = strpos($inputParts['dirname'], $this->config['imagesBasedir']);
@@ -199,18 +203,18 @@ public function createThumbnail($src, $options) {
 		else {  // trim off everything before and including imagesBasedir
 			$cacheFilenamePrefix = substr($inputParts['dirname'], $baseDirOffset + $this->config['imagesBasedirLen']);
 		}
-		$cacheFilename = $inputParts['filename'] . '.' . hash('crc32', serialize($ptOptions) . $modtime);
-		$cacheFilenamePath = $this->config['cachePath'] . $cacheFilenamePrefix;
+		$cacheFilename .= hash('crc32', $modflags . json_encode($ptOptions)) . '.';
+		$cacheFilenamePath = "{$this->config['cachePath']}$cacheFilenamePrefix";
 	}
 	else {  // use classic phpThumbOf cache
 		$cacheFilenamePrefix = '';
-		$cacheFilename = $this->config['postfixPropertyHash'] ?
-			$inputParts['filename'] . '.' . md5(serialize($ptOptions) . $inputParts['dirname'] . $modtime) :  // hash
-			$inputParts['filename'];
+		if ($this->config['postfixPropertyHash']) {
+			$cacheFilename .= md5("$modflags{$inputParts['dirname']}" . json_encode($ptOptions)) . '.';
+		}
 	}
-	$cacheFilename .= $ptOptions['f'] === 'jpeg' ? '.jpg' : '.' . $ptOptions['f'];  // extension
-	$cacheKey = $this->config['cachePath'] . $cacheFilenamePrefix . $cacheFilename;
-	$cacheUrl = $this->config['cachePathUrl'] . $cacheFilenamePrefix . rawurlencode($cacheFilename);
+	$cacheFilename .= $ptOptions['f'] === 'jpeg' ? 'jpg' : $ptOptions['f'];  // extension
+	$cacheKey = "{$this->config['cachePath']}$cacheFilenamePrefix$cacheFilename";
+	$cacheUrl = "{$this->config['cachePathUrl']}$cacheFilenamePrefix" . rawurlencode($cacheFilename);
 
 	if (file_exists($cacheKey)) {  // If the file's in the cache, we're done.
 		return $cacheUrl;
