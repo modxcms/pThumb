@@ -58,7 +58,8 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 				return;
 			}
 		}
-		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, MODX_BASE_URL, $this->config['cachePath']);
+		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', $options, MODX_BASE_URL), '/');
+		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
 		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
 		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed

@@ -40,6 +40,9 @@ $_lang['setting_phpthumbof.postfix_property_hash_desc'] = '<strong>phpThumbOf ca
 $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
 $_lang['setting_phpthumbof.check_mod_time_desc'] = '<strong>Both cache systems</strong><br />Check file mod time and update the cached version if the original image has changed.<br /><strong>Default:</strong> No';
 
+$_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
+$_lang['setting_phpthumbof.cache_url_desc'] = 'Add an absolute URL here to override MODX_BASE_URL for generated images.';
+
 $_lang['setting_pthumb.global_options'] = 'Global Options';
 $_lang['setting_pthumb.global_options_desc'] = 'An string of default options for image resizing. Ex: q=60&zc=C';
 

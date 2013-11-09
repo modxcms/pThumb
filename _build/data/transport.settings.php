@@ -74,6 +74,15 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'phpthumbof.cache_url',
+	'value' => '',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Other',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
 	'key' => 'pthumb.use_ptcache',
 	'value' => FALSE,
 	'xtype' => 'combo-boolean',

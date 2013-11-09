@@ -38,7 +38,7 @@ if ($object->xpdo) {
 				$setting->save();
 			}
 			// remove some old settings on upgrade
-			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.jpeg_quality', 'phpthumbof.cache_url');
+			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.jpeg_quality');
 			foreach ($oldSettings as $key) {
 				$setting = $modx->getObject('modSystemSetting', array('key' => $key));
 				if ($setting) {
