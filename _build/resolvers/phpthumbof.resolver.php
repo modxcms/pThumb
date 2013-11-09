@@ -31,8 +31,14 @@ if ($object->xpdo) {
 	switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 		case xPDOTransport::ACTION_INSTALL:
 		case xPDOTransport::ACTION_UPGRADE:
+			$jpegQuality = $modx->getOption('phpthumbof.jpeg_quality', null, false);
+			if ($jpegQuality) {  // move an existing jpeg quality setting into the new global options
+				$setting = $modx->getObject('modSystemSetting', 'pthumb.global_options');
+				$setting->set('value', "q=$jpegQuality");
+				$setting->save();
+			}
 			// remove some old settings on upgrade
-			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.cache_url');
+			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.jpeg_quality', 'phpthumbof.cache_url');
 			foreach ($oldSettings as $key) {
 				$setting = $modx->getObject('modSystemSetting', array('key' => $key));
 				if ($setting) {

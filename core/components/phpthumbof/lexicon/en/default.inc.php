@@ -40,8 +40,8 @@ $_lang['setting_phpthumbof.postfix_property_hash_desc'] = '<strong>phpThumbOf ca
 $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
 $_lang['setting_phpthumbof.check_mod_time_desc'] = '<strong>Both cache systems</strong><br />Check file mod time and update the cached version if the original image has changed.<br /><strong>Default:</strong> No';
 
-$_lang['setting_phpthumbof.jpeg_quality'] = 'JPEG Quality';
-$_lang['setting_phpthumbof.jpeg_quality_desc'] = 'Default JPEG quality.<br /><strong>Range:</strong> 1 = worst quality, smallest file &ndash; 95 = best quality, largest file.<br /><strong>Default:</strong> 75';
+$_lang['setting_pthumb.global_options'] = 'Global Options';
+$_lang['setting_pthumb.global_options_desc'] = 'An string of default options for image resizing. Ex: q=60&zc=C';
 
 $_lang['setting_phpthumbof.use_resizer'] = 'Use Resizer';
 $_lang['setting_phpthumbof.use_resizer_desc'] = 'Use Resizer instead of phpThumb for image sizing and cropping.<br /><strong>Requires PHP 5.3.2 or higher</strong><br />See the <a href="https://github.com/oo12/Resizer" target="_blank">Resizer documentation</a> for more info.<br /><strong>Default:</strong> No';

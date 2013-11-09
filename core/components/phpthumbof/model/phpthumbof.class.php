@@ -65,8 +65,8 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
 		$this->config['newFilePermissions'] = octdec($modx->getOption('new_file_permissions', $options, '0664'));
 		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', $options, 5);  // in seconds. For fetching remote images
-		$this->config['jpegQuality'] = $modx->getOption('phpthumbof.jpeg_quality', $options, 75);
 		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
+		parse_str($modx->getOption('pthumb.global_options', null, ''), $this->config['globalOptions']);
 	}
 	// these two can't be cached
 	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
@@ -184,9 +184,7 @@ public function createThumbnail($src, $options) {
 		$ext = strtolower($inputParts['extension']);
 		$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
 	}
-	if (($ptOptions['f'] === 'jpeg' || $ptOptions['f'] === 'jpg') && empty($ptOptions['q'])) {
-		$ptOptions['q'] = $this->config['jpegQuality'];  // use global jpeg quality if needed
-	}
+	$ptOptions = array_merge($this->config['globalOptions'], $ptOptions);
 
 
 	/* Determine cache filename. Set $cacheKey and $cacheUrl */

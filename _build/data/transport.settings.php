@@ -38,8 +38,8 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'phpthumbof.jpeg_quality',
-	'value' => 75,
+	'key' => 'pthumb.global_options',
+	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
 	'area' => 'Images',
