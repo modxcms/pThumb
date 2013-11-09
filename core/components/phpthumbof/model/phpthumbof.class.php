@@ -114,7 +114,7 @@ public function createThumbnail($src, $options) {
 			}
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
-				$this->debugmsg("Unable to write to cache file: $file  *** Skipping ***");
+				$this->debugmsg("[pThumb remote images] Unable to write to cache file: $file  *** Skipping ***");
 				return $src;
 			}
 			$curlFail = FALSE;
@@ -129,12 +129,13 @@ public function createThumbnail($src, $options) {
 			));
 			curl_exec($ch);  // download the file and store it in $fh
 			if (curl_errno($ch)) {
-				$this->debugmsg("Retrieving $src\nTarget filename: $file\ncURL error: " . curl_error($ch) . "  *** Skipping ***\n");
+				$this->debugmsg("[pThumb remote images] Retrieving $src\nTarget filename: $file\ncURL error: " . curl_error($ch) . "  *** Skipping ***\n");
 				$curlFail = TRUE;
 			}
 			curl_close($ch);
 			fclose($fh);
-			if ($curlFail) {  // if we didn't get it, skip and don't cache
+			if ($curlFail || !filesize($file)) {  // if we didn't get it, skip and don't cache
+				$this->debugmsg("[pThumb remote images] Failed to cache $src");
 				unlink($file);
 				return $src;
 			}
