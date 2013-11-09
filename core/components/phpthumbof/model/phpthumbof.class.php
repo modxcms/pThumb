@@ -250,12 +250,26 @@ public function createThumbnail($src, $options) {
 				return $src;
 			}
 		}
+		if (!isset($this->config['modphpthumb'])) {  // make sure we get a few relevant system settings
+			$this->config['modphpthumb'] = array();
+			$this->config['modphpthumb']['config_allow_src_above_docroot'] = (boolean) $this->modx->getOption('phpthumb_allow_src_above_docroot', null, false);
+			$this->config['modphpthumb']['zc'] = $this->modx->getOption('phpthumb_zoomcrop', null, 0);
+			$this->config['modphpthumb']['far'] = $this->modx->getOption('phpthumb_far', null, 'C');
+			$this->config['modphpthumb']['config_ttf_directory'] = $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'model/phpthumb/fonts/';
+			$this->config['modphpthumb']['config_document_root'] = $this->modx->getOption('phpthumb_document_root', null, '');
+		}
 		$this->phpThumb = new phpthumb($this->modx);  // unfortunately we have to create a new object for each image!
-		foreach ($ptOptions as $k => $v) {
-			$this->phpThumb->setParameter($k,$v);
+		foreach ($this->config['modphpthumb'] as $param => $value) {  // add MODX system settings
+			$this->phpThumb->$param = $value;
+		}
+		foreach ($ptOptions as $param => $value) {  // add options passed to the snippet
+			$this->phpThumb->$param = $value;
 		}
 		// try to avert problems when $_SERVER['DOCUMENT_ROOT'] is different than MODX_BASE_PATH
-		$this->phpThumb->config_document_root = MODX_BASE_PATH;
+		if (!$this->phpThumb->config_document_root) {
+			$this->phpThumb->config_document_root = MODX_BASE_PATH;  // default if nothing set from system settings
+		}
+		$this->phpThumb->config_cache_directory = "{$this->config['cachePath']}$cacheFilenamePrefix";  // doesn't matter, but saves phpThumb some frustration
 		$this->phpThumb->setSourceFilename($this->input[0] === '/' ? $this->input : MODX_BASE_PATH . $this->input);
 
 		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
