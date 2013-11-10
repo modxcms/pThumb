@@ -50,14 +50,16 @@ if (empty($pt_settings)) {
 	}
 }
 
-$phpThumbOf = new phpThumbOf($modx, $pt_settings, $scriptProperties);
+$pThumb = new phpThumbOf($modx, $pt_settings, $scriptProperties);
 
-if (!$phpThumbOf->cacheWritable) {
+if (!$pThumb->cacheWritable) {
 	return $input;
 }
 
-$thumbnail = $phpThumbOf->createThumbnail($input, $options);
+$thumbnail = $pThumb->createThumbnail($input, $options);
 
-$debug && $thumbnail !== $input &&   $phpThumbOf->debugmsg(':: Processed ::', TRUE);
+if ($debug && $thumbnail !== $input) {  // if debugging is on and createThumbnail was successful, log the debug info
+	$pThumb->debugmsg(isset($pThumb->phpThumb->debugmessages) ? ':: Processed ::' : ":: Loaded from cache: $thumbnail", true);
+}
 
 return $thumbnail;
