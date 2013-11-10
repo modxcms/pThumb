@@ -61,4 +61,8 @@ $_lang['setting_pthumb.ptcache_location_desc'] = 'Cache location when using the 
 $_lang['setting_pthumb.ptcache_images_basedir'] = 'Images Base Directory';
 $_lang['setting_pthumb.ptcache_images_basedir_desc'] = 'Location of your original images. You’ll likely want to make this more specific. Any subdirectories are used in cache filenames. Any images outside of this directory will simply be cached to top level of pThumb Cache Location.<br /><strong>Default:</strong> assets';
 
+$_lang['setting_pthumb.clean_level'] = 'Cache Cleaning Level';
+$_lang['setting_pthumb.clean_level_desc'] = 'How to clean the caches on site refresh. The cache manager plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.<br /><strong>0</strong>: (default) Do nothing<br /><strong>1</strong>: Clean the caches separately based on the "Max Cache *" system settings (core &gt; phpThumb)<br /><strong>2</strong>: Delete all cached images';
+
+
 $_lang['prop_pthumb.debug_desc'] = 'Write debug messages to the MODX error log.';

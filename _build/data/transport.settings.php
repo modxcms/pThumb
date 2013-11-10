@@ -60,7 +60,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => TRUE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'phpThumbOf Cache',
+	'area' => 'Cache [phpThumbOf]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -69,7 +69,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'phpThumbOf Cache',
+	'area' => 'Cache [phpThumbOf]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -78,7 +78,16 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'Other',
+	'area' => 'Cache [common]',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.clean_level',
+	'value' => '0',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Cache [common]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -87,7 +96,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => FALSE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'pThumb Cache',
+	'area' => 'Cache [pThumb]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -96,7 +105,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => 'assets/image-cache',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'pThumb Cache',
+	'area' => 'Cache [pThumb]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -105,7 +114,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => 'assets',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',
-	'area' => 'pThumb Cache',
+	'area' => 'Cache [pThumb]',
 ), '', true, true);
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
@@ -114,7 +123,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'value' => FALSE,
 	'xtype' => 'combo-boolean',
 	'namespace' => 'phpthumbof',
-	'area' => 'pThumb Cache',
+	'area' => 'Cache [pThumb]',
 ), '', true, true);
 
 return $systemSettings;

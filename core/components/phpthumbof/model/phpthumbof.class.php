@@ -32,7 +32,9 @@ class phpThumbOf {
 public $phpThumb;
 public $cacheWritable = TRUE;
 
-private $modx;
+protected $modx;
+protected $config;
+
 private $input;
 
 function __construct(modX &$modx, &$settings_cache, $options = array()) {
@@ -289,122 +291,5 @@ public function createThumbnail($src, $options) {
 	}
 }
 
-
-/*
- *  Clean up the phpThumbOf cache directory
- *  Used by phpThumbOfCacheManager
- *  Adapted from phpThumb ( http://phpthumb.sourceforge.net/ )
- */
-public function cleanCache($subdir = '') {
-	if (!isset($this->config['cache_maxage'])) {
-		$this->config['cache_maxage'] = $this->modx->getOption('phpthumb_cache_maxage', NULL, 30) * 86400;
-		$this->config['cache_maxsize'] = $this->modx->getOption('phpthumb_cache_maxsize', NULL, 100) * 1048576;
-		$this->config['cache_maxfiles'] = (int) $this->modx->getOption('phpthumb_cache_maxfiles', NULL, 10000);
-		$this->modx->log(modX::LOG_LEVEL_INFO, ":: Max Age: {$this->config['cache_maxage']} seconds || Max Size: {$this->config['cache_maxsize']} bytes || Max Files: {$this->config['cache_maxfiles']}");
-	}
-	$cachePath = $this->config['cachePath'] . trim($subdir, '/');
-
-	if (!($this->config['cache_maxage'] || $this->config['cache_maxsize'] || $this->config['cache_maxfiles'])) {
-		return;
-	}
-
-	$DeletedKeys = array();
-	$AllFilesInCacheDirectory = $subdir ? glob($cachePath . '/*.*') : glob($cachePath . '/*.{jp*g, png, gif}', GLOB_BRACE);
-	if (!$AllFilesInCacheDirectory) {
-		return;
-	}
-	$indexhtml = array_search($cachePath . '/index.html', $AllFilesInCacheDirectory, TRUE);
-	unset($AllFilesInCacheDirectory[$indexhtml]);
-
-	$totalimages = count($AllFilesInCacheDirectory);
-	$this->modx->log(modX::LOG_LEVEL_INFO, ":: $totalimages image" . ($totalimages !== 1 ? 's':'') . ' in the cache');
-
-	$CacheDirOldFilesAge  = array();
-	$CacheDirOldFilesSize = array();
-	foreach ($AllFilesInCacheDirectory as $fullfilename) {
-		$CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename);
-		if (!$CacheDirOldFilesAge[$fullfilename]) {
-			$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);
-		}
-		$CacheDirOldFilesSize[$fullfilename] = @filesize($fullfilename);
-	}
-	$DeletedKeys['zerobyte'] = array();
-	foreach ($CacheDirOldFilesSize as $fullfilename => $filesize) {
-		// purge all zero-size files more than an hour old (to prevent trying to delete just-created and/or in-use files)
-		$cutofftime = time() - 3600;
-		if (!$filesize && $CacheDirOldFilesAge[$fullfilename] < $cutofftime) {
-			if (@unlink($fullfilename)) {
-				$DeletedKeys['zerobyte'][] = $fullfilename;
-				unset($CacheDirOldFilesSize[$fullfilename]);
-				unset($CacheDirOldFilesAge[$fullfilename]);
-			}
-		}
-	}
-	$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . count($DeletedKeys['zerobyte']) . ' zero-byte images');
-	asort($CacheDirOldFilesAge);
-
-	if ($this->config['cache_maxfiles']) {
-		$TotalCachedFiles = count($CacheDirOldFilesAge);
-		$DeletedKeys['maxfiles'] = array();
-		foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-			if ($TotalCachedFiles > $this->config['cache_maxfiles']) {
-				if (@unlink($fullfilename)) {
-					--$TotalCachedFiles;
-					$DeletedKeys['maxfiles'][] = $fullfilename;
-					unset($CacheDirOldFilesAge[$fullfilename]);
-					unset($CacheDirOldFilesSize[$fullfilename]);
-				}
-			}
-			else {  // there are few enough files to keep the rest
-				break;
-			}
-		}
-		$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . count($DeletedKeys['maxfiles']) . " images based on (cache_maxfiles={$this->config['cache_maxfiles']})");
-	}
-
-	if ($this->config['cache_maxage']) {
-		$mindate = time() - $this->config['cache_maxage'];
-		$DeletedKeys['maxage'] = array();
-		foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-			if ($filedate) {
-				if ($filedate < $mindate) {
-					if (@unlink($fullfilename)) {
-						$DeletedKeys['maxage'][] = $fullfilename;
-						unset($CacheDirOldFilesAge[$fullfilename]);
-						unset($CacheDirOldFilesSize[$fullfilename]);
-					}
-				}
-				else {  // the rest of the files are new enough to keep
-					break;
-				}
-			}
-		}
-		$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . count($DeletedKeys['maxage']) . ' images based on (cache_maxage=' . $this->config['cache_maxage'] / 86400 . ' days)');
-	}
-
-	if ($this->config['cache_maxsize']) {
-		$TotalCachedFileSize = array_sum($CacheDirOldFilesSize);
-		$DeletedKeys['maxsize'] = array();
-		foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-			if ($TotalCachedFileSize > $this->config['cache_maxsize']) {
-				if (@unlink($fullfilename)) {
-					$TotalCachedFileSize -= $CacheDirOldFilesSize[$fullfilename];
-					$DeletedKeys['maxsize'][] = $fullfilename;
-					unset($CacheDirOldFilesAge[$fullfilename]);
-					unset($CacheDirOldFilesSize[$fullfilename]);
-				}
-			}
-			else {  // the total filesizes are small enough to keep the rest of the files
-				break;
-			}
-		}
-		$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . count($DeletedKeys['maxsize']) . ' images based on (cache_maxsize=' . $this->config['cache_maxsize'] / 1048576 . ' MB)');	}
-
-	$totalpurged = 0;
-	foreach ($DeletedKeys as $key => $value) {
-		$totalpurged += count($value);
-	}
-	$this->modx->log(modX::LOG_LEVEL_INFO, ":: Purged $totalpurged images out of $totalimages");
-}
 
 }

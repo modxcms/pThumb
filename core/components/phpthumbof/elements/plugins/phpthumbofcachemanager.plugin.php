@@ -1,13 +1,11 @@
 <?php
-/**
+/*
+ * Handles cache cleanup
  * pThumb
  * Copyright 2013 Jason Grant
  *
  * Please see the GitHub page for documentation or to report bugs:
  * https://github.com/oo12/phpThumbOf
- *
- * Forked from phpThumbOf 1.4.0
- * Copyright 2009-2012 by Shaun McCormick <shaun@modx.com>
  *
  * pThumb is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,29 +19,14 @@
  * You should have received a copy of the GNU General Public License along with
  * phpThumbOf; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * @package phpthumbof
  */
-/**
- * Handles cache management for phpthumbof filter
- *
- * @var modX $modx
- *
- * @package phpthumbof
- */
-
 
 if ($modx->event->name === 'OnSiteRefresh') {
-	if (!$modx->loadClass('phpThumbOf', MODX_CORE_PATH . 'components/phpthumbof/model/', true, true)) {
-		$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Could not load phpThumbOf class.');
+	if (!$modx->loadClass('pThumbCacheCleaner', MODX_CORE_PATH . 'components/phpthumbof/model/', true, true)) {
+		$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Could not load pThumbCacheCleaner class.');
 		return;
 	}
 	static $pt_settings = array();
-	$phpThumbOf = new phpThumbOf($modx, $pt_settings);
-	if ($phpThumbOf->cacheWritable) {
-		$modx->log(modX::LOG_LEVEL_INFO, 'phpThumbOfCacheManager: Cleaning phpThumbOf cache...');
-		$phpThumbOf->cleanCache();
-		$modx->log(modX::LOG_LEVEL_INFO, 'phpThumbOfCacheManager: Cleaning phpThumbOf remote images cache...');
-		$phpThumbOf->cleanCache('remote-images');
-	}
+	$pThumb = new pThumbCacheCleaner($modx, $pt_settings);
+	$pThumb->cleanCache();
 }
