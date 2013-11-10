@@ -15,7 +15,7 @@ $components = array(
 	'packageName' => 'pThumb',  /* No spaces, no dashes */
 	'packageNameLower' => 'phpthumbof',
 	'packageDescription' => 'A better phpThumbOf',
-	'version' => '2.1.0',
+	'version' => '2.2.0',
 	'release' => 'pl',
 	'author' => 'Jason Grant',
 	'email' => '',
@@ -55,49 +55,13 @@ $components = array(
 	 * their namespace to the lowercase package name of your extra */
 
 	'newSystemSettings' => array(
-		'pthumb_system_setting1' => array(
-			'key' => 'phpthumbof.cache_path',
-			'value' => '',
-			'xtype' => 'textfield',
-			'namespace' => 'phpthumbof',
-			'area' => 'paths',
-		),
-		'pthumb_system_setting4' => array(
-			'key' => 'phpthumbof.postfix_property_hash',
-			'value' => true,
-			'xtype' => 'combo-boolean',
-			'namespace' => 'phpthumbof',
-			'area' => 'general',
-		),
-		'pthumb_system_setting5' => array(
-			'key' => 'phpthumbof.check_mod_time',
-			'value' => true,
-			'xtype' => 'combo-boolean',
-			'namespace' => 'phpthumbof',
-			'area' => 'general',
-		),
-
-		'pthumb_system_setting6' => array(
-			'key' => 'phpthumbof.fix_dup_subdir',
-			'value' => true,
-			'xtype' => 'combo-boolean',
-			'namespace' => 'phpthumbof',
-			'area' => 'general',
-		),
-		'pthumb_system_setting7' => array(
-			'key' => 'phpthumbof.jpeg_quality',
-			'value' => '75',
-			'xtype' => 'textfield',
-			'namespace' => 'phpthumbof',
-			'area' => 'general',
-		),
-		'pthumb_system_setting8' => array(
-			'key' => 'phpthumbof.use_resizer',
-			'value' => false,
-			'xtype' => 'combo-boolean',
-			'namespace' => 'phpthumbof',
-			'area' => 'Resizer',
-		),
+		// 'pthumb_system_setting1' => array(
+		// 	'key' => 'phpthumbof.cache_path',
+		// 	'value' => '',
+		// 	'xtype' => 'textfield',
+		// 	'namespace' => 'phpthumbof',
+		// 	'area' => 'paths',
+		// ),
 	),
 
 	/* ************************ NEW SYSTEM EVENTS ************************* */

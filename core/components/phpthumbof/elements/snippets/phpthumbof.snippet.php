@@ -58,6 +58,6 @@ if (!$phpThumbOf->cacheWritable) {
 
 $thumbnail = $phpThumbOf->createThumbnail($input, $options);
 
-$debug && $thumbnail !== $input &&   $phpThumbOf->debugmsg('', TRUE);
+$debug && $thumbnail !== $input &&   $phpThumbOf->debugmsg(':: Processed ::', TRUE);
 
 return $thumbnail;

@@ -72,6 +72,7 @@ public function cleanCache() {
 
 	if (!$config['clean_level'] || $config['clean_level'] == 1 && !($config['cache_maxage'] || $config['cache_maxsize'] || $config['cache_maxfiles'])) {
 		$this->modx->log(modX::LOG_LEVEL_INFO, '::  Skipping cache cleanup based on settings');
+		$this->modx->log(modX::LOG_LEVEL_INFO, '');
 		return;  // that was easy.
 	}
 	$cachepath = array();  // gather up cache paths

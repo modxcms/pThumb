@@ -35,16 +35,16 @@ $_lang['setting_phpthumbof.cache_path'] = 'Override Cache Path';
 $_lang['setting_phpthumbof.cache_path_desc'] = '<strong>phpThumbOf cache only</strong><br />Optional. You may set an absolute path here to override the path for the cache.';
 
 $_lang['setting_phpthumbof.postfix_property_hash'] = 'Post-fix Properties Hash to Name';
-$_lang['setting_phpthumbof.postfix_property_hash_desc'] = '<strong>phpThumbOf cache only</strong><br /><strong>Yes</strong>: add a hash to the filename of the thumbnail to prevent collisions with different versions of the same image or others with the same name.<br /><strong>No</strong>: Don’t add a hash. You probably don’t want this if your site has more than a few images.';
+$_lang['setting_phpthumbof.postfix_property_hash_desc'] = '<strong>phpThumbOf cache only</strong><br /><strong>Yes</strong>: add a hash to the thumbnail’s filename to prevent collisions with different versions of the same image or others with the same name.<br /><strong>No</strong>: don’t add a hash. You probably don’t want this, especially if your site has more than a few images.';
 
 $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
-$_lang['setting_phpthumbof.check_mod_time_desc'] = '<strong>Both cache systems</strong><br />Check file mod time and update the cached version if the original image has changed.<br /><strong>Default:</strong> No';
+$_lang['setting_phpthumbof.check_mod_time_desc'] = '<strong>Both cache systems</strong><br />Check file mod time and update the cached version if the original image has changed. Note that changing this setting will cause all thumbnails to be regenerated on access.<br /><strong>Default:</strong> No';
 
 $_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
-$_lang['setting_phpthumbof.cache_url_desc'] = 'Add an absolute URL here to override MODX_BASE_URL for generated images.';
+$_lang['setting_phpthumbof.cache_url_desc'] = 'Add an absolute URL here to be used instead of MODX_BASE_URL for generated image URLs. Sometimes useful when using contexts and subdomains.';
 
-$_lang['setting_pthumb.global_options'] = 'Global Options';
-$_lang['setting_pthumb.global_options_desc'] = 'An string of default options for image resizing. Ex: q=60&zc=C';
+$_lang['setting_pthumb.global_defaults'] = 'Global Default Options';
+$_lang['setting_pthumb.global_defaults_desc'] = 'An string of default options for image resizing. Ex: q=60&zc=C';
 
 $_lang['setting_phpthumbof.use_resizer'] = 'Use Resizer';
 $_lang['setting_phpthumbof.use_resizer_desc'] = 'Use Resizer instead of phpThumb for image sizing and cropping.<br /><strong>Requires PHP 5.3.2 or higher</strong><br />See the <a href="https://github.com/oo12/Resizer" target="_blank">Resizer documentation</a> for more info.<br /><strong>Default:</strong> No';

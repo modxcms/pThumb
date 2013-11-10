@@ -33,7 +33,7 @@ if ($object->xpdo) {
 		case xPDOTransport::ACTION_UPGRADE:
 			$jpegQuality = $modx->getOption('phpthumbof.jpeg_quality', null, false);
 			if ($jpegQuality) {  // move an existing jpeg quality setting into the new global options
-				$setting = $modx->getObject('modSystemSetting', 'pthumb.global_options');
+				$setting = $modx->getObject('modSystemSetting', 'pthumb.global_defaults');
 				$setting->set('value', "q=$jpegQuality");
 				$setting->save();
 			}

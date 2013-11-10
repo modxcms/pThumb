@@ -39,7 +39,7 @@ $snippets[2]->fromArray(array (
 	'id' => 2,
 	'property_preprocess' => false,
 	'name' => 'pthumb',
-	'description' => "Identical to phpthumbof. Use whichever name you like best.\nDocumentation: https://github.com/oo12/phpThumbOf",
+	'description' => "Identical to phpthumbof. Better for future compatibility.\nDocumentation: https://github.com/oo12/phpThumbOf",
 ), '', true, true);
 $snippets[2]->setContent(file_get_contents($sources['source_core'] . '/elements/snippets/phpthumbof.snippet.php'));
 

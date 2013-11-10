@@ -38,7 +38,7 @@ $systemSettings[$ssIdx++]->fromArray(array (
 
 $systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
 $systemSettings[$ssIdx++]->fromArray(array (
-	'key' => 'pthumb.global_options',
+	'key' => 'pthumb.global_defaults',
 	'value' => '',
 	'xtype' => 'textfield',
 	'namespace' => 'phpthumbof',

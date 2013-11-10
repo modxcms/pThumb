@@ -21,12 +21,8 @@
  * You should have received a copy of the GNU General Public License along with
  * phpThumbOf; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * @package phpthumbof
  */
-/**
- * @package phpThumbOf
- */
+
 class phpThumbOf {
 
 public $phpThumb;
@@ -41,16 +37,16 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 	$this->modx =& $modx;
 	$this->config =& $settings_cache;
 	if (empty($this->config)) {  // first time through, get and store all the settings
-		$this->config['assetsPath'] = $modx->getOption('assets_path');
-		if ( $this->config['use_ptcache'] = $modx->getOption('pthumb.use_ptcache', $options, TRUE) ) {
-			$this->config['cachePath'] = MODX_BASE_PATH . $modx->getOption('pthumb.ptcache_location', $options, 'assets/image-cache', TRUE);
-			$this->config['imagesBasedir'] = trim($modx->getOption('pthumb.ptcache_images_basedir', $options, 'assets'), '/') . '/';
+		$this->config['assetsPath'] = $modx->getOption('assets_path', null, MODX_ASSETS_PATH);
+		if ( $this->config['use_ptcache'] = $modx->getOption('pthumb.use_ptcache', null, TRUE) ) {
+			$this->config['cachePath'] = MODX_BASE_PATH . $modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
+			$this->config['imagesBasedir'] = trim($modx->getOption('pthumb.ptcache_images_basedir', null, 'assets'), '/') . '/';
 			$this->config['imagesBasedirLen'] = strlen($this->config['imagesBasedir']);
 		}
 		else {
-			$this->config['cachePath'] = $modx->getOption('phpthumbof.cache_path', $options, "{$this->config['assetsPath']}components/phpthumbof/cache", TRUE);
+			$this->config['cachePath'] = $modx->getOption('phpthumbof.cache_path', null, "{$this->config['assetsPath']}components/phpthumbof/cache", TRUE);
 			$this->config['cachePath'] = str_replace(array('[[+assets_path]]', '[[+base_path]]'), array($this->config['assetsPath'], MODX_BASE_PATH), $this->config['cachePath']);
-			$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', $options, TRUE);
+			$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', null, TRUE);
 		}
 		$this->config['cachePath'] = rtrim(str_replace('//', '/', $this->config['cachePath']), '/') . '/';  // just in case
 		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
@@ -60,21 +56,22 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 				return;
 			}
 		}
-		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', $options, MODX_BASE_URL), '/');
+		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, MODX_BASE_URL), '/');
 		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
 		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
 		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed
-		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', $options, FALSE);
-		$this->config['newFilePermissions'] = octdec($modx->getOption('new_file_permissions', $options, '0664'));
-		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', $options, 5);  // in seconds. For fetching remote images
-		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', $options, FALSE);
-		parse_str($modx->getOption('pthumb.global_options', null, ''), $this->config['globalOptions']);
+		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', null, FALSE);
+		$this->config['newFilePermissions'] = octdec($modx->getOption('new_file_permissions', null, '0664'));
+		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', null, 5);  // in seconds. For fetching remote images
+		parse_str($modx->getOption('pthumb.global_defaults', null, ''), $this->config['globalDefaults']);
+		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', null, FALSE);
 	}
 	// these two can't be cached
 	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
 	$this->config['useResizer'] = isset($options['useResizer']) ? $options['useResizer'] : $this->config['useResizerGlobal'];
 }
+
 
 /*
  *  Write current resource id, image filename and $msg to the MODX error log.
@@ -91,6 +88,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
 	}
 	$this->modx->log(modX::LOG_LEVEL_ERROR, $logmsg);
 }
+
 
 /*
  *  Create a thumnail from $src with $options
@@ -145,14 +143,14 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else {  // it's a local file
-		if (file_exists($src)) {  // if we've already got an existing file, keep going
+		if (is_readable($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
 		else {  // otherwise prepend basePath and try again
 			$file = MODX_BASE_PATH . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
 			$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice
-			if (!file_exists($file)) {
-				$this->debugmsg("File not found: $file  *** Skipping ***");
+			if (!is_readable($file)) {
+				$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
 				return $src;
 			}
 		}
@@ -187,7 +185,7 @@ public function createThumbnail($src, $options) {
 		$ext = strtolower($inputParts['extension']);
 		$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
 	}
-	$ptOptions = array_merge($this->config['globalOptions'], $ptOptions);
+	$ptOptions = array_merge($this->config['globalDefaults'], $ptOptions);
 
 
 	/* Determine cache filename. Set $cacheKey and $cacheUrl */
@@ -222,9 +220,9 @@ public function createThumbnail($src, $options) {
 		return $cacheUrl;
 	}
 
-	if ($this->config['use_ptcache'] && !file_exists($cacheFilenamePath)) {
+	if ($this->config['use_ptcache'] && !is_writable($cacheFilenamePath)) {
 		if ( !$this->modx->cacheManager->writeTree($cacheFilenamePath) ) {
-			$this->modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Cache path not writable: ' . $cacheFilenamePath);
+			$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: $cacheFilenamePath");
 			return $src;
 		}
 	}
