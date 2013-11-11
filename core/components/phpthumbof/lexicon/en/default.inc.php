@@ -41,7 +41,7 @@ $_lang['setting_phpthumbof.check_mod_time'] = 'Check file modification time';
 $_lang['setting_phpthumbof.check_mod_time_desc'] = '<strong>Both cache systems</strong><br />Check file mod time and update the cached version if the original image has changed. Note that changing this setting will cause all thumbnails to be regenerated on access.<br /><strong>Default:</strong> No';
 
 $_lang['setting_phpthumbof.cache_url'] = 'Override Cache URL';
-$_lang['setting_phpthumbof.cache_url_desc'] = 'Add an absolute URL here to be used instead of MODX_BASE_URL for generated image URLs. Sometimes useful when using contexts and subdomains.';
+$_lang['setting_phpthumbof.cache_url_desc'] = 'An absolute URL to be prepended to generated image URLs. Can be useful when using contexts and subdomains. Ex: http://subdomain.site.com/';
 
 $_lang['setting_pthumb.global_defaults'] = 'Global Default Options';
 $_lang['setting_pthumb.global_defaults_desc'] = 'An string of default options for image resizing. Ex: q=60&zc=C';

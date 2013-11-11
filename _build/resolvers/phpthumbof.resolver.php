@@ -31,12 +31,33 @@ if ($object->xpdo) {
 	switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 		case xPDOTransport::ACTION_INSTALL:
 		case xPDOTransport::ACTION_UPGRADE:
+			// move an existing non-default jpeg quality setting into the new global options
 			$jpegQuality = $modx->getOption('phpthumbof.jpeg_quality', null, false);
-			if ($jpegQuality) {  // move an existing jpeg quality setting into the new global options
+			if ($jpegQuality && $jpegQuality != '75') {
 				$setting = $modx->getObject('modSystemSetting', 'pthumb.global_defaults');
 				$setting->set('value', "q=$jpegQuality");
 				$setting->save();
 			}
+
+			// Update the area on existing settings from previous versions
+			$convertarea = array(
+				'phpthumbof.check_mod_time' => 'Cache [common]',
+				'pthumb.ptcache_images_basedir' => 'Cache [pThumb]',
+				'pthumb.ptcache_location' => 'Cache [pThumb]',
+				'pthumb.use_ptcache' => 'Cache [pThumb]',
+				'pthumb.use_ptcache' => 'Cache [pThumb]',
+				'phpthumbof.cache_path' => 'Cache [phpThumbOf]',
+				'phpthumbof.postfix_property_hash' => 'Cache [phpThumbOf]',
+				'phpthumbof.cache_url' => 'Cache [common]'
+			);
+			foreach ($convertarea as $setting => $area) {
+				$setting = $modx->getObject('modSystemSetting', $setting);
+				if ($setting && $setting->get('area') !== $area) {
+					$setting->set('area', $area);
+					$setting->save();
+				}
+			}
+
 			// remove some old settings on upgrade
 			$oldSettings = array('phpthumbof.graphics_library', 'phpthumbof.fix_dup_subdir', 'phpthumbof.hash_thumbnail_names', 'phpthumbof.jpeg_quality');
 			foreach ($oldSettings as $key) {

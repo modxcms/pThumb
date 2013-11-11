@@ -39,7 +39,7 @@ pThumb adds the following system settings:
 
 * __Use pThumb Cache__: Controls which cache system to use: the ”classic” phpThumbOf cache or the new pThumb cache which supports subdirectories and uses shorter hashes.  See the [section below](#pthumb-cache) for more on this. **Default**: No
 
-* __Clean Level__: Specifies what the cache manager plugin should do on site refresh (site cache clear) events. The plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.  Possible values — **0**: (default) Do nothing. &nbsp; **1**: Clean the caches separately based on the “Max Cache *” system settings (core > phpThumb). &nbsp; **2**: Delete all cached images. &nbsp; One tip for option **1**: changing one of the “Max Cache *” settings to 0 will disable cache cleaning for that parameter.
+* __Clean Level__: Specifies what the cache manager plugin should do on site refresh (site cache clear) events. The plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images. Possible values — **0**: (default) Do nothing. || **1**: Clean the caches separately based on the “Max Cache \*” system settings (core > phpThumb). || **2**: Delete all cached images. || One tip for option **1**: changing one of the “Max Cache \*” settings to 0 will disable cache cleaning for that parameter.
 
 and two properties to the phpthumbof/pthumb snippets:
 

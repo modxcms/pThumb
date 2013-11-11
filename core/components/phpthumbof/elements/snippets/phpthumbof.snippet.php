@@ -22,7 +22,6 @@
  * phpThumbOf; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @package phpthumbof
  */
 /**
  *
@@ -31,14 +30,13 @@
  * @var string $input
  * @var string|array $options
  *
- * @package phpthumbof
  */
 
 if (empty($input)) {  // Exit quietly if no file name given
 	return;
 }
 
-$scriptProperties['debug'] = isset($debug) ? $debug : FALSE;
+$scriptProperties['debug'] = isset($debug) ? $debug : false;
 
 
 static $pt_settings = array();
