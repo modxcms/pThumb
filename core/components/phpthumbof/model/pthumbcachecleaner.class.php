@@ -97,7 +97,9 @@ public function cleanCache() {
 	}
 	foreach (array('phpThumbOf', 'Remote Images') as $dir) {
 		if ($cachepath[$dir]) {
-			$cachefiles[$dir] = glob("{$cachepath[$dir]}/*.{jp*g, png, gif}", GLOB_BRACE) ? : array();  // empty array if glob didn't find anything
+			if ( ! $cachefiles[$dir] = glob("{$cachepath[$dir]}/*.{jp*g, png, gif}", GLOB_BRACE)) {
+				$cachefiles[$dir] = array();  // empty array if glob didn't find anything
+			}
 		}
 	}
 
@@ -107,7 +109,9 @@ public function cleanCache() {
 		$CacheDirOldFilesAge  = array();
 		$CacheDirOldFilesSize = array();
 		foreach ($fileset as $fullfilename) {  // get accessed (or modified) time and size for each file
-			$CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename) ? : @filemtime($fullfilename);
+			if ( ! $CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename) ) {
+				$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);
+			}
 			$CacheDirOldFilesSize[$fullfilename] = @filesize($fullfilename);
 		}
 
