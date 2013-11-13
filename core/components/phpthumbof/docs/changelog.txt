@@ -1,6 +1,12 @@
 pThumb
 ======
 
+2.2.1-pl [13.11.2013]
+---------------------
+
+- [#10] Fix an incompatibility with the cache manager and PHP < 5.3
+
+
 2.2.0-pl [10.11.2013]
 ---------------------
 

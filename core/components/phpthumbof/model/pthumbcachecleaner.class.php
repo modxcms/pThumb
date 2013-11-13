@@ -109,8 +109,8 @@ public function cleanCache() {
 		$CacheDirOldFilesAge  = array();
 		$CacheDirOldFilesSize = array();
 		foreach ($fileset as $fullfilename) {  // get accessed (or modified) time and size for each file
-			if ( ! $CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename) ) {
-				$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);
+			if ( ! $CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename)) {
+				$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);  // fall back to filemtime if fileatime doesn't work
 			}
 			$CacheDirOldFilesSize[$fullfilename] = @filesize($fullfilename);
 		}
