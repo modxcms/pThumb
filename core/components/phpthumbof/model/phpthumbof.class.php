@@ -38,7 +38,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 	$this->config =& $settings_cache;
 	if (empty($this->config)) {  // first time through, get and store all the settings
 		$this->config['assetsPath'] = $modx->getOption('assets_path', null, MODX_ASSETS_PATH);
-		if ( $this->config['use_ptcache'] = $modx->getOption('pthumb.use_ptcache', null, TRUE) ) {
+		if ( $this->config['use_ptcache'] == $modx->getOption('pthumb.use_ptcache', null, TRUE) ) {
 			$this->config['cachePath'] = MODX_BASE_PATH . $modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
 			$this->config['imagesBasedir'] = trim($modx->getOption('pthumb.ptcache_images_basedir', null, 'assets'), '/') . '/';
 			$this->config['imagesBasedirLen'] = strlen($this->config['imagesBasedir']);
