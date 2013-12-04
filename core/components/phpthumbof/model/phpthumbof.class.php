@@ -256,7 +256,7 @@ public function createThumbnail($src, $options) {
 			$this->phpThumb->$param = $value;
 		}
 		foreach ($ptOptions as $param => $value) {  // add options passed to the snippet
-			$this->phpThumb->$param = $value;
+			$this->phpThumb->setParameter($param, $value);
 		}
 		// try to avert problems when $_SERVER['DOCUMENT_ROOT'] is different than MODX_BASE_PATH
 		if (!$this->phpThumb->config_document_root) {
