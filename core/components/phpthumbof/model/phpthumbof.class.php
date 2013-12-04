@@ -49,21 +49,16 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 			$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', null, TRUE);
 		}
 		$this->config['cachePath'] = rtrim(str_replace('//', '/', $this->config['cachePath']), '/') . '/';  // just in case
-		if (!is_writable($this->config['cachePath'])) {  // check that the cache directory is writable
-			if ( !$modx->cacheManager->writeTree($this->config['cachePath']) ) {
-				$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: {$this->config['cachePath']}");
-				$this->cacheWritable = FALSE;
-				return;
-			}
+		if (!is_writable($this->config['cachePath']) && !$modx->cacheManager->writeTree($this->config['cachePath'])) {  // check cache writability
+			$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: {$this->config['cachePath']}");
+			$this->cacheWritable = FALSE;
+			return;
 		}
 		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, MODX_BASE_URL), '/');
 		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
-		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
-		$this->config['checkRemoteCache'] = TRUE;  // check writability first time it's needed
+		$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim(MODX_BASE_URL, '/');  // used to weed out duplicate subdirs
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', null, FALSE);
-		$this->config['newFilePermissions'] = octdec($modx->getOption('new_file_permissions', null, '0664'));
-		$this->config['remoteTimeout'] = (int) $modx->getOption('phpthumbof.remote_timeout', null, 5);  // in seconds. For fetching remote images
 		parse_str($modx->getOption('pthumb.global_defaults', null, ''), $this->config['globalDefaults']);
 		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', null, FALSE);
 	}
@@ -104,14 +99,12 @@ public function createThumbnail($src, $options) {
 	if ($isRemote) {  // if we've got a real remote image to work with
 		$file = $this->config['remoteImagesCachePath'] . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
-			if ($this->config['checkRemoteCache']) {  // first time through check remote images cache exists and is writable
-				if (!is_writable($this->config['remoteImagesCachePath'])) {
-					if ( !$this->modx->cacheManager->writeTree($this->config['remoteImagesCachePath']) ) {
-						$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: {$this->config['remoteImagesCachePath']}");
-						return $src;
-					}
+			if (!isset($this->config['remoteTimeout'])) {  // first time through check remote images cache exists and is writable
+				if (!is_writable($this->config['remoteImagesCachePath']) && !$this->modx->cacheManager->writeTree($this->config['remoteImagesCachePath'])) {
+					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: {$this->config['remoteImagesCachePath']}");
+					return $src;
 				}
-				$this->config['checkRemoteCache'] = FALSE;
+				$this->config['remoteTimeout'] = (int) $this->modx->getOption('phpthumbof.remote_timeout', null, 5);  // in seconds. For fetching remote images
 			}
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
@@ -280,6 +273,9 @@ public function createThumbnail($src, $options) {
 	}
 
 	if ($writeSuccess) {  // write it to the cache file
+		if (!isset($this->config['newFilePermissions'])) {
+			$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
+		}
 		@chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
 		return $cacheUrl;
 	}
