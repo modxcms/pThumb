@@ -1,11 +1,12 @@
 pThumb
 ======
 
-2.2.2-pl [05.12.2013]
+2.2.2-pl2 [06.12.2013]
 ---------------------
 
 - [#13] Correct for any inaccurate paths caused by context settings
 - [#14] Fix handling of phpThumb fltr parameter
+- [#16] Fix handling of paths when MODX is running from a subdirectory
 
 
 2.2.1-pl [13.11.2013]
