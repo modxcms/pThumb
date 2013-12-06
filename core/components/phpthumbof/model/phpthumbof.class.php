@@ -54,7 +54,7 @@ function __construct(modX &$modx, &$settings_cache, $options = array()) {
 			$this->cacheWritable = FALSE;
 			return;
 		}
-		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, MODX_BASE_URL), '/');
+		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, MODX_BASE_URL, true), '/');
 		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', null, FALSE);
