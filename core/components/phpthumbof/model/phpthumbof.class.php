@@ -255,7 +255,7 @@ public function createThumbnail($src, $options) {
 			$this->config['modphpthumb']['config_ttf_directory'] = $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'model/phpthumb/fonts/';
 			$this->config['modphpthumb']['config_document_root'] = $this->modx->getOption('phpthumb_document_root', null, '');
 		}
-		$this->phpThumb = new phpthumb($this->modx);  // unfortunately we have to create a new object for each image!
+		$this->phpThumb = new phpthumb();  // unfortunately we have to create a new object for each image!
 		foreach ($this->config['modphpthumb'] as $param => $value) {  // add MODX system settings
 			$this->phpThumb->$param = $value;
 		}
@@ -274,6 +274,7 @@ public function createThumbnail($src, $options) {
 			return $src;
 		}
 		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
+		$this->phpThumb = null;
 	}
 
 	if ($writeSuccess) {  // write it to the cache file
