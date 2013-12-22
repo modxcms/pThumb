@@ -126,4 +126,20 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'area' => 'Cache [pThumb]',
 ), '', true, true);
 
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.s3_output',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Amazon S3',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.s3_headers',
+	'xtype' => 'textarea',
+	'namespace' => 'phpthumbof',
+	'area' => 'Amazon S3',
+), '', true, true);
+
 return $systemSettings;
