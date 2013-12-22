@@ -118,17 +118,26 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
 public function createThumbnail($src, $options) {
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
 	if ($isRemote && MODX_HTTP_HOST === strtolower($matches[1])) {  // if it's the same server we're running on
-		$isRemote = FALSE;  // then it's not really remote
+		$isRemote = false;  // then it's not really remote
 		$src = $matches[2];  // we just need the path and filename
 	}
 	if ($isRemote) {  // if we've got a real remote image to work with
-		$file = $this->config['remoteImagesCachePath'] . preg_replace('/[^\w\d\-_\.]/', '-', "{$matches[1]}-{$matches[2]}");  // generate a cache filename
+		$hashExtras = $matches[1];  // we'll put the remote site name into the hash later
+		$remoteUrl = explode('?', $matches[2]);  // break off any query string
+		$remoteUrl[0] = rawurldecode($remoteUrl[0]);  // just in case?
+		$inputParts = pathinfo($remoteUrl[0]);
+		$inputParts['dirname'] = $inputParts['dirname'] === '.' ? '' : "{$inputParts['dirname']}/";  // remove '.' if in top level dir
+		$remoteCacheName = $inputParts['filename'] . (isset($remoteUrl[1]) ? '.' . hash('crc32', $remoteUrl[1]) : '') . ".{$inputParts['extension']}";  // hash any query string to allow for cache busting
+		$remoteFilePath = "{$this->config['remoteImagesCachePath']}{$matches[1]}/{$inputParts['dirname']}";
+		$file = "$remoteFilePath$remoteCacheName";
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
-			if (!isset($this->config['remoteTimeout'])) {  // first time through check remote images cache exists and is writable
-				if (!is_writable($this->config['remoteImagesCachePath']) && !$this->modx->cacheManager->writeTree($this->config['remoteImagesCachePath'])) {
-					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: {$this->config['remoteImagesCachePath']}");
+			if (!is_writable($remoteFilePath)) {
+				if ( !$this->modx->cacheManager->writeTree($remoteFilePath) ) {
+					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: $remoteFilePath");
 					return $src;
 				}
+			}
+			if (!isset($this->config['remoteTimeout'])) {  // first time through set up any additional remote images settings
 				$this->config['remoteTimeout'] = (int) $this->modx->getOption('phpthumbof.remote_timeout', null, 5);  // in seconds. For fetching remote images
 			}
 			$fh = fopen($file, 'wb');
@@ -140,7 +149,7 @@ public function createThumbnail($src, $options) {
 			if ($src[0] === '/') {  //cURL doesn't like protocol-relative URLs, so add http or https
 				$src = (empty($_SERVER['HTTPS']) ? 'http:' : 'https:') . $src;
 			}
-			$ch = curl_init($src);
+			$ch = curl_init(str_replace(' ', '%20', $src));
 			curl_setopt_array($ch, array(
 				CURLOPT_TIMEOUT	=> $this->config['remoteTimeout'],
 				CURLOPT_FILE => $fh,
@@ -203,7 +212,10 @@ public function createThumbnail($src, $options) {
 			}
 		}
 	}
-	$inputParts = pathinfo($this->input);
+	if (!$isRemote) {  // remote stuff has already been set up above
+		$inputParts = pathinfo($this->input);
+		$hashExtras = '';
+	}
 	if (empty($ptOptions['f'])) {  // if filetype isn't already set, set it based on extension
 		$ext = strtolower($inputParts['extension']);
 		$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
@@ -218,21 +230,26 @@ public function createThumbnail($src, $options) {
 	}
 	$cacheFilename = "{$inputParts['filename']}.";
 	if ($this->config['use_ptcache']) {
-		$inputParts['dirname'] .= '/';
-		$baseDirOffset = strpos($inputParts['dirname'], $this->config['imagesBasedir']);
-		if ($baseDirOffset === FALSE) {  // not coming from imagesBasedir, so throw it in the top level of the cache
-			$cacheFilenamePrefix = '';
+		if ($isRemote) {
+			$cacheFilenamePrefix = $inputParts['dirname'];
 		}
-		else {  // trim off everything before and including imagesBasedir
-			$cacheFilenamePrefix = substr($inputParts['dirname'], $baseDirOffset + $this->config['imagesBasedirLen']);
+		else {
+			$inputParts['dirname'] .= '/';
+			$baseDirOffset = strpos($inputParts['dirname'], $this->config['imagesBasedir']);
+			if ($baseDirOffset === false) {  // not coming from imagesBasedir, so throw it in the top level of the cache
+				$cacheFilenamePrefix = '';
+			}
+			else {  // trim off everything before and including imagesBasedir
+				$cacheFilenamePrefix = substr($inputParts['dirname'], $baseDirOffset + $this->config['imagesBasedirLen']);
+			}
 		}
-		$cacheFilename .= hash('crc32', $modflags . json_encode($ptOptions)) . '.';
 		$cacheFilenamePath = "{$this->config['cachePath']}$cacheFilenamePrefix";
+		$cacheFilename .= hash('crc32', $modflags . json_encode($ptOptions) . $hashExtras) . '.';
 	}
 	else {  // use classic phpThumbOf cache
 		$cacheFilenamePrefix = '';
 		if ($this->config['postfixPropertyHash']) {
-			$cacheFilename .= md5("$modflags{$inputParts['dirname']}" . json_encode($ptOptions)) . '.';
+			$cacheFilename .= md5("$modflags{$inputParts['dirname']}" . json_encode($ptOptions) . $hashExtras) . '.';
 		}
 	}
 	$cacheFilename .= $ptOptions['f'] === 'jpeg' ? 'jpg' : $ptOptions['f'];  // extension
