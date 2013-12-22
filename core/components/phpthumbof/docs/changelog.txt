@@ -1,6 +1,13 @@
 pThumb
 ======
 
+2.3.0-beta1 [22.12.2013]
+------------------------
+
+- [#3] Add Amazon S3 support
+- Improve naming for remote files
+
+
 2.2.2-pl2 [06.12.2013]
 ---------------------
 

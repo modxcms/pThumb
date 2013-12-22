@@ -1,4 +1,4 @@
-pThumb 2.2.1-pl
+pThumb 2.2.2-pl2
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -81,7 +81,7 @@ Note: Switching cache systems won't migrate your cached images from one cache to
 
 ### No Amazon S3
 
-Version 2.0 drops support for AWS. I don't use or know much about it and rather than release completely untested and possibly broken code, I took it out.  If you'd like it added back and are interested in helping, please get in touch.
+Version 2.2 doesn’t support S3, but 2.3 will.  If you’d like to test it, download the transport package, read the [instructions](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3), and be sure to report any bugs or other thoughts [here](https://github.com/oo12/phpThumbOf/issues/3).
 
 
 Changes from phpThumbOf 1.4.0

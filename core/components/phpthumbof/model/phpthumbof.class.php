@@ -281,14 +281,15 @@ public function createThumbnail($src, $options) {
 		return $cacheUrl;
 	}
 
-	if ($this->config['use_ptcache'] && !is_writable($cacheFilenamePath)) {
+	if ($this->config['use_ptcache'] && !is_writable($cacheFilenamePath)) {  // make sure pThumb cache location exists
 		if ( !$this->modx->cacheManager->writeTree($cacheFilenamePath) ) {
 			$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: $cacheFilenamePath");
 			return $src;
 		}
 	}
 
-	if ($this->config['useResizer']) {
+	/* Generate Thumbnail */
+	if ($this->config['useResizer']) {  // use Resizer
 		static $resizer_obj = array();
 		if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
 			if (!$this->modx->loadClass('Resizer', MODX_CORE_PATH . 'components/resizer/model/', true, true)) {
@@ -304,7 +305,7 @@ public function createThumbnail($src, $options) {
 		$this->phpThumb = $resizer_obj[0];
 		$writeSuccess = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
 	}
-	else {  //use phpThumb
+	else {  // use phpThumb
 		if (!class_exists('phpthumb', FALSE)) {
 			if (!$this->modx->loadClass('phpthumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
 				$this->debugmsg('Could not load phpthumb class.');
@@ -338,7 +339,6 @@ public function createThumbnail($src, $options) {
 			return $src;
 		}
 		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
-		$this->phpThumb = null;
 	}
 
 	if ($writeSuccess) {  // write it to the cache file
