@@ -81,7 +81,7 @@ Note: Switching cache systems won't migrate your cached images from one cache to
 
 ### No Amazon S3
 
-Version 2.2 doesn’t support S3, but 2.3 will.  If you’d like to test it, download the transport package, read the [instructions](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3), and be sure to report any bugs or other thoughts [here](https://github.com/oo12/phpThumbOf/issues/3).
+Version 2.2 doesn’t support S3, but 2.3 will.  If you’d like to test it, download the [transport package](https://github.com/oo12/phpThumbOf/releases/tag/v2.3.0-beta1), read the [instructions](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3), and be sure to report any bugs or other thoughts [here](https://github.com/oo12/phpThumbOf/issues/3).
 
 
 Changes from phpThumbOf 1.4.0
