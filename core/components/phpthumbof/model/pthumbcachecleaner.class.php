@@ -87,19 +87,18 @@ public function cleanCache() {
 	}
 
 	$cachefiles = array();  // gather up cache files
-	if ($cachepath['pThumb']) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
-		$dir = new RecursiveDirectoryIterator($cachepath['pThumb'], FilesystemIterator::SKIP_DOTS);
-		$filter = new FilenameFilter($dir, '/\.(?:jpe?g|png|gif)$/i');
-		$cachefiles['pThumb'] = array();
-		foreach(new RecursiveIteratorIterator($filter) as $file) {
-			$cachefiles['pThumb'][] = $file->getPathName();
+	foreach (array('pThumb', 'Remote Images') as $cachename) {
+		if ($cachepath[$cachename]) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
+			$filter = new FilenameFilter(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), '/\.(?:jpe?g|png|gif)$/i');
+			$cachefiles[$cachename] = array();
+			foreach(new RecursiveIteratorIterator($filter) as $file) {
+				$cachefiles[$cachename][] = $file->getPathName();
+			}
 		}
 	}
-	foreach (array('phpThumbOf', 'Remote Images') as $dir) {
-		if ($cachepath[$dir]) {
-			if ( ! $cachefiles[$dir] = glob("{$cachepath[$dir]}/*.{jp*g, png, gif}", GLOB_BRACE)) {
-				$cachefiles[$dir] = array();  // empty array if glob didn't find anything
-			}
+	if ($cachepath['phpThumbOf']) {
+		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g, png, gif}", GLOB_BRACE)) {
+			$cachefiles['phpThumbOf'] = array();  // empty array if glob didn't find anything
 		}
 	}
 
