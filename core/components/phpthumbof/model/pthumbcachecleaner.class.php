@@ -117,7 +117,7 @@ public function cleanCache() {
 
 		$this->modx->log(modX::LOG_LEVEL_INFO, ":: $cachename Cache: " . $this->pluralize($totalimages) . ' (' . round(array_sum($CacheDirOldFilesSize) / 1048576, 2) . ' MB)');
 
-		if ($config['clean_level'] == 2) {
+		if ($config['clean_level'] == 2) {  // simply delete all the files
 			$deleted = 0;
 			foreach ($fileset as $file) {
 				if (@unlink($file)) {
@@ -125,101 +125,114 @@ public function cleanCache() {
 				}
 			}
 			$this->modx->log(modX::LOG_LEVEL_INFO, ':: ' . $this->pluralize($deleted, 'file') . ' purged');
-			continue;
 		}
-
-		$madedeletions = false;
-		$DeletedKeys['zerobyte'] = 0;
-		foreach ($CacheDirOldFilesSize as $fullfilename => $filesize) {  // remove any 0-byte files
-			// but only if they're more than 10 min old (to prevent trying to delete just-created or in-use files)
-			$cutofftime = time() - 600;
-			if (!$filesize && $CacheDirOldFilesAge[$fullfilename] < $cutofftime) {
-				if (@unlink($fullfilename)) {
-					++$DeletedKeys['zerobyte'];
-					unset($CacheDirOldFilesSize[$fullfilename]);
-					unset($CacheDirOldFilesAge[$fullfilename]);
+		else {  // clean up based on system phpThumb settings
+			$madedeletions = false;
+			$DeletedKeys['zerobyte'] = 0;
+			foreach ($CacheDirOldFilesSize as $fullfilename => $filesize) {  // remove any 0-byte files
+				// but only if they're more than 10 min old (to prevent trying to delete just-created or in-use files)
+				$cutofftime = time() - 600;
+				if (!$filesize && $CacheDirOldFilesAge[$fullfilename] < $cutofftime) {
+					if (@unlink($fullfilename)) {
+						++$DeletedKeys['zerobyte'];
+						unset($CacheDirOldFilesSize[$fullfilename]);
+						unset($CacheDirOldFilesAge[$fullfilename]);
+					}
 				}
 			}
-		}
-		if ($DeletedKeys['zerobyte']) {
-			$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['zerobyte'], 'zero-byte image'));
-			$madedeletions = true;
-		}
+			if ($DeletedKeys['zerobyte']) {
+				$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['zerobyte'], 'zero-byte image'));
+				$madedeletions = true;
+			}
 
-		asort($CacheDirOldFilesAge);  // all deletions start with the least recently accesed (or oldest) files first
+			asort($CacheDirOldFilesAge);  // all deletions start with the least recently accesed (or oldest) files first
 
-		if ($config['cache_maxage']) {  // delete any files older that maxage
-			$mindate = time() - $config['cache_maxage'];
-			$DeletedKeys['maxage'] = 0;
-			foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-				if ($filedate) {
-					if ($filedate < $mindate) {
+			if ($config['cache_maxage']) {  // delete any files older that maxage
+				$mindate = time() - $config['cache_maxage'];
+				$DeletedKeys['maxage'] = 0;
+				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
+					if ($filedate) {
+						if ($filedate < $mindate) {
+							if (@unlink($fullfilename)) {
+								++$DeletedKeys['maxage'];
+								unset($CacheDirOldFilesAge[$fullfilename]);
+								unset($CacheDirOldFilesSize[$fullfilename]);
+							}
+						}
+						else {  // the rest of the files are new enough to keep
+							break;
+						}
+					}
+				}
+				if ($DeletedKeys['maxage']) {
+					$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxage']) . " based on (cache_maxage={$description['maxage']})");
+					$madedeletions = true;
+				}
+			}
+
+			if ($config['cache_maxfiles']) {  // delete any files in excess of maxfiles
+				$TotalCachedFiles = count($CacheDirOldFilesAge);
+				$DeletedKeys['maxfiles'] = 0;
+				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
+					if ($TotalCachedFiles > $config['cache_maxfiles']) {
 						if (@unlink($fullfilename)) {
-							++$DeletedKeys['maxage'];
+							--$TotalCachedFiles;
+							++$DeletedKeys['maxfiles'];
 							unset($CacheDirOldFilesAge[$fullfilename]);
 							unset($CacheDirOldFilesSize[$fullfilename]);
 						}
 					}
-					else {  // the rest of the files are new enough to keep
+					else {  // there are few enough files to keep the rest
 						break;
 					}
 				}
+				if ($DeletedKeys['maxfiles']) {
+					$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxfiles']) . " based on (cache_maxfiles={$config['cache_maxfiles']})");
+					$madedeletions = true;
+				}
 			}
-			if ($DeletedKeys['maxage']) {
-				$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxage']) . " based on (cache_maxage={$description['maxage']})");
-				$madedeletions = true;
-			}
-		}
 
-		if ($config['cache_maxfiles']) {  // delete any files in excess of maxfiles
-			$TotalCachedFiles = count($CacheDirOldFilesAge);
-			$DeletedKeys['maxfiles'] = 0;
-			foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-				if ($TotalCachedFiles > $config['cache_maxfiles']) {
-					if (@unlink($fullfilename)) {
-						--$TotalCachedFiles;
-						++$DeletedKeys['maxfiles'];
-						unset($CacheDirOldFilesAge[$fullfilename]);
-						unset($CacheDirOldFilesSize[$fullfilename]);
+			if ($config['cache_maxsize']) {  // delete files to get the total cache size under the maxsize limit
+				$TotalCachedFileSize = array_sum($CacheDirOldFilesSize);
+				$DeletedKeys['maxsize'] = 0;
+				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
+					if ($TotalCachedFileSize > $config['cache_maxsize']) {
+						if (@unlink($fullfilename)) {
+							$TotalCachedFileSize -= $CacheDirOldFilesSize[$fullfilename];
+							++$DeletedKeys['maxsize'];
+							unset($CacheDirOldFilesAge[$fullfilename]);
+							unset($CacheDirOldFilesSize[$fullfilename]);
+						}
+					}
+					else {  // the total filesizes are small enough to keep the rest of the files
+						break;
 					}
 				}
-				else {  // there are few enough files to keep the rest
-					break;
+				if ($DeletedKeys['maxsize']) {
+					$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxsize']) . " based on (cache_maxsize={$description['maxsize']})");
+					$madedeletions = true;
 				}
-			}
-			if ($DeletedKeys['maxfiles']) {
-				$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxfiles']) . " based on (cache_maxfiles={$config['cache_maxfiles']})");
-				$madedeletions = true;
 			}
 		}
 
-		if ($config['cache_maxsize']) {  // delete files to get the total cache size under the maxsize limit
-			$TotalCachedFileSize = array_sum($CacheDirOldFilesSize);
-			$DeletedKeys['maxsize'] = 0;
-			foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
-				if ($TotalCachedFileSize > $config['cache_maxsize']) {
-					if (@unlink($fullfilename)) {
-						$TotalCachedFileSize -= $CacheDirOldFilesSize[$fullfilename];
-						++$DeletedKeys['maxsize'];
-						unset($CacheDirOldFilesAge[$fullfilename]);
-						unset($CacheDirOldFilesSize[$fullfilename]);
-					}
+		$DeletedSubdirs = 0;
+		if ($cachename !== 'phpThumbOf' && $cachepath[$cachename]) {  // remove any empty subdirs in pThumb and Remote Images caches
+			$ritit = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+			foreach ($ritit as $dirname => $pathObj) {
+				if ($pathObj->isDir() && iterator_count($ritit->getSubIterator()->getChildren()) === 0) {
+					rmdir($dirname);
+					++$DeletedSubdirs;
 				}
-				else {  // the total filesizes are small enough to keep the rest of the files
-					break;
-				}
-			}
-			if ($DeletedKeys['maxsize']) {
-				$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($DeletedKeys['maxsize']) . " based on (cache_maxsize={$description['maxsize']})");
-				$madedeletions = true;
 			}
 		}
 
-		$totalpurged = 0;
-		foreach ($DeletedKeys as $value) {
-			$totalpurged += $value;
+		if ($config['clean_level'] != 2) {
+			$totalpurged = 0;
+			foreach ($DeletedKeys as $value) {
+				$totalpurged += $value;
+			}
+			$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($totalpurged) . ($DeletedSubdirs ? ', ' . $this->pluralize($DeletedSubdirs, 'empty subdir') : '') . ($madedeletions ? ' || New cache size: ' . $this->pluralize(count($CacheDirOldFilesSize)) . ' (' . round(array_sum($CacheDirOldFilesSize) / 1048576, 2) . ' MB)': ''));
 		}
-		$this->modx->log(modX::LOG_LEVEL_INFO, ':: Purged ' . $this->pluralize($totalpurged) . ($madedeletions ? ' || New cache size: ' . $this->pluralize(count($CacheDirOldFilesSize)) . ' (' . round(array_sum($CacheDirOldFilesSize) / 1048576, 2) . ' MB)': ''));
 	}
 	$this->modx->log(modX::LOG_LEVEL_INFO, '');
 }
