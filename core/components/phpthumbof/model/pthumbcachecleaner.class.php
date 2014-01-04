@@ -88,7 +88,7 @@ public function cleanCache() {
 
 	$cachefiles = array();  // gather up cache files
 	foreach (array('pThumb', 'Remote Images') as $cachename) {
-		if ($cachepath[$cachename]) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
+		if (is_writable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
 			$filter = new FilenameFilter(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), '/\.(?:jpe?g|png|gif)$/i');
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {
