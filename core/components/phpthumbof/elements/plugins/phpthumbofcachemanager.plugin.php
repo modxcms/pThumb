@@ -27,6 +27,6 @@ if ($modx->event->name === 'OnSiteRefresh') {
 		return;
 	}
 	static $pt_settings = array();
-	$pThumb = new pThumbCacheCleaner($modx, $pt_settings);
+	$pThumb = new pThumbCacheCleaner($modx, $pt_settings, array(), true);
 	$pThumb->cleanCache();
 }

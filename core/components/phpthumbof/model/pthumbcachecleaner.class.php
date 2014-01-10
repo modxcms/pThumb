@@ -50,6 +50,14 @@ private function pluralize($count, $thing = 'image') {
 	return $count == 1 ? "1 $thing" : "$count $thing" . 's';
 }
 
+private function rmfile($file, $isS3, $s3obj) {
+	if ($isS3) {
+		$response = $s3obj->driver->delete_object($s3obj->bucket, $file);
+		return $response->isOK();
+	}
+	else { return @unlink($file); }
+}
+
 
 /*
  *  Clean up the pThumb cache directories
@@ -88,7 +96,7 @@ public function cleanCache() {
 
 	$cachefiles = array();  // gather up cache files
 	foreach (array('pThumb', 'Remote Images') as $cachename) {
-		if (is_writable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
+		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
 			$filter = new FilenameFilter(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), '/\.(?:jpe?g|png|gif)$/i');
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {
@@ -101,27 +109,48 @@ public function cleanCache() {
 			$cachefiles['phpThumbOf'] = array();  // empty array if glob didn't find anything
 		}
 	}
+	$s3out = false;
+	if ($this->config['s3outputMS']) {
+		$s3out =& $this->config[$this->config['s3outKey']];
+		$cachefiles['S3'] = array_keys($this->config[$this->config['s3outKey'] . '_images']);
+	}
 
 	foreach ($cachefiles as $cachename => $fileset) {
+		$isS3 = $cachename === 'S3' ? true : false;
 		$totalimages = count($fileset);
 		$DeletedKeys = array();
 		$CacheDirOldFilesAge  = array();
 		$CacheDirOldFilesSize = array();
-		foreach ($fileset as $fullfilename) {  // get accessed (or modified) time and size for each file
-			if ( ! $CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename)) {
-				$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);  // fall back to filemtime if fileatime doesn't work
+		if ($isS3) {
+			foreach($this->config[$this->config['s3outKey'] . '_images'] as $k => $v) {
+				$CacheDirOldFilesAge[$k] = $v['mod'];
+				$CacheDirOldFilesSize[$k] = $v['size'];
 			}
-			$CacheDirOldFilesSize[$fullfilename] = @filesize($fullfilename);
 		}
-
+		else {
+			foreach ($fileset as $fullfilename) {  // get accessed (or modified) time and size for each file
+				if ( ! $CacheDirOldFilesAge[$fullfilename] = @fileatime($fullfilename)) {
+					$CacheDirOldFilesAge[$fullfilename] = @filemtime($fullfilename);  // fall back to filemtime if fileatime doesn't work
+				}
+				$CacheDirOldFilesSize[$fullfilename] = @filesize($fullfilename);
+			}
+		}
 
 		$this->modx->log(modX::LOG_LEVEL_INFO, ":: $cachename Cache: " . $this->pluralize($totalimages) . ' (' . round(array_sum($CacheDirOldFilesSize) / 1048576, 2) . ' MB)');
 
 		if ($config['clean_level'] == 2) {  // simply delete all the files
 			$deleted = 0;
-			foreach ($fileset as $file) {
-				if (@unlink($file)) {
-					++$deleted;
+			if ($isS3) {
+				$response = $s3out->driver->delete_all_objects($s3out->bucket, $this->cacheimgRegex);
+				if ($response) {
+					$deleted = $totalimages;
+				}
+			}
+			else {
+				foreach ($fileset as $file) {
+					if ($this->rmfile($fullfilename, $isS3, $s3out)) {
+						++$deleted;
+					}
 				}
 			}
 			$this->modx->log(modX::LOG_LEVEL_INFO, ':: ' . $this->pluralize($deleted, 'file') . ' purged');
@@ -133,7 +162,7 @@ public function cleanCache() {
 				// but only if they're more than 10 min old (to prevent trying to delete just-created or in-use files)
 				$cutofftime = time() - 600;
 				if (!$filesize && $CacheDirOldFilesAge[$fullfilename] < $cutofftime) {
-					if (@unlink($fullfilename)) {
+					if ($this->rmfile($fullfilename, $isS3, $s3out)) {
 						++$DeletedKeys['zerobyte'];
 						unset($CacheDirOldFilesSize[$fullfilename]);
 						unset($CacheDirOldFilesAge[$fullfilename]);
@@ -153,7 +182,7 @@ public function cleanCache() {
 				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
 					if ($filedate) {
 						if ($filedate < $mindate) {
-							if (@unlink($fullfilename)) {
+							if ($this->rmfile($fullfilename, $isS3, $s3out)) {
 								++$DeletedKeys['maxage'];
 								unset($CacheDirOldFilesAge[$fullfilename]);
 								unset($CacheDirOldFilesSize[$fullfilename]);
@@ -175,7 +204,7 @@ public function cleanCache() {
 				$DeletedKeys['maxfiles'] = 0;
 				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
 					if ($TotalCachedFiles > $config['cache_maxfiles']) {
-						if (@unlink($fullfilename)) {
+						if ($this->rmfile($fullfilename, $isS3, $s3out)) {
 							--$TotalCachedFiles;
 							++$DeletedKeys['maxfiles'];
 							unset($CacheDirOldFilesAge[$fullfilename]);
@@ -197,7 +226,7 @@ public function cleanCache() {
 				$DeletedKeys['maxsize'] = 0;
 				foreach ($CacheDirOldFilesAge as $fullfilename => $filedate) {
 					if ($TotalCachedFileSize > $config['cache_maxsize']) {
-						if (@unlink($fullfilename)) {
+						if ($this->rmfile($fullfilename, $isS3, $s3out)) {
 							$TotalCachedFileSize -= $CacheDirOldFilesSize[$fullfilename];
 							++$DeletedKeys['maxsize'];
 							unset($CacheDirOldFilesAge[$fullfilename]);
@@ -216,7 +245,7 @@ public function cleanCache() {
 		}
 
 		$DeletedSubdirs = 0;
-		if ($cachename !== 'phpThumbOf' && $cachepath[$cachename]) {  // remove any empty subdirs in pThumb and Remote Images caches
+		if ($cachename !== 'phpThumbOf' && !$isS3 && is_writable($cachepath[$cachename])) {  // remove any empty subdirs in pThumb and Remote Images caches
 			$ritit = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 			foreach ($ritit as $dirname => $pathObj) {
 				if ($pathObj->isDir() && iterator_count($ritit->getSubIterator()->getChildren()) === 0) {
