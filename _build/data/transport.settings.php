@@ -151,4 +151,12 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'area' => 'Amazon S3',
 ), '', true, true);
 
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.s3_cache_path',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Amazon S3',
+), '', true, true);
+
 return $systemSettings;

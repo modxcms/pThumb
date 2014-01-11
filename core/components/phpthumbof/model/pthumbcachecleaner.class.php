@@ -148,7 +148,7 @@ public function cleanCache() {
 			}
 			else {
 				foreach ($fileset as $file) {
-					if ($this->rmfile($fullfilename, $isS3, $s3out)) {
+					if (@unlink($file)) {
 						++$deleted;
 					}
 				}

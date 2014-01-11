@@ -30,7 +30,7 @@ public $cacheWritable = TRUE;
 
 protected $modx;
 protected $config;
-protected $cacheimgRegex = '/.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif)$/';
+protected $cacheimgRegex;
 
 private $input;
 
@@ -62,7 +62,13 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 		parse_str($modx->getOption('pthumb.global_defaults', null, ''), $this->config['globalDefaults']);
 		$this->config['useResizerGlobal'] = $modx->getOption('phpthumbof.use_resizer', null, FALSE);
 		$this->config['s3outputMSglobal'] = $modx->getOption('pthumb.s3_output', null, 0, true);
-		$this->config['s3multiImgGlobal'] = $modx->getOption('pthumb.s3_multi_img', null, false) || $s3info;
+		if ( $this->config['s3cachePath'] = trim($modx->getOption('pthumb.s3_cache_path', null, ''), '/') ) {
+			$this->config['s3cachePath'] .= '/';  // only added if the string isn't empty
+		}
+		$this->config['s3multiImgGlobal'] = $s3info ? true : $modx->getOption('pthumb.s3_multi_img', null, false);
+		if ($s3info) {  // used by the cache cleaner class
+			$this->cacheimgRegex = '/^' . str_replace('/', '\/', $this->config['s3cachePath']) . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif)$/';  // for safety, only select images with a hash
+		}
 	}
 	// these can't be cached
 	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
@@ -71,13 +77,16 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 	if ( $this->config['s3outputMS'] = (int) (isset($options['s3output']) ? $options['s3output'] : $this->config['s3outputMSglobal']) ) {
 		$this->config['s3outKey'] = "s3out{$this->config['s3outputMS']}";
 		if (!isset($this->config[$this->config['s3outKey']])) {  // if this MS isn't cached already
+			$this->config["{$this->config['s3outKey']}_ok"] = false;
 			$this->config[$this->config['s3outKey']] = $modx->getObject('modMediaSource', $this->config['s3outputMS']);
 			$s3obj =& $this->config[$this->config['s3outKey']];
 			if (strpos(get_class($s3obj), 'modS3MediaSource') === false) {  // check for valid S3 media source
 				$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] No such S3 output media source: {$this->config['s3outputMS']}");
 				$this->config['s3outputMS'] = 0;  // prevent any further S3 processing this time through
+				$this->config[$this->config['s3outKey']] = false;
 			}
 			else {  // initialize MS
+				$this->config["{$this->config['s3outKey']}_ok"] = true;
 				$s3properties = $s3obj->getPropertyList();
 				$this->config["{$this->config['s3outKey']}_url"] = $s3properties['url'];
 				$s3obj->bucket = $s3properties['bucket'];
@@ -86,24 +95,24 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 				define('AWS_SECRET_KEY', $s3properties['secret_key']);
 				try { $s3obj->driver = new AmazonS3(); }
 				catch (Exception $e) {
-					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Error connecting to S3 media source {$this->config['s3outputMS']}: " . $e->getMessage());
+					$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Error connecting to S3 media source {$this->config['s3outputMS']}: " . $e->getMessage());
+					$this->config["{$this->config['s3outKey']}_ok"] = false;
 					$this->config['s3outputMS'] = 0;
 				}
 			}
 		}
 	}
 	$this->config['s3multiImg'] = isset($options['s3multiImg']) ? $options['s3multiImg'] : $this->config['s3multiImgGlobal'];
-	if ($this->config['s3outputMS'] && $this->config['s3multiImg'] && !isset($this->config[$this->config['s3outKey'] . '_images'])) {
+	if ($this->config['s3outputMS'] && $this->config["{$this->config['s3outKey']}_ok"] && $this->config['s3multiImg'] && !isset($this->config[$this->config['s3outKey'] . '_images'])) {  // get a list of all objects in the bucket
 		$s3obj =& $this->config[$this->config['s3outKey']];
-		$start = microtime(true); ////
 		$opt = array();
 		$objects = array();
-		do {
+		do {  // list_objects only gets 1000 objects at a time, so we'll loop if necessary
 			$list = $s3obj->driver->list_objects($s3obj->bucket, $opt);
 			if (is_string($list->body)) {
 				$list->body = new CFSimpleXML($list->body);
 			}
-			if ($s3info) {
+			if ($s3info) {  // also store last modified time and file size
 				foreach ($list->body->Contents as $obj) {
 					$key = (string) $obj->Key;
 					if (preg_match($this->cacheimgRegex, $key)) {
@@ -114,17 +123,14 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 					}
 				}
 			}
-			elseif ($keys = $list->body->query('descendant-or-self::Key')->map_string(null)) {
+			elseif ( $keys = $list->body->query('descendant-or-self::Key')->map_string(null) ) {  // otherwise just get object names
 				$objects = array_merge($objects, $keys);
 			}
 			$body = (array) $list->body;
-			$opt = array(
-				'marker' => (isset($body['Contents']) && is_array($body['Contents'])) ? ((string) end($body['Contents'])->Key) : ((string) $list->body->Contents->Key)
-			);
+			$opt = array('marker' => (isset($body['Contents']) && is_array($body['Contents'])) ? ((string) end($body['Contents'])->Key) : ((string) $list->body->Contents->Key));  // set starting point for next request
 		} while ((string) $list->body->IsTruncated === 'true');
 		$this->config[$this->config['s3outKey'] . '_images'] = $objects;
-		$this->config[$this->config['s3outKey'] . '_time'] = round(microtime(true) - $start, 3); ////
-		// echo var_export($objects, true) . "!\n\n"; ////
+		unset($objects);
 	}
 }
 
@@ -152,6 +158,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  *  Returns the filename of the cached image on success or $src on failure
  */
 public function createThumbnail($src, $options) {
+/* Find input file */
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
 	if ($isRemote && MODX_HTTP_HOST === strtolower($matches[1])) {  // if it's the same server we're running on
 		$isRemote = false;  // then it's not really remote
@@ -230,8 +237,7 @@ public function createThumbnail($src, $options) {
 	}
 	$this->input = $file;
 
-
-	/* Process options. Set $ptOptions */
+/* Process options. Set $ptOptions */
 	if (!is_array($options)) {  // convert options string to array
 		parse_str($options, $ptOptions);
 	}
@@ -264,7 +270,7 @@ public function createThumbnail($src, $options) {
 	$ptOptions = array_merge($this->config['globalDefaults'], $ptOptions);
 
 
-	/* Determine cache filename. Set $cacheKey and $cacheUrl */
+/* Determine cache filename. Set $cacheKey and $cacheUrl */
 	$modflags = (int) $this->config['useResizer'];  // keep cached image from being stale if useResizer changes
 	if ($this->config['checkModTime']) {
 		$modflags .= @filemtime($this->input);
@@ -297,32 +303,24 @@ public function createThumbnail($src, $options) {
 	$cacheKey = "{$this->config['cachePath']}$cacheFilenamePrefix$cacheFilename";
 	$cacheUrl = "{$this->config['cachePathUrl']}$cacheFilenamePrefix" . rawurlencode($cacheFilename);
 
-	/* Look for cached file */
-	$start = ''; ////
+/* Look for cached file */
 	if ($this->config['s3outputMS']) {  // check for file in S3 MS
 		$s3out =& $this->config[$this->config['s3outKey']];
+		$cacheFilenamePrefix = $this->config['s3cachePath'] . $cacheFilenamePrefix;
 		$s3cacheUrl = $this->config["{$this->config['s3outKey']}_url"] . $cacheFilenamePrefix . rawurlencode($cacheFilename);
 		$cacheFilename = "$cacheFilenamePrefix$cacheFilename";
-		if (in_array($cacheFilename, $this->config[$this->config['s3outKey'] . '_images'])) {
-			return $s3cacheUrl . '?m=' . $this->config[$this->config['s3outKey'] . '_time']; ////
-		}
-		$start = microtime(true); ////
-		try {
-			if (method_exists($s3out->driver, 'if_object_exists')) {
-				if ($s3out->driver->if_object_exists($s3out->bucket, $cacheFilename)) {
-					$start = '?s=' . round(microtime(true) - $start, 3); ////
-					return $s3cacheUrl . $start; ////
-				}
+		if (isset($this->config[$this->config['s3outKey'] . '_images'])) {  // we have a list of all objects in the bucket
+			if (in_array($cacheFilename, $this->config[$this->config['s3outKey'] . '_images'], true)) {
+				return $s3cacheUrl;
 			}
-			else { throw new Exception('Source setup failed'); }
-			$start = '?s=' . round(microtime(true) - $start, 3); ////
 		}
-		catch (Exception $e) {
-			$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Error connecting to S3 media source {$this->config['s3outputMS']}: " . $e->getMessage());
-			if (file_exists($cacheKey)) {  // fall back to local cached image
-				return $cacheUrl;
+		elseif ($this->config["{$this->config['s3outKey']}_ok"]) {  // otherwise check individual object
+			if ($s3out->driver->if_object_exists($s3out->bucket, $cacheFilename)) {
+				return $s3cacheUrl;
 			}
-			$this->config['s3outputMS'] = 0;  // so output won't be written back to S3
+		}
+		elseif (file_exists($cacheKey)) {  // if the MS didn't initialize properly, fall back to local cached image
+			return $cacheUrl;
 		}
 	}
 	elseif (file_exists($cacheKey)) {  // If the file's in the cache, we're done.
@@ -336,7 +334,7 @@ public function createThumbnail($src, $options) {
 		}
 	}
 
-	/* Generate Thumbnail */
+/* Generate Thumbnail */
 	if ($this->config['useResizer']) {  // use Resizer
 		static $resizer_obj = array();
 		if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
@@ -389,7 +387,8 @@ public function createThumbnail($src, $options) {
 		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
 	}
 
-	if ($writeSuccess) {  // write it to the cache file
+/* Write thumbnail */
+	if ($writeSuccess) {
 		if (!isset($this->config['newFilePermissions'])) {
 			$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
 		}
@@ -412,8 +411,10 @@ public function createThumbnail($src, $options) {
 				'headers' => $this->config['s3headers']
 			));
 			if ($s3response->isOK()) {
-				$this->config[$this->config['s3outKey'] . '_images'][] = $cacheFilename;
-				return $s3cacheUrl . $start; ////
+				if (isset($this->config[$this->config['s3outKey'] . '_images'])) {
+					$this->config[$this->config['s3outKey'] . '_images'][] = $cacheFilename;
+				}
+				return $s3cacheUrl;
 			}
 			else { $this->debugmsg("Error uploading $cacheFilename to S3 bucket {$s3out->bucket} (media source {$this->config['s3outputMS']})"); }
 		}

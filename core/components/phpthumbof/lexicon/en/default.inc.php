@@ -65,13 +65,16 @@ $_lang['setting_pthumb.clean_level'] = 'Cache Cleaning Level';
 $_lang['setting_pthumb.clean_level_desc'] = 'How to clean the caches on site refresh. The cache manager plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.<br /><strong>0</strong>: (default) Do nothing<br /><strong>1</strong>: Clean the caches separately based on the "Max Cache *" system settings (core &gt; phpThumb)<br /><strong>2</strong>: Delete all cached images';
 
 $_lang['setting_pthumb.s3_output'] = 'S3 Output Media Source';
-$_lang['setting_pthumb.s3_output_desc'] = 'ID number of the S3 media source to use for output. May be overridden with the &amp;s3output property.';
+$_lang['setting_pthumb.s3_output_desc'] = 'ID number of the S3 media source to use for output. May be overridden with the <em>&amp;s3output</em> property.';
 
 $_lang['setting_pthumb.s3_headers'] = 'S3 Additional Headers';
 $_lang['setting_pthumb.s3_headers_desc'] = 'Specify additional HTTP headers for S3 objects. One per line in the format <strong>header: value</strong>';
 
-$_lang['setting_pthumb.s3_multi_img'] = 'Optimize for multiple images';
-$_lang['setting_pthumb.s3_multi_img_desc'] = 'Controls how pThumb checks for cached thumbnails on S3<br /><strong>Yes</strong>: Retreive a list of all objects in the bucket, then use this list for all subsequent pThumb calls on the page (1 S3 request total)<br /><strong>No</strong>: Check the existence of each thumbnail object individually (separate S3 request for each image)<br />May be overridden with the &amp;s3multiImg property. Multi is faster the more the thumbnails on a page and the fewer the objects in the S3 bucket. In some rough testing I found Multi is better when X > 1 + Y/250, where X is the number of thumbnails on a page and Y is the number of objects in the bucket.';
+$_lang['setting_pthumb.s3_multi_img'] = 'Optimize for Multiple Images';
+$_lang['setting_pthumb.s3_multi_img_desc'] = 'Controls how pThumb checks for cached thumbnails on S3.<br /><strong>Yes</strong>: Retreive a list of all objects in the bucket, then use this list for all subsequent pThumb calls on the page (1 S3 request total)<br /><strong>No</strong>: Check the existence of each thumbnail object individually (separate S3 request for each image)<br />May be overridden with the <em>&amp;s3multiImg</em> property. Multi is faster the more the thumbnails on a page and the fewer the objects in the S3 bucket. In some quick testing I found Multi is better when X > 1 + Y/250, where X is the number of thumbnails on a page and Y is the number of objects in the bucket.';
+
+$_lang['setting_pthumb.s3_cache_path'] = 'S3 Cache Path Prefix';
+$_lang['setting_pthumb.s3_cache_path_desc'] = 'A subdirectory where all cached images will be stored in the S3 bucket(s).';
 
 
 $_lang['prop_pthumb.debug_desc'] = 'Write debug messages to the MODX error log.';
