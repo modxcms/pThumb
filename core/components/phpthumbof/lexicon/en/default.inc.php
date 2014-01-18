@@ -56,13 +56,13 @@ $_lang['setting_pthumb.use_ptcache'] = 'Use pThumb Cache';
 $_lang['setting_pthumb.use_ptcache_desc'] = '<strong>Yes</strong>: use the <a href="https://github.com/oo12/phpThumbOf#pthumb-cache" target="_blank">pThumb cache</a> structure, where thumbnail filenames retain part of the original image\'s path and have shorter hashes.<br /><strong>No</strong>: use the "classic" phpThumbOf cache.<br /><strong>Default:</strong> No';
 
 $_lang['setting_pthumb.ptcache_location'] = 'pThumb Cache Location';
-$_lang['setting_pthumb.ptcache_location_desc'] = 'Cache location when using the pThumb cache. Relative to MODX_BASE_DIR (generally your web root)<br /><strong>Default:</strong> assets/image-cache';
+$_lang['setting_pthumb.ptcache_location_desc'] = 'Cache location when using the pThumb cache. Relative to MODX_BASE_DIR (generally your web root). Make sure this directory is writable by PHP.<br /><strong>Default:</strong> assets/image-cache';
 
 $_lang['setting_pthumb.ptcache_images_basedir'] = 'Images Base Directory';
 $_lang['setting_pthumb.ptcache_images_basedir_desc'] = 'Location of your original images. You’ll likely want to make this more specific. Any subdirectories are used in cache filenames. Any images outside of this directory will simply be cached to top level of pThumb Cache Location.<br /><strong>Default:</strong> assets';
 
 $_lang['setting_pthumb.clean_level'] = 'Cache Cleaning Level';
-$_lang['setting_pthumb.clean_level_desc'] = 'How to clean the caches on site refresh. The cache manager plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.<br /><strong>0</strong>: (default) Do nothing<br /><strong>1</strong>: Clean the caches separately based on the "Max Cache *" system settings (core &gt; phpThumb)<br /><strong>2</strong>: Delete all cached images';
+$_lang['setting_pthumb.clean_level_desc'] = 'How to clean the caches on site refresh. The cache manager plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.  The S3 output media source is cleaned as well.<br /><strong>0</strong>: (default) Do nothing<br /><strong>1</strong>: Clean the caches separately based on the "Max Cache *" system settings (core &gt; phpThumb)<br /><strong>2</strong>: Delete all cached images';
 
 $_lang['setting_pthumb.s3_output'] = 'S3 Output Media Source';
 $_lang['setting_pthumb.s3_output_desc'] = 'ID number of the S3 media source to use for output. May be overridden with the <em>&amp;s3output</em> property.';

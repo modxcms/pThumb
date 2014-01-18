@@ -1,4 +1,4 @@
-pThumb 2.2.2-pl2
+pThumb 2.3.0-pl
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -78,10 +78,23 @@ Cache operation is controlled by three settings (in System Settings under phpthu
 Note: Switching cache systems won't migrate your cached images from one cache to the other; images be regenerated as needed.  But it won't delete existing images either, so if you switch back they'll still be there.
 
 
+### Amazon S3
 
-### No Amazon S3
+Version 2.3 adds S3 support, with some improvements over phpThumbOf.  See [this page](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3) for instructions on how to use it.
 
-Version 2.2 doesn’t support S3, but 2.3 will.  If you’d like to test it, download the [transport package](https://github.com/oo12/phpThumbOf/releases/tag/v2.3.0-beta1), read the [instructions](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3), and be sure to report any bugs or other thoughts [here](https://github.com/oo12/phpThumbOf/issues/3).
+
+### Remote Images
+
+pThumb goes to some lengths to handle remote images well, whether they’re coming from an S3 media source or from some other server.  It uses cURL to download the original image to _assets/components/phpthumbof/cache/remote-images/_, then uses that local copy for all future operations, meaning things are quite fast after the first run.  Version 2.3 improves file naming for remote images, so the output thumbnail file names will be the same as if the original images were local.
+
+Be aware though that once the remote image has been cached, pThumb won't look at the original again unless you delete the cached copy.  Or as an alternative, you may use a query parameter for cache busting.  For example if you have a TV called _someImageTV_, you can do something like this: ```<img src="[[pthumb? &input=`[[*someImageTV]]?v=1` &options=`h=150&w=150`]]">```.  The first time through this will cause pThumb to download a new copy of the remote image and generate a new thumbnail.
+
+
+Troubleshooting
+-----------
+
+If pThumb runs into a problem during thumbnail creation, it will simply return the input file name and exit.  Usually this happens because some part of the input path or file name is incorrect and pThumb can’t find the image.  A broken image link on the front end is a sure sign of this, meaning your web browser can’t find the image either.  pThumb will actually correct for several common configuration mistakes and find the image anyway, but in some cases it can’t.  Check the MODX error log for more insight into what’s going awry.
+
 
 
 Changes from phpThumbOf 1.4.0
