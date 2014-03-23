@@ -1,7 +1,7 @@
 <?php
 /**
  * pThumb
- * Copyright 2013 Jason Grant
+ * Copyright 2013-2014 Jason Grant
  *
  * Please see the GitHub page for documentation or to report bugs:
  * https://github.com/oo12/phpThumbOf
@@ -26,7 +26,6 @@
 class phpThumbOf {
 
 public $phpThumb;
-public $cacheWritable = TRUE;
 
 protected $modx;
 protected $config;
@@ -53,9 +52,10 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 		$this->config['cachePath'] = rtrim(str_replace('//', '/', $this->config['cachePath']), '/') . '/';  // just in case
 		if (!is_writable($this->config['cachePath']) && !$modx->cacheManager->writeTree($this->config['cachePath'])) {  // check cache writability
 			$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: {$this->config['cachePath']}");
-			$this->cacheWritable = FALSE;
+			$this->config['cacheNotWritable'] = true;
 			return;
 		}
+		$this->config['cacheNotWritable'] = false;
 		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, $modx->getOption('base_url', null, MODX_BASE_URL), true), '/');
 		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
@@ -159,6 +159,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  *  Returns the filename of the cached image on success or $src on failure
  */
 public function createThumbnail($src, $options) {
+	$src = str_replace('/./', '/', $src);  // get rid of any /./ instances in the path
 	$output = array(
 		'src' => $src,
 		'file' => '',
@@ -167,6 +168,9 @@ public function createThumbnail($src, $options) {
 		'outputDims' => false,
 		'success' => false
 	);
+	if ($this->config['cacheNotWritable']) {
+		return $output;
+	}
 /* Find input file */
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
 	if ($isRemote && $this->config['httpHost'] === strtolower($matches[1])) {  // if it's the same server we're running on
@@ -219,7 +223,7 @@ public function createThumbnail($src, $options) {
 			}
 			curl_close($ch);
 			fclose($fh);
-			if ($curlFail || !filesize($file)) {  // if we didn't get it, skip and don't cache
+			if ($curlFail || !getimagesize($file)) {  // if we didn't get an image, skip and remove from cache
 				$this->debugmsg("[pThumb remote images] Failed to cache $src");
 				unlink($file);
 				return $output;
@@ -283,9 +287,9 @@ public function createThumbnail($src, $options) {
 /* Determine cache filename. Set $cacheKey and $cacheUrl */
 	$modflags = (int) $this->config['useResizer'];  // keep cached image from being stale if useResizer changes
 	if ($this->config['checkModTime']) {
-		$modflags .= @filemtime($this->input);
+		$modflags .= filemtime($this->input);
 	}
-	$cacheFilename = "{$inputParts['filename']}.";
+	$cacheFilename = $inputParts['filename'] . '.';
 	if ($this->config['use_ptcache']) {
 		if ($isRemote) {
 			$cacheFilenamePrefix = $inputParts['dirname'];
@@ -337,13 +341,13 @@ public function createThumbnail($src, $options) {
 			return $output;
 		}
 		elseif ($output['success']) {  // thumbnail in both local and S3 caches
-			$output['file'] = '';
 			$output['src'] = $s3cacheUrl;
 			return $output;
 		}
 		$output['success'] = true;
 	}
 	elseif ($output['success']) {  // thumbnail on S3, but not in local cache
+		$output['file'] = '';
 		$output['src'] = $s3cacheUrl;
 		return $output;
 	}
@@ -416,8 +420,8 @@ public function createThumbnail($src, $options) {
 			if (!isset($this->config['newFilePermissions'])) {
 				$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
 			}
+			chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
 		}
-		@chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
 	}
 
 	if ($output['success']) {
@@ -448,6 +452,7 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else { $this->debugmsg("Could not cache thumbnail to file at: {$cacheKey}", TRUE); }
+	return $output;
 }
 
 

@@ -1,5 +1,14 @@
-pThumb
-======
+pThumb Changelog
+
+2.3.1-pl [23.03.2014]
+---------------------
+
+- [#18] Improve support for context settings (http_host and base_url)
+- Add options to return image dimensions (toPlaceholder property and
+  dims option)
+- Update Resizer to 0.5.1-pl
+- Several small bugfixes
+
 
 2.3.0-pl [18.01.2014]
 ------------------------

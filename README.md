@@ -1,4 +1,4 @@
-pThumb 2.3.0-pl
+pThumb 2.3.1-pl
 ==========
 
 A fork of phpThumbOf 1.4.0.  pThumb is a lightweight, efficient, and actively maintained replacement for phpThumbOf.  It offers most of the functionality of its predecessor while adding new features, fixing bugs, and offering some potentially dramatic speed improvements on sites which use phpThumbOf heavily.
@@ -41,11 +41,16 @@ pThumb adds the following system settings:
 
 * __Clean Level__: Specifies what the cache manager plugin should do on site refresh (site cache clear) events. The plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images. Possible values — **0**: (default) Do nothing. || **1**: Clean the caches separately based on the “Max Cache \*” system settings (core > phpThumb). || **2**: Delete all cached images. || One tip for option **1**: changing one of the “Max Cache \*” settings to 0 will disable cache cleaning for that parameter.
 
-and two properties to the phpthumbof/pthumb snippets:
+and several new properties to the phpthumbof/pthumb snippets:
 
 * __&amp;debug__: When this is on, phpThumbOf will write the phpThumb debugmessages array to the MODX error log.  This is very useful for troubleshooting phpThumb issues, like whether it's using ImageMagick on not.
 
 * __&amp;useResizer__: Overrides the phpthumbof.use_resizer system setting to allow more flexibility in switching between phpThumb and Resizer.  Useful if you generally want to use one but need the other in a few particular places.
+
+* __&amp;toPlaceholder__: Stores the output in three placeholders: thumbnail URL, width and height. Ex: ```[[pthumb? &input=`[[*imagetv]]` &options=`w=200` &toPlaceholder=`thumb`]]``` then ```<img src="[[+thumb]]" width="[[+thumb.width]]" height="[[+thumb.height]]">```.  For more details on this see the [Image Dimensions](#image-dimensions) section.
+
+* __&amp;s3output__, __&amp;s3multiImg__: See the [S3 documentation](https://github.com/oo12/phpThumbOf/wiki/Amazon-S3).
+
 
 New pThumb Features
 ------------
@@ -88,6 +93,13 @@ Version 2.3 adds S3 support, with some improvements over phpThumbOf.  See [this 
 pThumb goes to some lengths to handle remote images well, whether they’re coming from an S3 media source or from some other server.  It uses cURL to download the original image to _assets/components/phpthumbof/cache/remote-images/_, then uses that local copy for all future operations, meaning things are quite fast after the first run.  Version 2.3 improves file naming for remote images, so the output thumbnail file names will be the same as if the original images were local.
 
 Be aware though that once the remote image has been cached, pThumb won't look at the original again unless you delete the cached copy.  Or as an alternative, you may use a query parameter for cache busting.  For example if you have a TV called _someImageTV_, you can do something like this: ```<img src="[[pthumb? &input=`[[*someImageTV]]?v=1` &options=`h=150&w=150`]]">```.  The first time through this will cause pThumb to download a new copy of the remote image and generate a new thumbnail.
+
+
+### Image Dimensions
+
+Starting in version 2.3.1 pThumb can also output image dimensions. It provides two ways of doing this. The first is the __&amp;toPlaceholder__ property described above.  Sometimes though placeholders can be tricky, like when they’re being used in a chunk being iterated over by something like getResources.  In certain cases—if you don’t give the placeholders distinct names like ``` &toPlaceholder=`img[[+idx]]` ```—all the placeholders will be filled in with the values from the last iteration.
+
+However there’s another way to get image dimensions which doesn’t involve placeholders: add ```dims=1``` to the options string and pThumb will output src, width and height all together.  Like this: ```<img [[*imagetv:pthumb=`w=200&dims=1`]] alt="test image">``` becomes ```<img src="/image-cache/test.d39f9375.jpg" width="200" height="300" alt="test image">```.
 
 
 Troubleshooting

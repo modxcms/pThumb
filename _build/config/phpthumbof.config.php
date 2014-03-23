@@ -15,14 +15,14 @@ $components = array(
 	'packageName' => 'pThumb',  /* No spaces, no dashes */
 	'packageNameLower' => 'phpthumbof',
 	'packageDescription' => 'A better phpThumbOf',
-	'version' => '2.3.0',
+	'version' => '2.3.1',
 	'release' => 'pl',
 	'author' => 'Jason Grant',
 	'email' => '',
 	'authorUrl' => 'https://github.com/oo12',
 	'authorSiteName' => 'GitHub',
 	'packageDocumentationUrl' => 'https://github.com/oo12/phpThumbOf',
-	'copyright' => '2013',
+	'copyright' => '2014',
 
 	/* no need to edit this except to change format */
 	'createdon' => strftime('%m-%d-%Y'),

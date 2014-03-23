@@ -1,7 +1,7 @@
 <?php
 /**
  * pThumb
- * Copyright 2013 Jason Grant
+ * Copyright 2013-2014 Jason Grant
  *
  * Please see the GitHub page for documentation or to report bugs:
  * https://github.com/oo12/phpThumbOf
@@ -50,9 +50,6 @@ if (empty($pt_settings)) {
 
 $pThumb = new phpThumbOf($modx, $pt_settings, $scriptProperties);
 
-if (!$pThumb->cacheWritable) {
-	return $input;
-}
 $result = $pThumb->createThumbnail($input, $options);
 
 if (!empty($toPlaceholder) || $result['outputDims']) {
