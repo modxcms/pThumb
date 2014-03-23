@@ -39,6 +39,7 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 	$this->config =& $settings_cache;
 	if (empty($this->config)) {  // first time through, get and store all the settings
 		$this->config['assetsPath'] = $modx->getOption('assets_path', null, MODX_ASSETS_PATH);
+		$this->config['httpHost'] = $modx->getOption('http_host', null, MODX_HTTP_HOST);
 		if ( $this->config['use_ptcache'] = $modx->getOption('pthumb.use_ptcache', null, TRUE) ) {
 			$this->config['cachePath'] = MODX_BASE_PATH . $modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
 			$this->config['imagesBasedir'] = trim($modx->getOption('pthumb.ptcache_images_basedir', null, 'assets'), '/') . '/';
@@ -55,7 +56,7 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 			$this->cacheWritable = FALSE;
 			return;
 		}
-		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, MODX_BASE_URL, true), '/');
+		$cacheurl = rtrim($modx->getOption('phpthumbof.cache_url', null, $modx->getOption('base_url', null, MODX_BASE_URL), true), '/');
 		$this->config['cachePathUrl'] = str_replace(MODX_BASE_PATH, "$cacheurl/", $this->config['cachePath']);
 		$this->config['remoteImagesCachePath'] = "{$this->config['assetsPath']}components/phpthumbof/cache/remote-images/";
 		$this->config['checkModTime'] = $modx->getOption('phpthumbof.check_mod_time', null, FALSE);
@@ -160,7 +161,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
 public function createThumbnail($src, $options) {
 /* Find input file */
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
-	if ($isRemote && MODX_HTTP_HOST === strtolower($matches[1])) {  // if it's the same server we're running on
+	if ($isRemote && $this->config['httpHost'] === strtolower($matches[1])) {  // if it's the same server we're running on
 		$isRemote = false;  // then it's not really remote
 		$src = $matches[2];  // we just need the path and filename
 	}
