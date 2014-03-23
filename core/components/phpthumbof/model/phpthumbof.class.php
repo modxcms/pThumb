@@ -159,6 +159,14 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
  *  Returns the filename of the cached image on success or $src on failure
  */
 public function createThumbnail($src, $options) {
+	$output = array(
+		'src' => $src,
+		'file' => '',
+		'width' => '',
+		'height' => '',
+		'outputDims' => false,
+		'success' => false
+	);
 /* Find input file */
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
 	if ($isRemote && $this->config['httpHost'] === strtolower($matches[1])) {  // if it's the same server we're running on
@@ -183,7 +191,7 @@ public function createThumbnail($src, $options) {
 			if (!is_writable($remoteFilePath)) {
 				if ( !$this->modx->cacheManager->writeTree($remoteFilePath) ) {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: $remoteFilePath");
-					return $src;
+					return $output;
 				}
 			}
 			if (!isset($this->config['remoteTimeout'])) {  // first time through set up any additional remote images settings
@@ -192,7 +200,7 @@ public function createThumbnail($src, $options) {
 			$fh = fopen($file, 'wb');
 			if (!$fh) {
 				$this->debugmsg("[pThumb remote images] Unable to write to cache file: $file  *** Skipping ***");
-				return $src;
+				return $output;
 			}
 			$curlFail = FALSE;
 			if ($src[0] === '/') {  //cURL doesn't like protocol-relative URLs, so add http or https
@@ -214,7 +222,7 @@ public function createThumbnail($src, $options) {
 			if ($curlFail || !filesize($file)) {  // if we didn't get it, skip and don't cache
 				$this->debugmsg("[pThumb remote images] Failed to cache $src");
 				unlink($file);
-				return $src;
+				return $output;
 			}
 		}
 	}
@@ -231,12 +239,12 @@ public function createThumbnail($src, $options) {
 				$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice. Also remove base_url, which might just be added by a context
 				if (!is_readable($file)) {  // Time to declare failure
 					$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
-					return $src;
+					return $output;
 				}
 			}
 		}
 	}
-	$this->input = $file;
+	$this->input = $output['file'] = $file;
 
 /* Process options. Set $ptOptions */
 	if (!is_array($options)) {  // convert options string to array
@@ -268,6 +276,7 @@ public function createThumbnail($src, $options) {
 		$ext = strtolower($inputParts['extension']);
 		$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
 	}
+	$output['outputDims'] = !empty($ptOptions['dims']);
 	$ptOptions = array_merge($this->config['globalDefaults'], $ptOptions);
 
 
@@ -305,97 +314,115 @@ public function createThumbnail($src, $options) {
 	$cacheUrl = "{$this->config['cachePathUrl']}$cacheFilenamePrefix" . rawurlencode($cacheFilename);
 
 /* Look for cached file */
+	$s3ok = false;
 	if ($this->config['s3outputMS']) {  // check for file in S3 MS
 		$s3out =& $this->config[$this->config['s3outKey']];
 		$cacheFilenamePrefix = $this->config['s3cachePath'] . $cacheFilenamePrefix;
 		$s3cacheUrl = $this->config["{$this->config['s3outKey']}_url"] . $cacheFilenamePrefix . rawurlencode($cacheFilename);
 		$cacheFilename = "$cacheFilenamePrefix$cacheFilename";
 		if (isset($this->config[$this->config['s3outKey'] . '_images'])) {  // we have a list of all objects in the bucket
-			if (in_array($cacheFilename, $this->config[$this->config['s3outKey'] . '_images'], true)) {
-				return $s3cacheUrl;
-			}
+			$s3ok = true;
+			$output['success'] = in_array($cacheFilename, $this->config[$this->config['s3outKey'] . '_images'], true);
 		}
 		elseif ($this->config["{$this->config['s3outKey']}_ok"]) {  // otherwise check individual object
-			if ($s3out->driver->if_object_exists($s3out->bucket, $cacheFilename)) {
-				return $s3cacheUrl;
-			}
-		}
-		elseif (file_exists($cacheKey)) {  // if the MS didn't initialize properly, fall back to local cached image
-			return $cacheUrl;
+			$s3ok = true;
+			$output['success'] = $s3out->driver->if_object_exists($s3out->bucket, $cacheFilename);
 		}
 	}
-	elseif (file_exists($cacheKey)) {  // If the file's in the cache, we're done.
-		return $cacheUrl;
-	}
-
-	if ($this->config['use_ptcache'] && !is_writable($cacheFilenamePath)) {  // make sure pThumb cache location exists
-		if ( !$this->modx->cacheManager->writeTree($cacheFilenamePath) ) {
-			$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: $cacheFilenamePath");
-			return $src;
+	if (file_exists($cacheKey)) {
+		$output['file'] = $cacheKey;
+		if (!$s3ok) {  // thumbnail in local cache, not using S3 or S3 didn't initialize
+			$output['success'] = true;
+			$output['src'] = $cacheUrl;
+			return $output;
 		}
+		elseif ($output['success']) {  // thumbnail in both local and S3 caches
+			$output['file'] = '';
+			$output['src'] = $s3cacheUrl;
+			return $output;
+		}
+		$output['success'] = true;
 	}
-
+	elseif ($output['success']) {  // thumbnail on S3, but not in local cache
+		$output['src'] = $s3cacheUrl;
+		return $output;
+	}
+	else {
 /* Generate Thumbnail */
-	if ($this->config['useResizer']) {  // use Resizer
-		static $resizer_obj = array();
-		if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
-			if (!$this->modx->loadClass('Resizer', MODX_CORE_PATH . 'components/resizer/model/', true, true)) {
-				$this->debugmsg('Could not load Resizer class.');
-				return $src;
-			}
-			$resizer_obj[0] = new Resizer($this->modx);  // we'll reuse this same object for all subsequent images
-			$resizer_obj[0]->debug = $this->config['debug'];
-		}
-		elseif ($this->config['debug'])  {  // We've already got a Resizer object and will just clear out its debug log
-			$resizer_obj[0]->resetDebug();
-		}
-		$this->phpThumb = $resizer_obj[0];
-		$writeSuccess = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
-	}
-	else {  // use phpThumb
-		if (!class_exists('phpthumb', FALSE)) {
-			if (!$this->modx->loadClass('phpthumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
-				$this->debugmsg('Could not load phpthumb class.');
-				return $src;
+		if ($this->config['use_ptcache'] && !is_writable($cacheFilenamePath)) {  // make sure pThumb cache location exists
+			if ( !$this->modx->cacheManager->writeTree($cacheFilenamePath) ) {
+				$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: $cacheFilenamePath");
+				return $output;
 			}
 		}
-		if (!isset($this->config['modphpthumb'])) {  // make sure we get a few relevant system settings
-			$this->config['modphpthumb'] = array();
-			$this->config['modphpthumb']['config_allow_src_above_docroot'] = (boolean) $this->modx->getOption('phpthumb_allow_src_above_docroot', null, false);
-			$this->config['modphpthumb']['zc'] = $this->modx->getOption('phpthumb_zoomcrop', null, 0);
-			$this->config['modphpthumb']['far'] = $this->modx->getOption('phpthumb_far', null, 'C');
-			$this->config['modphpthumb']['config_ttf_directory'] = $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'model/phpthumb/fonts/';
-			$this->config['modphpthumb']['config_document_root'] = $this->modx->getOption('phpthumb_document_root', null, '');
-		}
-		$this->phpThumb = new phpthumb();  // unfortunately we have to create a new object for each image!
-		foreach ($this->config['modphpthumb'] as $param => $value) {  // add MODX system settings
-			$this->phpThumb->$param = $value;
-		}
-		foreach ($ptOptions as $param => $value) {  // add options passed to the snippet
-			$this->phpThumb->setParameter($param, $value);
-		}
-		// try to avert problems when $_SERVER['DOCUMENT_ROOT'] is different than MODX_BASE_PATH
-		if (!$this->phpThumb->config_document_root) {
-			$this->phpThumb->config_document_root = MODX_BASE_PATH;  // default if nothing set from system settings
-		}
-		$this->phpThumb->config_cache_directory = "{$this->config['cachePath']}$cacheFilenamePrefix";  // doesn't matter, but saves phpThumb some frustration
-		$this->phpThumb->setSourceFilename(($this->input[0] === '/' || $this->input[1] === ':') ? $this->input : MODX_BASE_PATH . $this->input);
 
-		if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
-			$this->debugmsg('Could not generate thumbnail', TRUE);
-			return $src;
+		if ($this->config['useResizer']) {  // use Resizer
+			static $resizer_obj = array();
+			if (!class_exists('Resizer')) {  // set up Resizer. We'll reuse this object for any subsequent images on the page
+				if (!$this->modx->loadClass('Resizer', MODX_CORE_PATH . 'components/resizer/model/', true, true)) {
+					$this->debugmsg('Could not load Resizer class.');
+					return $output;
+				}
+				$resizer_obj[0] = new Resizer($this->modx);  // we'll reuse this same object for all subsequent images
+				$resizer_obj[0]->debug = $this->config['debug'];
+			}
+			else {  // We've already got a Resizer object and will just clear out its debug log
+				$resizer_obj[0]->resetDebug();
+			}
+			$this->phpThumb = $resizer_obj[0];
+			$output['success'] = $this->phpThumb->processImage($this->input, $cacheKey, $ptOptions);
+			if ($output['success']) {
+				$output['width'] = $this->phpThumb->width;
+				$output['height'] = $this->phpThumb->height;
+			}
 		}
-		$writeSuccess = $this->phpThumb->RenderToFile($cacheKey);
-	}
+		else {  // use phpThumb
+			if (!class_exists('phpthumb', FALSE)) {
+				if (!$this->modx->loadClass('phpthumb', MODX_CORE_PATH . 'model/phpthumb/', true, true)) {
+					$this->debugmsg('Could not load phpthumb class.');
+					return $output;
+				}
+			}
+			if (!isset($this->config['modphpthumb'])) {  // make sure we get a few relevant system settings
+				$this->config['modphpthumb'] = array();
+				$this->config['modphpthumb']['config_allow_src_above_docroot'] = (boolean) $this->modx->getOption('phpthumb_allow_src_above_docroot', null, false);
+				$this->config['modphpthumb']['zc'] = $this->modx->getOption('phpthumb_zoomcrop', null, 0);
+				$this->config['modphpthumb']['far'] = $this->modx->getOption('phpthumb_far', null, 'C');
+				$this->config['modphpthumb']['config_ttf_directory'] = MODX_CORE_PATH . 'model/phpthumb/fonts/';
+				$this->config['modphpthumb']['config_document_root'] = $this->modx->getOption('phpthumb_document_root', null, '');
+			}
+			$this->phpThumb = new phpthumb();  // unfortunately we have to create a new object for each image!
+			foreach ($this->config['modphpthumb'] as $param => $value) {  // add MODX system settings
+				$this->phpThumb->$param = $value;
+			}
+			foreach ($ptOptions as $param => $value) {  // add options passed to the snippet
+				$this->phpThumb->setParameter($param, $value);
+			}
+			// try to avert problems when $_SERVER['DOCUMENT_ROOT'] is different than MODX_BASE_PATH
+			if (!$this->phpThumb->config_document_root) {
+				$this->phpThumb->config_document_root = MODX_BASE_PATH;  // default if nothing set from system settings
+			}
+			$this->phpThumb->config_cache_directory = "{$this->config['cachePath']}$cacheFilenamePrefix";  // doesn't matter, but saves phpThumb some frustration
+			$this->phpThumb->setSourceFilename(($this->input[0] === '/' || $this->input[1] === ':') ? $this->input : MODX_BASE_PATH . $this->input);
 
-/* Write thumbnail */
-	if ($writeSuccess) {
-		if (!isset($this->config['newFilePermissions'])) {
-			$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
+			if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
+				$this->debugmsg('Could not generate thumbnail', TRUE);
+				return $output;
+			}
+			$output['success'] = $this->phpThumb->RenderToFile($cacheKey);
+		}
+		if ($output['success']) {
+			$output['file'] = $cacheKey;
+			if (!isset($this->config['newFilePermissions'])) {
+				$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
+			}
 		}
 		@chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
+	}
 
-		if ($this->config['s3outputMS']) {  // write to S3
+	if ($output['success']) {
+		$output['src'] = $cacheUrl;
+		if ($s3ok) {  // write to S3
 			if (!isset($this->config['s3headers'])) {  // first time through set up additional headers
 				$this->config['s3headers'] = array();
 				$s3headers = explode("\n", $this->modx->getOption('pthumb.s3_headers', null, ''));
@@ -415,16 +442,12 @@ public function createThumbnail($src, $options) {
 				if (isset($this->config[$this->config['s3outKey'] . '_images'])) {
 					$this->config[$this->config['s3outKey'] . '_images'][] = $cacheFilename;
 				}
-				return $s3cacheUrl;
+				$output['src'] = $s3cacheUrl;
 			}
 			else { $this->debugmsg("Error uploading $cacheFilename to S3 bucket {$s3out->bucket} (media source {$this->config['s3outputMS']})"); }
 		}
-		return $cacheUrl;
 	}
-	else {
-		$this->debugmsg("Could not cache thumbnail to file at: {$cacheKey}", TRUE);
-		return $src;
-	}
+	else { $this->debugmsg("Could not cache thumbnail to file at: {$cacheKey}", TRUE); }
 }
 
 

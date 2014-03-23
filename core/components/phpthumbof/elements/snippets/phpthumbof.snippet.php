@@ -53,11 +53,31 @@ $pThumb = new phpThumbOf($modx, $pt_settings, $scriptProperties);
 if (!$pThumb->cacheWritable) {
 	return $input;
 }
+$result = $pThumb->createThumbnail($input, $options);
 
-$thumbnail = $pThumb->createThumbnail($input, $options);
-
-if ($debug && $thumbnail !== $input) {  // if debugging is on and createThumbnail was successful, log the debug info
-	$pThumb->debugmsg(isset($pThumb->phpThumb->debugmessages) ? ':: Processed ::' : ":: Loaded from cache: $thumbnail", true);
+if (!empty($toPlaceholder) || $result['outputDims']) {
+	if ($result['width'] === '' && $result['file'] && $dims = getimagesize($result['file']) ) {
+			$result['width'] = $dims[0];
+			$result['height'] = $dims[1];
+	}
+	if (!empty($toPlaceholder)) {
+		$modx->setPlaceholders(array(
+			$toPlaceholder => $result['src'],
+			"$toPlaceholder.width" => $result['width'],
+			"$toPlaceholder.height" => $result['height']
+		));
+		$output = '';
+	}
+	if ($result['outputDims']) {
+		$output = "src=\"{$result['src']}\"" . ($result['width'] ? " width=\"{$result['width']}\" height=\"{$result['height']}\"" : '');
+	}
+}
+else {
+	$output = $result['src'];
 }
 
-return $thumbnail;
+if ($debug && $result['success']) {  // if debugging is on and createThumbnail was successful, log the debug info
+	$pThumb->debugmsg(isset($pThumb->phpThumb->debugmessages) ? ':: Processed ::' : ":: Loaded from cache: {$result['src']}", true);
+}
+
+return $output;
