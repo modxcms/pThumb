@@ -141,9 +141,11 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
  *  if $phpthumbDebug, also write the phpThumb debugmessages array
  */
 public function debugmsg($msg, $phpthumbDebug = FALSE) {
-	$logmsg = "[pThumb] Resource: {$this->modx->resource->get('id')} || Image: " .
-		(isset($this->input) ? $this->input : '(none)') .
-		($msg ? "\n$msg" : '');
+	if (!empty($this->modx->resource)) { 
+		$logmsg = "[pThumb] Resource: {$this->modx->resource->get('id')} || Image: " .
+			(isset($this->input) ? $this->input : '(none)') .
+			($msg ? "\n$msg" : '');
+	}
 	if ($phpthumbDebug && isset($this->phpThumb->debugmessages)) {
 		$logmsg .= ($this->config['useResizer'] ? "\nResizer" : "\nphpThumb") .
 			' debug output:' . substr(print_r($this->phpThumb->debugmessages, TRUE), 7, -2) .
