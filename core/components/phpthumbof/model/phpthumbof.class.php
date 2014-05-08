@@ -233,20 +233,26 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else {  // it's a local file
-		if (is_readable($src)) {  // if we've already got an existing file, keep going
+		if (is_readable($src) && is_file($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
 		else {  // otherwise prepend base_path and try again
 			$file = MODX_BASE_PATH . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
-			if (!is_readable($file)) {  // still can't find it?  We'll try to correct a couple common problems.
-				if (!isset($this->config['basePathCheck'])) {
-					$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim($this->modx->getOption('base_url'), '/');
+			if (!is_dir($file)) {
+				if (!is_readable($file)) {  // still can't find it?  We'll try to correct a couple common problems.
+					if (!isset($this->config['basePathCheck'])) {
+						$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim($this->modx->getOption('base_url'), '/');
+					}
+					$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice. Also remove base_url, which might just be added by a context
+					if (!is_readable($file)) {  // Time to declare failure
+						$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
+						return $src;
+					}
 				}
-				$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice. Also remove base_url, which might just be added by a context
-				if (!is_readable($file)) {  // Time to declare failure
-					$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
-					return $output;
-				}
+			}
+			else {
+				$this->debugmsg('Source seems to be a directory ' . $src . ' *** Skipping ***');
+				return $src;
 			}
 		}
 	}
