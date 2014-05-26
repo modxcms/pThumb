@@ -36,7 +36,7 @@ if ($transport && $transport->xpdo) {
             $modx =& $transport->xpdo;
 
             /* define resizer version */
-            $newVersion = '0.5.1-pl';
+            $newVersion = '1.0.1-pl';
             $newVersionMajor = '0';
             $name = 'resizer';
 
