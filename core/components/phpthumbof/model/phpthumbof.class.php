@@ -1,7 +1,7 @@
 <?php
 /**
  * pThumb
- * Copyright 2013-2014 Jason Grant
+ * Copyright 2013, 2014 Jason Grant
  *
  * Please see the GitHub page for documentation or to report bugs:
  * https://github.com/oo12/phpThumbOf
@@ -145,11 +145,9 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
  *  if $phpthumbDebug, also write the phpThumb debugmessages array
  */
 public function debugmsg($msg, $phpthumbDebug = FALSE) {
-	if (!empty($this->modx->resource)) { 
-		$logmsg = "[pThumb] Resource: {$this->modx->resource->get('id')} || Image: " .
-			(isset($this->input) ? $this->input : '(none)') .
-			($msg ? "\n$msg" : '');
-	}
+	$logmsg = '[pThumb] ' . (isset($this->modx->resource) ? "Resource: {$this->modx->resource->get('id')} || " : '') .
+		'Image: ' . (isset($this->input) ? $this->input : '(none)') .
+		($msg ? "\n$msg" : '');
 	if ($phpthumbDebug && isset($this->phpThumb->debugmessages)) {
 		$logmsg .= ($this->config['useResizer'] ? "\nResizer" : "\nphpThumb") .
 			' debug output:' . substr(print_r($this->phpThumb->debugmessages, TRUE), 7, -2) .
@@ -189,12 +187,12 @@ public function createThumbnail($src, $options) {
 		$remoteUrl[0] = rawurldecode($remoteUrl[0]);  // just in case?
 		$inputParts = pathinfo($remoteUrl[0]);
 		$inputParts['dirname'] = $inputParts['dirname'] === '.' ? '' : "{$inputParts['dirname']}/";  // remove '.' if in top level dir
-		$cachebuster = '';
+		$cachebuster = '.';
 		if (isset($remoteUrl[1])) {
 			$hashExtras .= $remoteUrl[1];
-			$cachebuster = hash('crc32', $remoteUrl[1]);
+			$cachebuster .= hash('crc32', $remoteUrl[1]) . '.';
 		}
-		$remoteCacheName = "{$inputParts['filename']}.$cachebuster.{$inputParts['extension']}";  // hash any query string to allow for cache busting
+		$remoteCacheName = "{$inputParts['filename']}$cachebuster{$inputParts['extension']}";  // hash any query string to allow for cache busting
 		$remoteFilePath = "{$this->config['remoteImagesCachePath']}{$matches[1]}/{$inputParts['dirname']}";
 		$file = "$remoteFilePath$remoteCacheName";
 		if (!file_exists($file)) {  // if it's not in our cache, go get it
@@ -237,27 +235,25 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else {  // it's a local file
-		if (is_readable($src) && is_file($src)) {  // if we've already got an existing file, keep going
+		if (is_readable($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
 		else {  // otherwise prepend base_path and try again
 			$file = MODX_BASE_PATH . rawurldecode(ltrim($src, '/'));  // Fix spaces and other encoded characters in the filename
-			if (!is_dir($file)) {
-				if (!is_readable($file)) {  // still can't find it?  We'll try to correct a couple common problems.
-					if (!isset($this->config['basePathCheck'])) {
-						$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim($this->modx->getOption('base_url'), '/');
-					}
-					$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice. Also remove base_url, which might just be added by a context
-					if (!is_readable($file)) {  // Time to declare failure
-						$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
-						return $src;
-					}
+			if (!is_readable($file)) {  // still can't find it?  We'll try to correct a couple common problems.
+				if (!isset($this->config['basePathCheck'])) {
+					$this->config['basePathCheck'] = MODX_BASE_PATH . ltrim($this->modx->getOption('base_url'), '/');
+				}
+				$file = str_replace($this->config['basePathCheck'], MODX_BASE_PATH, $file);  // if MODX is in a subdir, keep this subdir name from occuring twice. Also remove base_url, which might just be added by a context
+				if (!is_readable($file)) {  // Time to declare failure
+					$this->debugmsg('File not ' . (file_exists($file) ? 'readable': 'found') . ": $file  *** Skipping ***");
+					return $output;
 				}
 			}
-			else {
-				$this->debugmsg('Source seems to be a directory ' . $src . ' *** Skipping ***');
-				return $src;
-			}
+		}
+		if (is_dir($file)) {
+			$this->debugmsg("$file is a directory  *** Skipping ***");
+			return $output;
 		}
 	}
 	$this->input = $output['file'] = $file;

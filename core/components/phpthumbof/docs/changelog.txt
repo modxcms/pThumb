@@ -1,5 +1,14 @@
 pThumb Changelog
 
+2.3.2-pl [26.05.2014]
+---------------------
+
+- [#20] Fix PHP error when running in mgr context (hat tip exside)
+- [#21] Better error messages when input is a directory (hat tip exside)
+- Make pThumb cache cleaning more selective
+- Update Resizer to 1.0.1-pl
+
+
 2.3.1-pl [23.03.2014]
 ---------------------
 
