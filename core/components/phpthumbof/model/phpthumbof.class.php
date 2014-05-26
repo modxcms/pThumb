@@ -40,7 +40,11 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 		$this->config['assetsPath'] = $modx->getOption('assets_path', null, MODX_ASSETS_PATH);
 		$this->config['httpHost'] = $modx->getOption('http_host', null, MODX_HTTP_HOST);
 		if ( $this->config['use_ptcache'] = $modx->getOption('pthumb.use_ptcache', null, TRUE) ) {
-			$this->config['cachePath'] = MODX_BASE_PATH . $modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
+			$this->config['cachePath'] = $modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
+			if ($this->config['cachePath'] === '/') {  // for safety, pThumb cache location has to be a subdir, can't be the web root
+				$this->config['cachePath'] = 'assets/image-cache';
+			}
+			$this->config['cachePath'] = MODX_BASE_PATH . $this->config['cachePath'];
 			$this->config['imagesBasedir'] = trim($modx->getOption('pthumb.ptcache_images_basedir', null, 'assets'), '/') . '/';
 			$this->config['imagesBasedirLen'] = strlen($this->config['imagesBasedir']);
 		}

@@ -1,7 +1,7 @@
 <?php
 /**
  * pThumb
- * Copyright 2013 Jason Grant
+ * Copyright 2013, 2014 Jason Grant
  *
  * Please see the GitHub page for documentation or to report bugs:
  * https://github.com/oo12/phpThumbOf
@@ -68,7 +68,7 @@ private function rmfile($file, $isS3, $s3obj) {
  *  2: remove all cached images
  */
 public function cleanCache() {
-	$config['clean_level'] = $this->modx->getOption('pthumb.clean_level', null, 0);
+	$config['clean_level'] = (int) $this->modx->getOption('pthumb.clean_level', null, 0);
 	$config['cache_maxage'] = $this->modx->getOption('phpthumb_cache_maxage', null, 365);
 	$description['maxage'] = $this->pluralize($config['cache_maxage'], 'day');
 	$config['cache_maxage'] *= 86400;  // convert to seconds
@@ -78,13 +78,17 @@ public function cleanCache() {
 	$config['cache_maxfiles'] = (int) $this->modx->getOption('phpthumb_cache_maxfiles', null, 10000);
 	$this->modx->log(modX::LOG_LEVEL_INFO, "[pThumb Cache Manager]  Clean Level: {$config['clean_level']} || Max Age: {$description['maxage']} || Max Size: {$description['maxsize']} || Max Files: {$config['cache_maxfiles']}");
 
-	if (!$config['clean_level'] || $config['clean_level'] == 1 && !($config['cache_maxage'] || $config['cache_maxsize'] || $config['cache_maxfiles'])) {
+	if ($config['clean_level'] < 1 || ($config['clean_level'] === 1 && !($config['cache_maxage'] || $config['cache_maxsize'] || $config['cache_maxfiles']))) {
 		$this->modx->log(modX::LOG_LEVEL_INFO, '::  Skipping cache cleanup based on settings');
 		$this->modx->log(modX::LOG_LEVEL_INFO, '');
 		return;  // that was easy.
 	}
 	$cachepath = array();  // gather up cache paths
-	$cachepath['pThumb'] = MODX_BASE_PATH . $this->modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', TRUE);
+	$cachepath['pThumb'] = $this->modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', true);
+	if ($cachepath['pThumb'] === '/') {  // for safety, pThumb cache location has to be a subdir, can't be the web root
+		$cachepath['pThumb'] = 'assets/image-cache';
+	}
+	$cachepath['pThumb'] = MODX_BASE_PATH . $cachepath['pThumb'];
 	$cachepath['phpThumbOf'] = $this->modx->getOption('phpthumbof.cache_path', null, "{$this->config['assetsPath']}components/phpthumbof/cache", true);
 	$cachepath['Remote Images'] = $this->config['remoteImagesCachePath'];
 	foreach ($cachepath as $path) {
@@ -97,7 +101,10 @@ public function cleanCache() {
 	$cachefiles = array();  // gather up cache files
 	foreach (array('pThumb', 'Remote Images') as $cachename) {
 		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
-			$filter = new FilenameFilter(new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS), '/\.(?:jpe?g|png|gif)$/i');
+			$filter = new FilenameFilter(
+				new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS),
+				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif)$/' : '/\.(?:jpe?g|png|gif)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
+			);
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {
 				$cachefiles[$cachename][] = $file->getPathName();
@@ -116,7 +123,7 @@ public function cleanCache() {
 	}
 
 	foreach ($cachefiles as $cachename => $fileset) {
-		$isS3 = $cachename === 'S3' ? true : false;
+		$isS3 = $cachename === 'S3';
 		$totalimages = count($fileset);
 		$DeletedKeys = array();
 		$CacheDirOldFilesAge  = array();
@@ -138,7 +145,7 @@ public function cleanCache() {
 
 		$this->modx->log(modX::LOG_LEVEL_INFO, ":: $cachename Cache: " . $this->pluralize($totalimages) . ' (' . round(array_sum($CacheDirOldFilesSize) / 1048576, 2) . ' MB)');
 
-		if ($config['clean_level'] == 2) {  // simply delete all the files
+		if ($config['clean_level'] === 2) {  // simply delete all the files
 			$deleted = 0;
 			if ($isS3) {
 				$response = $s3out->driver->delete_all_objects($s3out->bucket, $this->cacheimgRegex);
