@@ -112,7 +112,7 @@ public function cleanCache() {
 		}
 	}
 	if ($cachepath['phpThumbOf']) {
-		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g, png, gif}", GLOB_BRACE)) {
+		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g,png,gif}", GLOB_BRACE)) {
 			$cachefiles['phpThumbOf'] = array();  // empty array if glob didn't find anything
 		}
 	}
