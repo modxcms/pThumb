@@ -1,5 +1,12 @@
 pThumb Changelog
 
+2.3.3-pl [14.06.2014]
+---------------------
+
+- [#23] Fix cache cleaner to delete pngs and gifs from phpthumbof cache
+  (hat tip Ian Brindley)
+
+
 2.3.2-pl [26.05.2014]
 ---------------------
 
