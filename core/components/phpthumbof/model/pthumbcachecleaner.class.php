@@ -81,7 +81,7 @@ public function cleanCache() {
 	if ($config['clean_level'] < 1 || ($config['clean_level'] === 1 && !($config['cache_maxage'] || $config['cache_maxsize'] || $config['cache_maxfiles']))) {
 		$this->modx->log(modX::LOG_LEVEL_INFO, '::  Skipping cache cleanup based on settings');
 		$this->modx->log(modX::LOG_LEVEL_INFO, '');
-		return;  // that was easy.
+		return;
 	}
 	$cachepath = array();  // gather up cache paths
 	$cachepath['pThumb'] = $this->modx->getOption('pthumb.ptcache_location', null, 'assets/image-cache', true);
@@ -271,6 +271,7 @@ public function cleanCache() {
 		}
 	}
 	$this->modx->log(modX::LOG_LEVEL_INFO, '');
+	return;
 }
 
 }
