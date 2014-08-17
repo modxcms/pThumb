@@ -195,7 +195,29 @@ public function createThumbnail($src, $options) {
 		$remoteCacheName = "{$inputParts['filename']}$cachebuster{$inputParts['extension']}";  // hash any query string to allow for cache busting
 		$remoteFilePath = "{$this->config['remoteImagesCachePath']}{$matches[1]}/{$inputParts['dirname']}";
 		$file = "$remoteFilePath$remoteCacheName";
-		if (!file_exists($file)) {  // if it's not in our cache, go get it
+
+		$localFileIsOutOfDate = false;
+		if($this->config['checkModTime'] && file_exists($file)) {
+			$curl = curl_init(str_replace(' ', '%20', $src));
+
+			curl_setopt($curl, CURLOPT_NOBODY, true);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_FILETIME, true);
+
+			$result = curl_exec($curl);
+
+			if ($result === false) {
+				$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images file modification time could not retrieved: $remoteFilePath");
+			} else {
+				$timestamp = curl_getinfo($curl, CURLINFO_FILETIME);
+
+				if($timestamp > 0 && $timestamp > filemtime($file))
+					$localFileIsOutOfDate = true;
+			}
+		}
+
+
+		if (!file_exists($file) || $localFileIsOutOfDate) {  // if it's not in our cache, go get it
 			if (!is_writable($remoteFilePath)) {
 				if ( !$this->modx->cacheManager->writeTree($remoteFilePath) ) {
 					$this->modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Remote images cache path not writable: $remoteFilePath");
