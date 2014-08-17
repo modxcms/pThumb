@@ -66,6 +66,11 @@ if (!empty($toPlaceholder) || $result['outputDims']) {
 		$output = '';
 	}
 	if ($result['outputDims']) {
+	    parse_str($options);
+	    if (isset($scale) && $scale > 1) {
+	        $result['width'] = floor($result['width'] / $scale);
+	        $result['height'] = floor($result['height'] / $scale);
+	    }
 		$output = "src=\"{$result['src']}\"" . ($result['width'] ? " width=\"{$result['width']}\" height=\"{$result['height']}\"" : '');
 	}
 }
