@@ -93,7 +93,12 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 			else {  // initialize MS
 				$this->config["{$this->config['s3outKey']}_ok"] = true;
 				$s3properties = $s3obj->getPropertyList();
-				$this->config["{$this->config['s3outKey']}_url"] = $s3properties['url'];
+				$useCloudFront = $modx->getOption('pthumb.s3_output_cloudfront', null, false);
+				if ($useCloudFront) {
+					$this->config["{$this->config['s3outKey']}_url"] = $modx->getOption('pthumb.s3_output_cloudfront_url', null, $s3properties['url'], true); // fall-back to regular S3 url if CloudFront url is not set
+				} else {
+					$this->config["{$this->config['s3outKey']}_url"] = $s3properties['url'];
+				}
 				$s3obj->bucket = $s3properties['bucket'];
 				include_once MODX_CORE_PATH . 'model/aws/sdk.class.php';
 				define('AWS_KEY', $s3properties['key']);

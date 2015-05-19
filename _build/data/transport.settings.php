@@ -159,4 +159,21 @@ $systemSettings[$ssIdx++]->fromArray(array (
 	'area' => 'Amazon S3',
 ), '', true, true);
 
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.s3_output_cloudfront',
+	'value' => FALSE,
+	'xtype' => 'combo-boolean',
+	'namespace' => 'phpthumbof',
+	'area' => 'Amazon S3',
+), '', true, true);
+
+$systemSettings[$ssIdx] = $modx->newObject('modSystemSetting');
+$systemSettings[$ssIdx++]->fromArray(array (
+	'key' => 'pthumb.s3_output_cloudfront_url',
+	'xtype' => 'textfield',
+	'namespace' => 'phpthumbof',
+	'area' => 'Amazon S3',
+), '', true, true);
+
 return $systemSettings;
