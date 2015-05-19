@@ -76,5 +76,11 @@ $_lang['setting_pthumb.s3_multi_img_desc'] = 'Controls how pThumb checks for cac
 $_lang['setting_pthumb.s3_cache_path'] = 'S3 Cache Path Prefix';
 $_lang['setting_pthumb.s3_cache_path_desc'] = 'A subdirectory where all cached images will be stored in the S3 bucket(s).';
 
+$_lang['setting_pthumb.s3_output_cloudfront'] = 'S3 Output Via CloudFront';
+$_lang['setting_pthumb.s3_output_cloudfront_desc'] = 'Serve thumbnails via Amazon CloudFront instead of S3 bucket when using an S3 media source for output. Please also specify the CloudFront URL.';
+
+$_lang['setting_pthumb.s3_output_cloudfront_url'] = 'CloudFront URL';
+$_lang['setting_pthumb.s3_output_cloudfront__url_desc'] = 'The CloudFront URL used for serving the thumbnails. Ex: http://d111111abcdef8.cloudfront.net/';
+
 
 $_lang['prop_pthumb.debug_desc'] = 'Write debug messages to the MODX error log.';
