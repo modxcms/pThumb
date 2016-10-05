@@ -437,6 +437,7 @@ public function createThumbnail($src, $options) {
 				$this->phpThumb->config_document_root = MODX_BASE_PATH;  // default if nothing set from system settings
 			}
 			$this->phpThumb->config_cache_directory = "{$this->config['cachePath']}$cacheFilenamePrefix";  // doesn't matter, but saves phpThumb some frustration
+            		$this->phpThumb->config_temp_directory = "{$this->config['cachePath']}$cacheFilenamePrefix";
 			$this->phpThumb->setSourceFilename(($this->input[0] === '/' || $this->input[1] === ':') ? $this->input : MODX_BASE_PATH . $this->input);
 
 			if (!$this->phpThumb->GenerateThumbnail()) {  // create the thumbnail
