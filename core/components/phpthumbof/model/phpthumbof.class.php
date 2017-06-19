@@ -287,7 +287,7 @@ public function createThumbnail($src, $options) {
 	else {  // otherwise use the original phpThumbOf code
 		$ptOptions = array();
 		foreach ($options as $opt) {
-			$opt = explode('=', $opt);
+			$opt = strpos($opt, '=') !== false ? explode('=', $opt) : array($opt, '');
 			$key = str_replace('[]','',$opt[0]);
 			if (!empty($key)) {
 				/* allow arrays of options */
