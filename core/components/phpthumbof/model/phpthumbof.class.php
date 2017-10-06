@@ -282,7 +282,7 @@ public function createThumbnail($src, $options) {
 
 /* Process options. Set $ptOptions */
 	if (!is_array($options)) {  // convert options string to array
-		parse_str($options, $ptOptions);
+		parse_str(html_entity_decode($options), $ptOptions);
 	}
 	else {  // otherwise use the original phpThumbOf code
 		$ptOptions = array();
