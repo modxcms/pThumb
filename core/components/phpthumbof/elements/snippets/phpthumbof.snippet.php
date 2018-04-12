@@ -56,12 +56,14 @@ if (!empty($toPlaceholder) || $result['outputDims']) {
 	if ($result['width'] === '' && $result['file'] && $dims = getimagesize($result['file']) ) {
 			$result['width'] = $dims[0];
 			$result['height'] = $dims[1];
+			$result['ratio'] = round($dims[1] / $dims[0] * 100 ,1);
 	}
 	if (!empty($toPlaceholder)) {
 		$modx->setPlaceholders(array(
 			$toPlaceholder => $result['src'],
 			"$toPlaceholder.width" => $result['width'],
-			"$toPlaceholder.height" => $result['height']
+			"$toPlaceholder.height" => $result['height'],
+			"$toPlaceholder.ratio" => $result['ratio'],
 		));
 		$output = '';
 	}
