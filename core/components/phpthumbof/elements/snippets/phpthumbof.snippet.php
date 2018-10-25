@@ -60,11 +60,11 @@ if (!empty($toPlaceholder) || $result['outputDims']) {
 	}
 	if (!empty($toPlaceholder)) {
 		$modx->setPlaceholders(array(
-			$toPlaceholder => $result['src'],
-			"$toPlaceholder.width" => $result['width'],
-			"$toPlaceholder.height" => $result['height'],
-			"$toPlaceholder.ratio" => $result['ratio'],
-		));
+			'src' => $result['src'],
+			'width' => $result['width'],
+			'height' => $result['height'],
+			'ratio' => $result['ratio'],
+		),$toPlaceholder.'.');
 		$output = '';
 	}
 	if ($result['outputDims']) {
