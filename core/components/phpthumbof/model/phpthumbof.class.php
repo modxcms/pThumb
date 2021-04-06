@@ -240,6 +240,7 @@ public function createThumbnail($src, $options) {
 			curl_setopt_array($ch, array(
 				CURLOPT_TIMEOUT	=> $this->config['remoteTimeout'],
 				CURLOPT_FILE => $fh,
+				CURLOPT_FOLLOWLOCATION => TRUE,
 				CURLOPT_FAILONERROR => TRUE
 			));
 			curl_exec($ch);  // download the file and store it in $fh
