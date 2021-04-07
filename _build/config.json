@@ -1,0 +1,134 @@
+{
+    "name": "pThumb",
+    "lowCaseName": "phpthumbof",
+    "description": "A better phpThumbOf",
+    "author": "MODx",
+    "version": "2.4.0",
+    "package": {
+        "menus": [],
+        "elements": {
+            "chunks": [],
+            "plugins": [{
+                "name": "phpThumbOfCacheManager",
+                "description": "Handles cache cleaning when clearing the Site Cache.",
+                "file": "phpthumbofcachemanager.plugin.php",
+                "events": [
+                    "OnSiteRefresh"
+                ]
+            }],
+            "snippets": [{
+                "name": "phpthumbof",
+                "description": "Identical to pthumb. Retained for backwards compatibility.\nDocumentation: https://github.com/oo12/phpThumbOf",
+                "file": "phpthumbof.snippet.php",
+                "properties": [{
+                    "name": "debug",
+                    "value": false,
+                    "description": "prop_pthumb.debug_desc",
+                    "type": "combo-boolean",
+                    "lexicon": "phpthumbof:default"
+                }]
+            },{
+                "name": "pthumb",
+                "description": "Identical to phpthumbof. Better for future compatibility.\nDocumentation: https://github.com/oo12/phpThumbOf",
+                "file": "phpthumbof.snippet.php",
+                "properties": [{
+                    "name": "debug",
+                    "value": false,
+                    "description": "prop_pthumb.debug_desc",
+                    "type": "combo-boolean",
+                    "lexicon": "phpthumbof:default"
+                }]
+            }]
+        },
+        "systemSettings": [{
+            "key": "phpthumbof.use_resizer",
+            "value": false,
+            "area": "Images",
+            "namespace": "",
+            "type": "combo-boolean"
+        },{
+            "key": "pthumb.global_defaults",
+            "area": "Images",
+            "namespace": ""
+        },{
+            "key": "phpthumbof.remote_timeout",
+            "value": 5,
+            "area": "Other",
+            "namespace": ""
+        },{
+            "key": "phpthumbof.postfix_property_hash",
+            "value": true,
+            "area": "Cache [phpThumbOf]",
+            "namespace": "",
+            "type": "combo-boolean"
+        },{
+            "key": "phpthumbof.cache_path",
+            "area": "Cache [phpThumbOf]",
+            "namespace": ""
+        },{
+            "key": "phpthumbof.cache_url",
+            "area": "Cache [common]",
+            "namespace": ""
+        },{
+            "key": "pthumb.clean_level",
+            "value": "0",
+            "area": "Cache [common]",
+            "namespace": ""
+        },{
+            "key": "pthumb.use_ptcache",
+            "value": false,
+            "area": "Cache [pThumb]",
+            "namespace": "",
+            "type": "combo-boolean"
+        },{
+            "key": "pthumb.ptcache_location",
+            "value": "assets/image-cache",
+            "area": "Cache [pThumb]",
+            "namespace": ""
+        },{
+            "key": "pthumb.ptcache_images_basedir",
+            "value": "assets",
+            "area": "Cache [pThumb]",
+            "namespace": ""
+        },{
+            "key": "phpthumbof.check_mod_time",
+            "value": false,
+            "area": "Cache [pThumb]",
+            "namespace": "",
+            "type": "combo-boolean"
+        },{
+            "key": "pthumb.s3_output",
+            "area": "Amazon S3",
+            "namespace": ""
+        },{
+            "key": "pthumb.s3_headers",
+            "area": "Amazon S3",
+            "namespace": "",
+            "type": "textarea"
+        },{
+            "key": "pthumb.s3_multi_img",
+            "value": false,
+            "area": "Amazon S3",
+            "namespace": "",
+            "type": "combo-boolean"
+        },{
+            "key": "pthumb.s3_cache_path",
+            "area": "Amazon S3",
+            "namespace": ""
+        }]
+    },
+    "dependencies": [{
+        "name": "resizer",
+        "version": ">=1.0.1"
+    }],
+    "build": {
+        "readme": "docs/readme.txt",
+        "license": "docs/license.txt",
+        "changelog": "docs/changelog.txt",
+        "resolver": {
+            "after": [
+                "phpthumbof.resolver.php"
+            ]
+        }
+    }
+}
