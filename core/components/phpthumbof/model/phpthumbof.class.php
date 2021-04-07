@@ -53,6 +53,13 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 			$this->config['cachePath'] = str_replace(array('[[+assets_path]]', '[[+base_path]]'), array($this->config['assetsPath'], MODX_BASE_PATH), $this->config['cachePath']);
 			$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', null, TRUE);
 		}
+		// Check if filePathPrefix is set in the pThumb snippet call options, and add it to the cachePath
+		if (isset($options['options'])) {
+			parse_str($options['options'], $parsedOptions);
+			if (isset($parsedOptions['filePathPrefix']) && !empty(trim($parsedOptions['filePathPrefix']))) {
+				$this->config['cachePath'] .= '/' . trim($parsedOptions['filePathPrefix'], '/') . '/';
+			}
+		}
 		$this->config['cachePath'] = rtrim(str_replace('//', '/', $this->config['cachePath']), '/') . '/';  // just in case
 		if (!is_writable($this->config['cachePath']) && !$modx->cacheManager->writeTree($this->config['cachePath'])) {  // check cache writability
 			$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Cache path not writable: {$this->config['cachePath']}");
@@ -203,6 +210,7 @@ public function createThumbnail($src, $options) {
 			curl_setopt($curl, CURLOPT_NOBODY, true);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($curl, CURLOPT_FILETIME, true);
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
 			$result = curl_exec($curl);
 
@@ -240,6 +248,7 @@ public function createThumbnail($src, $options) {
 			curl_setopt_array($ch, array(
 				CURLOPT_TIMEOUT	=> $this->config['remoteTimeout'],
 				CURLOPT_FILE => $fh,
+				CURLOPT_FOLLOWLOCATION => TRUE,
 				CURLOPT_FAILONERROR => TRUE
 			));
 			curl_exec($ch);  // download the file and store it in $fh
