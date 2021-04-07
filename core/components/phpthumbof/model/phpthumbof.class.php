@@ -53,6 +53,7 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 			$this->config['cachePath'] = str_replace(array('[[+assets_path]]', '[[+base_path]]'), array($this->config['assetsPath'], MODX_BASE_PATH), $this->config['cachePath']);
 			$this->config['postfixPropertyHash'] = $modx->getOption('phpthumbof.postfix_property_hash', null, TRUE);
 		}
+		// Check if filePathPrefix is set in the pThumb snippet call options, and add it to the cachePath
 		if (isset($options['options'])) {
 			parse_str($options['options'], $parsedOptions);
 			if (isset($parsedOptions['filePathPrefix']) && !empty(trim($parsedOptions['filePathPrefix']))) {
