@@ -42,7 +42,12 @@ $scriptProperties['debug'] = isset($debug) ? $debug : false;
 static $pt_settings = array();
 
 if (empty($pt_settings)) {
-	if (!$modx->loadClass('phpThumbOf', MODX_CORE_PATH . 'components/phpthumbof/model/', true, true)) {
+    $modelPath = $modx->getOption(
+        'phpthumbof.core_path',
+        null,
+        $modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/phpthumbof/'
+    ) . 'model/';
+	if (!$modx->loadClass('phpThumbOf', $modelPath, true, true)) {
 		$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Could not load phpThumbOf class.');
 		return $input;
 	}
