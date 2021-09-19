@@ -74,6 +74,7 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 		if ($s3info) {  // used by the cache cleaner class
 			$this->cacheimgRegex = '/^' . str_replace('/', '\/', $this->config['s3cachePath']) . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif)$/';  // for safety, only select images with a hash
 		}
+        $this->config['postHook'] = $modx->getOption('pthumb.post_hook', null, FALSE);
 	}
 	// these can't be cached
 	$this->config['debug'] = empty($options['debug']) ? FALSE : TRUE;
@@ -451,6 +452,13 @@ public function createThumbnail($src, $options) {
 				$this->config['newFilePermissions'] = octdec($this->modx->getOption('new_file_permissions', null, '0664'));
 			}
 			chmod($cacheKey, $this->config['newFilePermissions']);  // make sure file permissions are correct
+
+            if ($this->config['postHook']) {
+                $result = $this->modx->runSnippet($this->config['postHook'], $output);
+                if (!empty($result) && is_string($result)) { // allow hook to return a message as string
+                    $this->debugmsg($result);
+                }
+            }
 		}
 	}
 
