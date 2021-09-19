@@ -158,7 +158,7 @@ public function debugmsg($msg, $phpthumbDebug = FALSE) {
 
 
 /*
- *  Create a thumnail from $src with $options
+ *  Create a thumbnail from $src with $options
  *  $src can be a path/filename or URL and absolute or relative
  *  Returns the filename of the cached image on success or $src on failure
  */
@@ -175,6 +175,9 @@ public function createThumbnail($src, $options) {
 	if ($this->config['cacheNotWritable']) {
 		return $output;
 	}
+    if (strtolower(pathinfo($src, PATHINFO_EXTENSION)) === 'svg') { // abort if file is SVG
+        return $output;
+    }
 /* Find input file */
 	$isRemote = preg_match('/^(?:https?:)?\/\/((?:.+?)\.(?:.+?))\/(.+)/i', $src, $matches);  // check for absolute URLs
 	if ($isRemote && $this->config['httpHost'] === strtolower($matches[1])) {  // if it's the same server we're running on
