@@ -307,8 +307,9 @@ public function createThumbnail($src, $options) {
 		$hashExtras = '';
 	}
 	if (empty($ptOptions['f'])) {  // if filetype isn't already set, set it based on extension
-		$ext = strtolower($inputParts['extension']);
-		$ptOptions['f'] = ($ext === 'png' || $ext === 'gif') ? $ext : 'jpeg';
+		$ext =  preg_replace('#[^a-z]#', '', strtolower($inputParts['extension']));
+        $availableExtensions = ['jpeg', 'png', 'gif', 'bmp', 'ico', 'wbmp', 'webp', 'avif'];
+		$ptOptions['f'] = in_array($ext, $availableExtensions, true) ? $ext : 'jpeg';
 	}
 	$output['outputDims'] = !empty($ptOptions['dims']);
 	$ptOptions = array_merge($this->config['globalDefaults'], $ptOptions);
