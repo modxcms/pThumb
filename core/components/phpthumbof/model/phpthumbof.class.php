@@ -257,7 +257,7 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else {  // it's a local file
-		if (is_readable($src)) {  // if we've already got an existing file, keep going
+		if (!is_string(ini_get('open_basedir')) && is_readable($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
 		else {  // otherwise prepend base_path and try again
