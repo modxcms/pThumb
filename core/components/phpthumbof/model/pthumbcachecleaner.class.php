@@ -103,7 +103,7 @@ public function cleanCache() {
 		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png, gif and webp
 			$filter = new FilenameFilter(
 				new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS),
-				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif|webp)$/' : '/\.(?:jpe?g|png|gif|webp)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
+				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif|webp)$/' : '/\.(?:jpe?g|png|gif|webp|avif|bmp|ico|wbmp)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
 			);
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {

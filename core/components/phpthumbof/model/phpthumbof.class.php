@@ -72,7 +72,7 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 		}
 		$this->config['s3multiImgGlobal'] = $s3info ? true : $modx->getOption('pthumb.s3_multi_img', null, false);
 		if ($s3info) {  // used by the cache cleaner class
-			$this->cacheimgRegex = '/^' . str_replace('/', '\/', $this->config['s3cachePath']) . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif|webp)$/';  // for safety, only select images with a hash
+			$this->cacheimgRegex = '/^' . str_replace('/', '\/', $this->config['s3cachePath']) . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif|webp|avif|bmp|ico|wbmp)$/';  // for safety, only select images with a hash
 		}
 	}
 	// these can't be cached
