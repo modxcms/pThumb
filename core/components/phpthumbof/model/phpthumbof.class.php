@@ -257,7 +257,20 @@ public function createThumbnail($src, $options) {
 		}
 	}
 	else {  // it's a local file
-		if (is_readable($src)) {  // if we've already got an existing file, keep going
+        // see if open_basedir is active - avoid calling is_readable in PHP >= 8.x
+        $openBasedirIniSetting = ini_get('open_basedir');
+        $isOpenBasedirSafe = true;
+        if (is_string($openBasedirIniSetting)) {
+            $isOpenBasedirSafe = false;
+            $openBasedirPaths = explode(":", $openBasedirIniSetting);
+            foreach($openBasedirPaths as $path) {
+                if (substr($src, 0, strlen($path)) == $path) {
+                    $isOpenBasedirSafe = true;
+                    break;
+                }
+            }
+        }
+        if ($isOpenBasedirSafe && is_readable($src)) {  // if we've already got an existing file, keep going
 			$file = $src;
 		}
 		else {  // otherwise prepend base_path and try again
