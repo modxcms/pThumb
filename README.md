@@ -27,9 +27,10 @@ Documentation
 
 pThumb includes two snippets: phpthumbof and pthumb.  They're exactly the same; use whichever snippet name you like best. phpthumbof is handy for an existing site that was already using phpthumbof; pthumb better for future compatibility and shorter too :-)
 
-Official documentation for [phpThumbOf](http://rtfm.modx.com/display/addon/phpthumbof/) and [phpThumb](http://phpthumb.sourceforge.net/demo/docs/phpthumb.readme.txt).
+Official documentation for [phpThumbOf](http://rtfm.modx.com/display/addon/phpthumbof/) and [phpThumb](https://web.archive.org/web/20220323050907/https://phpthumb.sourceforge.net/demo/docs/phpthumb.readme.txt) (Archived version). <br>
+Only interested in parameters? Check out the [PARAMS.md](PARAMS.md).
 
-pThumb adds the following system settings:
+<ins>pThumb adds the following system settings:</ins>
 
 * __Check File Modification Time__: Checks the original image's file modification time and updates the cached version if necessary.  Changing this setting's value will cause all currently cached images to become stale. **Default**: No
 
