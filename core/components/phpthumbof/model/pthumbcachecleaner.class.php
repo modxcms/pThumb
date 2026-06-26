@@ -100,10 +100,10 @@ public function cleanCache() {
 
 	$cachefiles = array();  // gather up cache files
 	foreach (array('pThumb', 'Remote Images') as $cachename) {
-		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png and gif
+		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png, gif and webp
 			$filter = new FilenameFilter(
 				new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS),
-				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif)$/' : '/\.(?:jpe?g|png|gif)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
+				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif|webp)$/' : '/\.(?:jpe?g|png|gif|webp|avif|bmp|ico|wbmp)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
 			);
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {
@@ -112,7 +112,7 @@ public function cleanCache() {
 		}
 	}
 	if ($cachepath['phpThumbOf']) {
-		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g,png,gif}", GLOB_BRACE)) {
+		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g,png,gif,webp}", GLOB_BRACE)) {
 			$cachefiles['phpThumbOf'] = array();  // empty array if glob didn't find anything
 		}
 	}
