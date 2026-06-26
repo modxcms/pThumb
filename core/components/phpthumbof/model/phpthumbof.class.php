@@ -96,8 +96,8 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 				$this->config["{$this->config['s3outKey']}_url"] = $s3properties['url'];
 				$s3obj->bucket = $s3properties['bucket'];
 				include_once MODX_CORE_PATH . 'model/aws/sdk.class.php';
-				define('AWS_KEY', $s3properties['key']);
-				define('AWS_SECRET_KEY', $s3properties['secret_key']);
+				if(!defined('AWS_KEY')) define('AWS_KEY', $s3properties['key']);
+				if(!defined('AWS_SECRET_KEY')) define('AWS_SECRET_KEY', $s3properties['secret_key']);
 				try { $s3obj->driver = new AmazonS3(); }
 				catch (Exception $e) {
 					$modx->log(modX::LOG_LEVEL_ERROR, "[pThumb] Error connecting to S3 media source {$this->config['s3outputMS']}: " . $e->getMessage());
