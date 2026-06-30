@@ -1,0 +1,5 @@
+{
+    "require-dev": {
+        "modx/revolution": "^3.2"
+    }
+}

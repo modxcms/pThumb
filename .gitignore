@@ -1,3 +1,4 @@
 no-git/*
 .DS_Store
 .idea
+vendor/

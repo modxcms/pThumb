@@ -45,7 +45,6 @@ if ($object->xpdo) {
 				'pthumb.ptcache_images_basedir' => 'Cache [pThumb]',
 				'pthumb.ptcache_location' => 'Cache [pThumb]',
 				'pthumb.use_ptcache' => 'Cache [pThumb]',
-				'pthumb.use_ptcache' => 'Cache [pThumb]',
 				'phpthumbof.cache_path' => 'Cache [phpThumbOf]',
 				'phpthumbof.postfix_property_hash' => 'Cache [phpThumbOf]',
 				'phpthumbof.cache_url' => 'Cache [common]'
@@ -66,6 +65,13 @@ if ($object->xpdo) {
 					$setting->remove();
 				}
 			}
+
+            $settings = $modx->getCollection('modSystemSetting', array('key:LIKE' => 'pthumb.%'));
+            foreach ($settings as $setting) {
+                $rekey = str_replace('pthumb.', 'phpthumbof.', $setting->get('key'));
+                $setting->set('key', $rekey);
+                $setting->save();
+            }
 			$success = TRUE;
 			break;
 

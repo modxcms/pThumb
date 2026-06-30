@@ -38,17 +38,7 @@ if (empty($input)) {  // Exit quietly if no file name given
 
 $scriptProperties['debug'] = isset($debug) ? $debug : false;
 
-
-static $pt_settings = array();
-
-if (empty($pt_settings)) {
-	if (!$modx->loadClass('phpThumbOf', MODX_CORE_PATH . 'components/phpthumbof/model/', true, true)) {
-		$modx->log(modX::LOG_LEVEL_ERROR, '[pThumb] Could not load phpThumbOf class.');
-		return $input;
-	}
-}
-
-$pThumb = new phpThumbOf($modx, $pt_settings, $scriptProperties);
+$pThumb = new \MODX\phpThumbOf\Service($modx, $scriptProperties);
 
 $result = $pThumb->createThumbnail($input, $options);
 
@@ -76,7 +66,7 @@ else {
 }
 
 if ($debug && $result['success']) {  // if debugging is on and createThumbnail was successful, log the debug info
-	$pThumb->debugmsg(isset($pThumb->phpThumb->debugmessages) ? ':: Processed ::' : ":: Loaded from cache: {$result['src']}", true);
+	$pThumb->debug(isset($pThumb->phpThumb->debugmessages) ? ':: Processed ::' : ":: Loaded from cache: {$result['src']}", true);
 }
 
 return $output;
