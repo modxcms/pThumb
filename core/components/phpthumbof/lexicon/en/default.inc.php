@@ -64,6 +64,9 @@ $_lang['setting_pthumb.ptcache_images_basedir_desc'] = 'Location of your origina
 $_lang['setting_pthumb.clean_level'] = 'Cache Cleaning Level';
 $_lang['setting_pthumb.clean_level_desc'] = 'How to clean the caches on site refresh. The cache manager plugin processes all 3 caches: phpThumbOf style, pThumb style, and remote images.  The S3 output media source is cleaned as well.<br /><strong>0</strong>: (default) Do nothing<br /><strong>1</strong>: Clean the caches separately based on the "Max Cache *" system settings (core &gt; phpThumb)<br /><strong>2</strong>: Delete all cached images';
 
+$_lang['setting_pthumb.clean_extensions'] = 'Cache Cleaning File Types';
+$_lang['setting_pthumb.clean_extensions_desc'] = 'Comma-separated list of image file extensions the cache manager will clean. Leave empty to clean every format pThumb can generate.<br /><strong>Default:</strong> (empty) jpg, jpeg, png, gif, webp, avif, bmp, ico, wbmp';
+
 $_lang['setting_pthumb.s3_output'] = 'S3 Output Media Source';
 $_lang['setting_pthumb.s3_output_desc'] = 'ID number of the S3 media source to use for output. May be overridden with the <em>&amp;s3output</em> property.';
 
