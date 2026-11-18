@@ -71,8 +71,12 @@ function __construct(modX &$modx, &$settings_cache, $options, $s3info = 0) {
 			$this->config['s3cachePath'] .= '/';  // only added if the string isn't empty
 		}
 		$this->config['s3multiImgGlobal'] = $s3info ? true : $modx->getOption('pthumb.s3_multi_img', null, false);
+		// image extensions the cache cleaner manages (local + S3); keep in sync with output formats in createThumbnail()
+		$cleanExts = $modx->getOption('pthumb.clean_extensions', null, 'jpg,jpeg,png,gif,webp,avif,bmp,ico,wbmp', true);
+		$cleanExts = array_unique(array_filter(array_map('trim', explode(',', strtolower($cleanExts)))));
+		$this->config['cacheExtRegex'] = implode('|', array_map(function ($e) { return preg_quote($e, '/'); }, $cleanExts));
 		if ($s3info) {  // used by the cache cleaner class
-			$this->cacheimgRegex = '/^' . str_replace('/', '\/', $this->config['s3cachePath']) . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:jpe?g|png|gif|webp|avif|bmp|ico|wbmp)$/';  // for safety, only select images with a hash
+			$this->cacheimgRegex = '/^' . preg_quote($this->config['s3cachePath'], '/') . '.+\.(?:[0-9a-f]{8}|[0-9a-f]{32})\.(?:' . $this->config['cacheExtRegex'] . ')$/i';  // for safety, only select images with a hash
 		}
 	}
 	// these can't be cached

@@ -90,20 +90,25 @@ public function cleanCache() {
 	}
 	$cachepath['pThumb'] = MODX_BASE_PATH . $cachepath['pThumb'];
 	$cachepath['phpThumbOf'] = $this->modx->getOption('phpthumbof.cache_path', null, "{$this->config['assetsPath']}components/phpthumbof/cache", true);
+	$cachepath['phpThumbOf'] = str_replace(array('[[+assets_path]]', '[[+base_path]]'), array($this->config['assetsPath'], MODX_BASE_PATH), $cachepath['phpThumbOf']);
 	$cachepath['Remote Images'] = $this->config['remoteImagesCachePath'];
-	foreach ($cachepath as $path) {
+	foreach ($cachepath as &$path) {
 		$path = rtrim(str_replace('//', '/', $path), '/');  // normalize path
 		if (!is_dir($path)) {
 			$path = false;
 		}
 	}
+	unset($path);
+
+	// extensions to clean; set by phpThumbOf constructor from pthumb.clean_extensions
+	$extRegex = isset($this->config['cacheExtRegex']) ? $this->config['cacheExtRegex'] : 'jpe?g|png|gif|webp|avif|bmp|ico|wbmp';
 
 	$cachefiles = array();  // gather up cache files
 	foreach (array('pThumb', 'Remote Images') as $cachename) {
-		if (is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for jpeg, jpg, png, gif and webp
+		if ($cachepath[$cachename] && is_writeable($cachepath[$cachename])) {  // recurse through all subdirectories looking for cached images
 			$filter = new FilenameFilter(
 				new RecursiveDirectoryIterator($cachepath[$cachename], FilesystemIterator::SKIP_DOTS),
-				$cachename === 'pThumb' ? '/.+\.[0-9a-f]{8}\.(jpg|png|gif|webp)$/' : '/\.(?:jpe?g|png|gif|webp|avif|bmp|ico|wbmp)$/i'  // for pThumb cache, only select images with what appears to be an 8-character hash
+				$cachename === 'pThumb' ? "/.+\\.[0-9a-f]{8}\\.(?:$extRegex)$/i" : "/\\.(?:$extRegex)$/i"  // for pThumb cache, only select images with what appears to be an 8-character hash
 			);
 			$cachefiles[$cachename] = array();
 			foreach(new RecursiveIteratorIterator($filter) as $file) {
@@ -111,9 +116,12 @@ public function cleanCache() {
 			}
 		}
 	}
-	if ($cachepath['phpThumbOf']) {
-		if ( ! $cachefiles['phpThumbOf'] = glob("{$cachepath['phpThumbOf']}/*.{jp*g,png,gif,webp}", GLOB_BRACE)) {
-			$cachefiles['phpThumbOf'] = array();  // empty array if glob didn't find anything
+	if ($cachepath['phpThumbOf']) {  // top level only; avoids GLOB_BRACE, which isn't available on all platforms
+		$cachefiles['phpThumbOf'] = array();
+		foreach (new FilesystemIterator($cachepath['phpThumbOf'], FilesystemIterator::SKIP_DOTS) as $f) {
+			if ($f->isFile() && preg_match("/\\.(?:$extRegex)$/i", $f->getFilename())) {
+				$cachefiles['phpThumbOf'][] = $f->getPathname();
+			}
 		}
 	}
 	$s3out = false;
